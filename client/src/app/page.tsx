@@ -1,6 +1,7 @@
-import Image from 'next/image';
-import styles from './page.module.css';
-
 export default function Home() {
-  return <div>내용</div>;
+  return (
+    <div className="content">
+      <div className="content-inner">d</div>
+    </div>
+  );
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Header from './components/Header';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 export const metadata: Metadata = {
   title: 'MOVIEPEDIA',
@@ -15,8 +16,11 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
-        <Header />
-        {children}
+        <div className="wrap">
+          <Header />
+          {children}
+          <Footer />
+        </div>
       </body>
     </html>
   );
