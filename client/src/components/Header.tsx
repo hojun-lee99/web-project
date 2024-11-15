@@ -1,18 +1,49 @@
 'use client';
 
 import styled from 'styled-components';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useDebounce } from '../hooks/useDebounce';
 
 export default function Header() {
+  const userID = 'dddddd';
+
+  const [searchValue, setSearchValue] = useState('');
+  const debouncedSearchValue = useDebounce(searchValue, 500); // 디바운스된 값 사용 (500ms)
+  const router = useRouter();
+
+  // 디바운스된 값이 변경될 때 URL 이동
+  useEffect(() => {
+    if (debouncedSearchValue.trim()) {
+      router.push(`/search?q=${encodeURIComponent(debouncedSearchValue)}`);
+    }
+  }, [debouncedSearchValue, router]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
+  };
+
   return (
     <HeaderWrap>
       <HeaderInner>
         <nav>
-          <Logo>MOVIEPEDIA</Logo>
+          <Logo>
+            <Link href="/">MOVIEPEDIA</Link>
+          </Logo>
           <MenuList>
-            <li>영화</li>
-            <li>시리즈</li>
-            <li>책</li>
-            <li>웹툰</li>
+            <li>
+              <Link href="/movies">영화</Link>
+            </li>
+            <li>
+              <Link href="/series">시리즈</Link>
+            </li>
+            <li>
+              <Link href="/books">책</Link>
+            </li>
+            <li>
+              <Link href="/webtoons">웹툰</Link>
+            </li>
           </MenuList>
         </nav>
         <User>
@@ -20,10 +51,16 @@ export default function Header() {
             <input
               type="text"
               placeholder="콘텐츠, 인물, 컬렉션, 유저를 검색해보세요."
+              value={searchValue}
+              onChange={handleChange}
             />
           </InputWrap>
-          <Evaluation>평가하기</Evaluation>
-          <UserProfile></UserProfile>
+          <Evaluation>
+            <Link href="/review">평가하기</Link>
+          </Evaluation>
+          <Link href={`/users/${userID}`}>
+            <UserProfile></UserProfile>
+          </Link>
         </User>
       </HeaderInner>
     </HeaderWrap>
