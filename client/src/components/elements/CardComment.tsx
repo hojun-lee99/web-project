@@ -4,39 +4,93 @@ import styled from 'styled-components';
 
 export default function CardComment() {
   return (
-    <CardWrap>
-      <div className="comment-user">
-        <div className='comment-user-inner'>
-          <div className="comment-user-photo"></div>
-          <div className="comment-user-id">닉네임</div>
-          <div className="comment-user-logo"></div>
+    <CardListWrap>
+      <CardWrap>
+        <div className="comment-user">
+          <div className='comment-user-inner'>
+            <div className="comment-user-photo"></div>
+            <div className="comment-user-id">닉네임</div>
+            <div className="comment-user-logo"></div>
+          </div>
+          <div className="comment-rating"></div>
         </div>
-        <div className="comment-rating"></div>
-      </div>
-      <div className='comment-cont'>
-        <div className="comment-photo"></div>
-        <div className="comment-text-wrap">
-          <div className="comment-title">리뷰 제목</div>
-          <div className="comment-desc">리뷰 내용 리뷰 내용 리뷰 내용 리뷰 내용 리뷰 내용 리뷰 내용 리뷰 내용 리뷰 내용 </div>
+        <div className='comment-cont'>
+          <div className="comment-photo"></div>
+          <div className="comment-text-wrap">
+            <div className="comment-title">리뷰 제목</div>
+            <div className="comment-desc">리뷰 내용 </div>
+          </div>
         </div>
-      </div>
-      <div className="comment-ico-wrap">
-        <div className="comment-thumbsUp-cnt"></div>
-        <div className="comment-reply-Cnt"></div>
-      </div>
-    </CardWrap>
+        <div className="comment-ico-wrap">
+          <div className="comment-thumbsUp-cnt">좋아요</div>
+          <div className="comment-reply-Cnt">댓글수</div>
+        </div>
+      </CardWrap>
+      <CardWrap>
+        <div className="comment-user">
+          <div className='comment-user-inner'>
+            <div className="comment-user-photo"></div>
+            <div className="comment-user-id">닉네임</div>
+            <div className="comment-user-logo"></div>
+          </div>
+          <div className="comment-rating"></div>
+        </div>
+        <div className='comment-cont'>
+          <div className="comment-photo"></div>
+          <div className="comment-text-wrap">
+            <div className="comment-title">리뷰 제목</div>
+            <div className="comment-desc">리뷰 내용 </div>
+          </div>
+        </div>
+        <div className="comment-ico-wrap">
+          <div className="comment-thumbsUp-cnt">좋아요</div>
+          <div className="comment-reply-Cnt">댓글수</div>
+        </div>
+      </CardWrap>
+      <CardWrap>
+        <div className="comment-user">
+          <div className='comment-user-inner'>
+            <div className="comment-user-photo"></div>
+            <div className="comment-user-id">닉네임</div>
+            <div className="comment-user-logo"></div>
+          </div>
+          <div className="comment-rating"></div>
+        </div>
+        <div className='comment-cont'>
+          <div className="comment-photo"></div>
+          <div className="comment-text-wrap">
+            <div className="comment-title">리뷰 제목</div>
+            <div className="comment-desc">리뷰 내용 </div>
+          </div>
+        </div>
+        <div className="comment-ico-wrap">
+          <div className="comment-thumbsUp-cnt">좋아요</div>
+          <div className="comment-reply-Cnt">댓글수</div>
+        </div>
+      </CardWrap>
+    </CardListWrap>
   );
 }
+
+const CardListWrap = styled.div`
+  display:flex;
+  justify-content:space-between;
+`
 
 const CardWrap = styled.div`
   max-width:430px;
   max-height:182px;
+  height:182px;
   width:100%;
   border:1px solid #E0E0E0;
   color:#747474;
   border-radius:6px;
   padding:11px;
 
+  .comment-ico-wrap{
+    display:flex;
+    gap:4px;
+  }
   .comment-user-inner{
     width:100%;
     height:20px;
@@ -47,7 +101,7 @@ const CardWrap = styled.div`
       width:20px;
       height:20px;
       border-radius:50%;
-      background-color:#fff;
+      background-color:#d7d7d7;
     }
     .comment-user-id{
       font-size:13px;
@@ -72,7 +126,7 @@ const CardWrap = styled.div`
       .comment-photo{
         width:57px;
         height:84px;
-        background-color:#fff;
+        background-color:#d7d7d7;
       }
       .comment-text-wrap{
         flex:1;

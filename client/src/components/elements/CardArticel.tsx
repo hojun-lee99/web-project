@@ -4,19 +4,48 @@ import styled from 'styled-components';
 
 export default function CardArticel() {
   return (
-    <CardWrap>
-      <div className="article-photo"></div>
-      <div className='article-text-wrap'>
-        <div className="article-user-wrap">
-          <div className="article-user-photo"></div>
-          <div className="article-user-id">닉네임</div>
+    <CardListWrap>
+      <CardWrap>
+        <div className="article-photo"></div>
+        <div className='article-text-wrap'>
+          <div className="article-user-wrap">
+            <div className="article-user-photo"></div>
+            <div className="article-user-id">닉네임</div>
+          </div>
+          <div className="article-movie-title">아티클 제목</div>
+          <div className="article-movie-desc">아티클 정보</div>
         </div>
-        <div className="article-movie-title">아티클 제목</div>
-        <div className="article-movie-desc">아티클 정보</div>
-      </div>
-    </CardWrap>
+      </CardWrap>
+      <CardWrap>
+        <div className="article-photo"></div>
+        <div className='article-text-wrap'>
+          <div className="article-user-wrap">
+            <div className="article-user-photo"></div>
+            <div className="article-user-id">닉네임</div>
+          </div>
+          <div className="article-movie-title">아티클 제목</div>
+          <div className="article-movie-desc">아티클 정보</div>
+        </div>
+      </CardWrap>
+      <CardWrap>
+        <div className="article-photo"></div>
+        <div className='article-text-wrap'>
+          <div className="article-user-wrap">
+            <div className="article-user-photo"></div>
+            <div className="article-user-id">닉네임</div>
+          </div>
+          <div className="article-movie-title">아티클 제목</div>
+          <div className="article-movie-desc">아티클 정보</div>
+        </div>
+      </CardWrap>
+    </CardListWrap>
   );
 }
+
+const CardListWrap = styled.div`
+  display:flex;
+  justify-content:space-between;
+`
 
 const CardWrap = styled.div`
   max-width:430px;
@@ -27,7 +56,7 @@ const CardWrap = styled.div`
   .article-photo{
     width:100%;
     height:240px;
-    background-color:#fff;
+    background-color:#d7d7d7;
   }
 
   
