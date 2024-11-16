@@ -1,22 +1,32 @@
+'use client';
+
 import CardDefault from "@/components/elements/CardDefault";
 import TitleSm from "@/components/elements/TitleSm";
-import TitleMd from "@/components/elements/TitleMd";
-import TitleLg from "@/components/elements/TitleLg";
-import TitleTab from "@/components/elements/TitleTab";
 import CardComment from "@/components/elements/CardComment";
 import CardArticel from "@/components/elements/CardArticel";
+import MainBanner from "@/components/MainBanner";
+
+import styled from "styled-components";
 
 export default function Home() {
   return (
-    <div className="content">
+    <div className="content main-content">
+      <MainBanner></MainBanner>
       <div className="content-inner">
-        <TitleSm></TitleSm>
-        <TitleMd></TitleMd>
-        <TitleLg></TitleLg>
-        <TitleTab></TitleTab>
-        <CardDefault></CardDefault>
-        <CardComment></CardComment>
-        <CardArticel></CardArticel>
+        <TitleSm title={"HOT 랭킹"} viewMore={false} />
+        <CardDefault cate={"HOTRank"} />
+      </div>
+      <div className="content-inner">
+        <TitleSm title={"지금 뜨는 코멘트"} viewMore={true} />
+        <CardComment />
+      </div>
+      <div className="content-inner">
+        <TitleSm title={"아티클"} viewMore={false} />
+        <CardArticel />
+      </div>
+      <div className="content-inner">
+        <TitleSm title={"공개예정작"} viewMore={true} />
+        <CardDefault cate={"Dday"} />
       </div>
     </div>
   );
