@@ -2,22 +2,49 @@
 
 import styled from 'styled-components';
 
-export default function CardDefault() {
+
+type TitleProps = {
+  cate: string;
+};
+
+export default function CardDefault({ cate }: TitleProps) {
   return (
-    <CardWrap>
-      <div className="card-photo">
-        <div className="card-PhotoTxt">1</div>
-        <div className="card-PhotoTxt">D-1</div>
-        <div className="card-logo">W</div>
-        <div className="card-WTS">+ 보고싶어요 <span className='cardWTSScr'>000</span></div>
-      </div>
-      <div className='card-text-wrap'>
-        <div className="card-movie-title">영화제목</div>
-        <div className="card-movie-desc">영화정보 <span className="card-movie-viewCnt">예매율 및 관객수</span></div>
-      </div>
-    </CardWrap>
+    <CardListWrap>
+      {cate === "HOTRank" && (
+        // 나중에 api연결해서 추가적으로 정보 받아서 map 돌리기
+        <CardWrap>
+          <div className="card-photo">
+            <div className="card-PhotoTxt">1</div>
+            <div className="card-logo"></div>
+          </div>
+          <div className='card-text-wrap'>
+            <div className="card-movie-title">영화제목</div>
+            <div className="card-movie-desc">영화정보</div>
+          </div>
+        </CardWrap>
+      )}
+      {cate === "Dday" && (
+        <CardWrap>
+          <div className="card-photo">
+            <div className="card-PhotoTxt">1</div>
+            <div className="card-PhotoTxt">D-1</div>
+            <div className="card-logo">W</div>
+            <div className="card-WTS">+ 보고싶어요 <span className='cardWTSScr'>000</span></div>
+          </div>
+          <div className='card-text-wrap'>
+            <div className="card-movie-title">영화제목</div>
+            <div className="card-movie-desc">영화정보 <span className="card-movie-viewCnt">예매율 및 관객수</span></div>
+          </div>
+        </CardWrap>
+      )}
+    </CardListWrap>
   );
 }
+
+const CardListWrap = styled.div`
+  display:flex;
+  justify-content:space-between;
+`
 
 const CardWrap = styled.div`
   width:100%;
