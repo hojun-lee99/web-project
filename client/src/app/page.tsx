@@ -4,6 +4,7 @@ import TitleMd from "@/components/elements/TitleMd";
 import TitleLg from "@/components/elements/TitleLg";
 import TitleTab from "@/components/elements/TitleTab";
 import CardComment from "@/components/elements/CardComment";
+import CardArticel from "@/components/elements/CardArticel";
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
         <TitleTab></TitleTab>
         <CardDefault></CardDefault>
         <CardComment></CardComment>
+        <CardArticel></CardArticel>
       </div>
     </div>
   );

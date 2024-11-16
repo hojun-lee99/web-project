@@ -26,6 +26,7 @@ const PageTitleTab = styled.li`
   border:1px solid #E0E0E0;
   color:#747474;
   border-radius:50px;
+  cursor:pointer;
 `
 const PageTitleTabAct = styled.li`
   float:left;
