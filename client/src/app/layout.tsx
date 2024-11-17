@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import Head from 'next/head';
 
 export const metadata: Metadata = {
   title: 'MOVIEPEDIA',
@@ -15,6 +16,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
+      <head>
+        <link
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+          rel="stylesheet"
+        />
+      </head>
       <body>
         <div className="wrap">
           <Header />

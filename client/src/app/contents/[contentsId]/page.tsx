@@ -4,27 +4,29 @@ import styled from 'styled-components';
 import Comment from '../../../components/Comment';
 import PeopleInfo from '../../../components/PeopleInfo';
 import StarRating from '../../../components/StarRating';
+import GallerySlider from '../../../components/GallerySlider';
 import axios from '../../../api/axios';
 
+/* tmdb 기준 작업 다른 api쓸 경우 수정 필요*/
+
 export default function Contents() {
-  const [movie, setMovie] = useState(null);
-  const category = 'movies'; //카테고리 정보 컴포넌트에 넘겨줘야 함
+  const [movie, setMovie] = useState<{ [key: string]: any } | null>(null);
+
+  const category = 'movies';
+  const movieId = 550; // 영화 클릭했을 때 id 값 받아서 쓰는걸로 수정 useRouter 서버컴포넌트에서 사용안함
 
   useEffect(() => {
-    const id = 550;
-    fetchData(id);
+    fetchData(movieId);
   }, []);
 
   const fetchData = async (id: string | number) => {
     try {
       const { data: movieDetail } = await axios.get(`movie/${id}`, {
-        params: { append_to_response: 'videos' },
+        params: { append_to_response: 'videos,release_dates' },
       });
-
       setMovie(movieDetail);
-      console.log(movieDetail);
     } catch (error) {
-      console.error('Error fetching movie data:');
+      console.error('Error fetching movie data:', error);
     }
   };
 
@@ -32,35 +34,81 @@ export default function Contents() {
     return <div>Loading...</div>;
   }
 
+  // 연령 등급 처리 로직
+  const getAgeRating = () => {
+    if (movie.release_dates && movie.release_dates.results) {
+      const krRelease = movie.release_dates.results.find(
+        (item: {
+          iso_3166_1: string;
+          release_dates: { certification: string }[];
+        }) => item.iso_3166_1 === 'KR',
+      );
+      if (krRelease && krRelease.release_dates.length > 0) {
+        return krRelease.release_dates[0].certification + '세' || '등급 없음';
+      }
+    }
+    return '등급 없음';
+  };
+
   return (
     <div className="content">
-      <StillCut>
-        <div className="content-inner">
+      <StillCut
+        $backgroundImage={`https://image.tmdb.org/t/p/w1280${movie.backdrop_path}`}
+      >
+        <div className="stillcut-inner">
           <ContentInfo>
-            <p className="content-title">title</p>
-            <p className="content-small-title">small title</p>
+            <p className="content-title">{movie.title}</p>
+            <p className="content-small-title">{movie.original_title}</p>
             <p>
-              <span className="content-year">2023</span>
-              <span className="content-genre">장르</span>
-              <span className="content-country">국가</span>
+              <span className="content-year">
+                {movie.release_date ? movie.release_date.split('-')[0] : '년도'}
+              </span>
+              <span className="content-genre">
+                {movie.genres && movie.genres.length > 0
+                  ? movie.genres
+                      .map((genre: { id: number; name: string }) => genre.name)
+                      .join(', ')
+                  : '장르'}
+              </span>
+              <span className="content-country">
+                {movie.origin_country && movie.origin_country.length > 0
+                  ? movie.origin_country.join(', ')
+                  : '국가 없음'}
+              </span>
             </p>
             <p>
-              <span className="content-runtime">러닝타임</span>
-              <span className="content-rating">등급</span>
+              <span className="content-runtime">
+                {movie.runtime
+                  ? `${Math.floor(movie.runtime / 60)}시간 ${
+                      movie.runtime % 60
+                    }분`
+                  : '러닝타임'}
+              </span>
+              <span className="content-rating">{getAgeRating()}</span>
             </p>
           </ContentInfo>
         </div>
       </StillCut>
       <div className="content-inner">
         <ContentInfo2>
-          <div className="content-poster"></div>
+          <div className="content-poster">
+            <img
+              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              alt={`${movie.title} Poster`}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </div>
           <div>
             <div className="content-rating">
               <StarRating />
-              <div className="content-rating_value">
-                <span>3.3</span>
+              <p className="content-rating_value">
+                <span>
+                  {movie.vote_average
+                    ? (movie.vote_average / 2).toFixed(1)
+                    : 'N/A'}
+                </span>
                 <span>평균 별점</span>
-              </div>
+              </p>
             </div>
             <div className="content-comment">
               <div>
@@ -68,27 +116,47 @@ export default function Contents() {
               </div>
               <button>코멘트 남기기</button>
             </div>
-            <div className="content-description">설명</div>
+            <div className="content-description">{movie.overview}</div>
           </div>
         </ContentInfo2>
-        <PeopleInfo data={category} />
+        <PeopleInfo data={{ category, movieId }} />
         <CommentWrap>
           <Comment />
         </CommentWrap>
+
+        <SliderWrap>
+          <header>
+            <p>스틸컷</p>
+          </header>
+          <GallerySlider data={{ movieId, type: 'image' }} />
+        </SliderWrap>
+
+        <SliderWrap>
+          <header>
+            <p>동영상</p>
+          </header>
+          <GallerySlider data={{ movieId, type: 'video' }} />
+        </SliderWrap>
       </div>
     </div>
   );
 }
 
-const StillCut = styled.div`
+const StillCut = styled.div<{ $backgroundImage: string }>`
   width: 100%;
   height: 550px;
-  background: #eee;
+  background: ${({ $backgroundImage }) =>
+    $backgroundImage
+      ? `url(${$backgroundImage}) center/cover no-repeat`
+      : '#eee'};
 
-  .content-inner {
+  .stillcut-inner {
     position: relative;
     width: 100%;
+    max-width: 1320px;
     height: 100%;
+    margin: 0 auto;
+    color: #fff;
   }
 `;
 
@@ -102,8 +170,17 @@ const ContentInfo = styled.div`
     margin-top: 16px;
   }
   span {
+    position: relative;
     display: inline-block;
-    padding: 0 4px;
+
+    &:not(:last-child)::after {
+      content: '·';
+      font-size: 14px;
+      position: relative;
+      top: 1px;
+      padding: 0 4px;
+      font-weight: 600;
+    }
   }
   .content-title {
     font-size: 36px;
@@ -162,6 +239,8 @@ const ContentInfo2 = styled.section`
       color: var(--color-text-white);
       background-color: var(--color-primary-accent);
       font-size: 14px;
+      border-radius: 4px;
+      cursor: pointer;
     }
   }
 
@@ -174,4 +253,18 @@ const ContentInfo2 = styled.section`
 const CommentWrap = styled.section`
   width: 100%;
   margin-top: 60px;
+`;
+
+const SliderWrap = styled.section`
+  width: 100%;
+  margin-top: 60px;
+
+  header {
+    margin-bottom: 20px;
+
+    p {
+      font-size: 24px;
+      font-weight: 600;
+    }
+  }
 `;
