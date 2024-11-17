@@ -100,7 +100,7 @@ export default function Contents() {
           </div>
           <div>
             <div className="content-rating">
-              <StarRating />
+              <StarRating name={movie.id} />
               <p className="content-rating_value">
                 <span>
                   {movie.vote_average

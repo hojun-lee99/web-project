@@ -2,7 +2,113 @@
 
 import styled from 'styled-components';
 
-const RateContainer = styled.fieldset`
+interface StarRatingProps {
+  fontSize?: string;
+  name?: string | number;
+  onRatingSelect?: (value: string) => void;
+}
+
+export default function StarRating({
+  fontSize = '60px',
+  name,
+  onRatingSelect,
+}: StarRatingProps) {
+  const handleRatingChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedValue = event.target.value;
+    console.log(`${selectedValue}`);
+
+    if (onRatingSelect) {
+      onRatingSelect(selectedValue);
+    }
+  };
+
+  return (
+    <RateContainer className="rate" fontSize={fontSize}>
+      <input
+        type="radio"
+        id={`rating10-${name}`}
+        name={`rating-${name}`}
+        value="5"
+        onChange={handleRatingChange}
+      />
+      <label htmlFor={`rating10-${name}`} title="5"></label>
+      <input
+        type="radio"
+        id={`rating9-${name}`}
+        name={`rating-${name}`}
+        value="4.5"
+        onChange={handleRatingChange}
+      />
+      <label className="half" htmlFor={`rating9-${name}`} title="4.5"></label>
+      <input
+        type="radio"
+        id={`rating8-${name}`}
+        name={`rating-${name}`}
+        value="4"
+        onChange={handleRatingChange}
+      />
+      <label htmlFor={`rating8-${name}`} title="4"></label>
+      <input
+        type="radio"
+        id={`rating7-${name}`}
+        name={`rating-${name}`}
+        value="3.5"
+        onChange={handleRatingChange}
+      />
+      <label className="half" htmlFor={`rating7-${name}`} title="3.5"></label>
+      <input
+        type="radio"
+        id={`rating6-${name}`}
+        name={`rating-${name}`}
+        value="3"
+        onChange={handleRatingChange}
+      />
+      <label htmlFor={`rating6-${name}`} title="3"></label>
+      <input
+        type="radio"
+        id={`rating5-${name}`}
+        name={`rating-${name}`}
+        value="2.5"
+        onChange={handleRatingChange}
+      />
+      <label className="half" htmlFor={`rating5-${name}`} title="2.5"></label>
+      <input
+        type="radio"
+        id={`rating4-${name}`}
+        name={`rating-${name}`}
+        value="2"
+        onChange={handleRatingChange}
+      />
+      <label htmlFor={`rating4-${name}`} title="2"></label>
+      <input
+        type="radio"
+        id={`rating3-${name}`}
+        name={`rating-${name}`}
+        value="1.5"
+        onChange={handleRatingChange}
+      />
+      <label className="half" htmlFor={`rating3-${name}`} title="1.5"></label>
+      <input
+        type="radio"
+        id={`rating2-${name}`}
+        name={`rating-${name}`}
+        value="1"
+        onChange={handleRatingChange}
+      />
+      <label htmlFor={`rating2-${name}`} title="1"></label>
+      <input
+        type="radio"
+        id={`rating1-${name}`}
+        name={`rating-${name}`}
+        value="0.5"
+        onChange={handleRatingChange}
+      />
+      <label className="half" htmlFor={`rating1-${name}`} title="0.5"></label>
+    </RateContainer>
+  );
+}
+
+const RateContainer = styled.fieldset<{ fontSize: string }>`
   display: inline-block;
   border: 0;
   margin-right: 15px;
@@ -21,15 +127,15 @@ const RateContainer = styled.fieldset`
 
     &:before {
       display: inline-block;
-      font-size: 60px;
+      font-size: ${({ fontSize }) => fontSize || '60px'};
       padding: 0.3rem 0.2rem;
       margin: 0;
       font-family: 'FontAwesome';
-      content: '\\f005'; /* Font Awesome star */
+      content: '\\f005';
     }
 
     &.half:before {
-      content: '\\f089'; /* Font Awesome half-star */
+      content: '\\f089';
       position: absolute;
       padding-right: 0;
     }
@@ -48,30 +154,3 @@ const RateContainer = styled.fieldset`
     color: var(--color-primary-accent) !important;
   }
 `;
-
-export default function StarRating() {
-  return (
-    <RateContainer className="rate">
-      <input type="radio" id="rating10" name="rating" value="10" />
-      <label htmlFor="rating10" title="5점"></label>
-      <input type="radio" id="rating9" name="rating" value="9" />
-      <label className="half" htmlFor="rating9" title="4.5점"></label>
-      <input type="radio" id="rating8" name="rating" value="8" />
-      <label htmlFor="rating8" title="4점"></label>
-      <input type="radio" id="rating7" name="rating" value="7" />
-      <label className="half" htmlFor="rating7" title="3.5점"></label>
-      <input type="radio" id="rating6" name="rating" value="6" />
-      <label htmlFor="rating6" title="3점"></label>
-      <input type="radio" id="rating5" name="rating" value="5" />
-      <label className="half" htmlFor="rating5" title="2.5점"></label>
-      <input type="radio" id="rating4" name="rating" value="4" />
-      <label htmlFor="rating4" title="2점"></label>
-      <input type="radio" id="rating3" name="rating" value="3" />
-      <label className="half" htmlFor="rating3" title="1.5점"></label>
-      <input type="radio" id="rating2" name="rating" value="2" />
-      <label htmlFor="rating2" title="1점"></label>
-      <input type="radio" id="rating1" name="rating" value="1" />
-      <label className="half" htmlFor="rating1" title="0.5점"></label>
-    </RateContainer>
-  );
-}
