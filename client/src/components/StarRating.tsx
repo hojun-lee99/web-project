@@ -1,7 +1,6 @@
 'use client';
 
 import styled from 'styled-components';
-import { useEffect } from 'react';
 
 const RateContainer = styled.fieldset`
   display: inline-block;
@@ -51,14 +50,6 @@ const RateContainer = styled.fieldset`
 `;
 
 export default function StarRating() {
-  useEffect(() => {
-    const link = document.createElement('link');
-    link.href =
-      'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
-  }, []);
-
   return (
     <RateContainer className="rate">
       <input type="radio" id="rating10" name="rating" value="10" />
