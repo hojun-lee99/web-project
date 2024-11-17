@@ -1,33 +1,110 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import axios from '../api/axios';
 
-type PeopleInfoProps = {
-  data: string;
-};
+interface PeopleInfoProps {
+  data: {
+    category: string | number;
+    movieId: string | number;
+  };
+}
 
-export default function PeopleInfo({ data }: { data: string }) {
+interface CastMember {
+  name: string;
+  character: string;
+  profile_path: string | null;
+}
+
+interface CrewMember {
+  name: string;
+  job: string;
+  profile_path: string | null;
+}
+
+export default function PeopleInfo({ data }: PeopleInfoProps) {
+  const [cast, setCast] = useState<CastMember[]>([]);
+  const [crew, setCrew] = useState<CrewMember[]>([]);
+
+  useEffect(() => {
+    const fetchMovieCredits = async () => {
+      if (
+        typeof data.movieId === 'string' ||
+        typeof data.movieId === 'number'
+      ) {
+        try {
+          const { data: creditsData } = await axios.get(
+            `movie/${data.movieId}/credits`,
+          );
+          setCast(creditsData.cast || []);
+          setCrew(creditsData.crew || []);
+        } catch (error) {
+          console.error('Error fetching credits data:', error);
+        }
+      }
+    };
+
+    fetchMovieCredits();
+  }, [data.movieId]);
+
   let content;
-
-  if (data === 'movies' || data === 'series') {
+  if (data.category === 'movies' || data.category === 'series') {
     content = <p>출연 / 제작</p>;
-  } else if (data === 'books') {
+  } else if (data.category === 'books') {
     content = <p>저자 / 역자</p>;
-  } else if (data === 'webtoon') {
+  } else if (data.category === 'webtoon') {
     content = <p>작가</p>;
+  } else {
+    content = <p>기타</p>; // 예외 처리
   }
 
   return (
     <InfoWrap>
       <header>{content}</header>
       <PeopleInfoList>
-        <li>
-          <div className="info-photo"></div>
-          <div>
-            <p className="info-name">감독이름</p>
-            <p className="info-role">역할</p>
-          </div>
-        </li>
+        {crew
+          .filter((member) => member.job === 'Director') // 감독만 필터링
+          .map((director) => (
+            <li key={director.name}>
+              <div className="info-photo">
+                {director.profile_path ? (
+                  <img
+                    src={`https://image.tmdb.org/t/p/w200${director.profile_path}`}
+                    alt={director.name}
+                  />
+                ) : (
+                  <div>No Image</div>
+                )}
+              </div>
+              <div>
+                <p className="info-name">{director.name}</p>
+                <p className="info-role">감독</p>
+              </div>
+            </li>
+          ))}
+        {cast.slice(0, 7).map(
+          (
+            actor, // 상위 5명만 표시
+          ) => (
+            <li key={actor.name}>
+              <div className="info-photo">
+                {actor.profile_path ? (
+                  <img
+                    src={`https://image.tmdb.org/t/p/w200${actor.profile_path}`}
+                    alt={actor.name}
+                  />
+                ) : (
+                  <div>No Image</div>
+                )}
+              </div>
+              <div>
+                <p className="info-name">{actor.name}</p>
+                <p className="info-role">{actor.character}</p>
+              </div>
+            </li>
+          ),
+        )}
       </PeopleInfoList>
     </InfoWrap>
   );
@@ -72,12 +149,19 @@ const PeopleInfoList = styled.ul`
   }
 
   .info-photo {
+    position: relative;
     background-color: var(--color-background-secondary);
     width: 56px;
     height: 56px;
     margin-right: 10px;
     border-radius: 4px;
     overflow: hidden;
+
+    img {
+      position: absolute;
+      top: -20%;
+      width: 100%;
+    }
   }
 
   .info-name {
