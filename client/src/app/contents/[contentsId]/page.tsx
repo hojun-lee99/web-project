@@ -6,14 +6,17 @@ import PeopleInfo from '../../../components/PeopleInfo';
 import StarRating from '../../../components/StarRating';
 import GallerySlider from '../../../components/GallerySlider';
 import axios from '../../../api/axios';
+import CommentPopup from '../../../components/CommentPopup';
 
 /* tmdb 기준 작업 다른 api쓸 경우 수정 필요*/
 
 export default function Contents() {
   const [movie, setMovie] = useState<{ [key: string]: any } | null>(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const category = 'movies';
   const movieId = 550; // 영화 클릭했을 때 id 값 받아서 쓰는걸로 수정 useRouter 서버컴포넌트에서 사용안함
+  const myReview = false; //임시 UI확인
 
   useEffect(() => {
     fetchData(movieId);
@@ -33,6 +36,9 @@ export default function Contents() {
   if (!movie) {
     return <div>Loading...</div>;
   }
+
+  const openPopup = () => setIsPopupOpen(true);
+  const closePopup = () => setIsPopupOpen(false);
 
   // 연령 등급 처리 로직
   const getAgeRating = () => {
@@ -111,10 +117,30 @@ export default function Contents() {
               </p>
             </div>
             <div className="content-comment">
-              <div>
-                이 작품에 대한 <span>닉네임</span>님의 평가를 글로 남겨보세요.
-              </div>
-              <button>코멘트 남기기</button>
+              {myReview ? (
+                <div className="content-comment_area">
+                  {/* myReview가 true일 때 보여줄 내용 */}
+                  <div>
+                    <div className="content-comment_profile"></div>
+                    <p>코멘트를 남기면 이렇게 보임 </p>
+                  </div>
+                  <div>
+                    <button type="button">수정</button>
+                    <button type="button">삭제</button>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  {/* myReview가 false일 때 보여줄 내용 */}
+                  <div>
+                    이 작품에 대한 <span>닉네임</span>님의 평가를 글로
+                    남겨보세요.
+                  </div>
+                  <button type="button" onClick={openPopup}>
+                    코멘트 남기기
+                  </button>
+                </div>
+              )}
             </div>
             <div className="content-description">{movie.overview}</div>
           </div>
@@ -138,6 +164,9 @@ export default function Contents() {
           <GallerySlider data={{ movieId, type: 'video' }} />
         </SliderWrap>
       </div>
+
+      {/* Popup 컴포넌트 표시 */}
+      <CommentPopup isOpen={isPopupOpen} onClose={closePopup} />
     </div>
   );
 }
@@ -228,10 +257,13 @@ const ContentInfo2 = styled.section`
   }
 
   .content-comment {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     padding: 20px 10px;
+
+    > div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
     button {
       padding: 10px;
@@ -241,6 +273,27 @@ const ContentInfo2 = styled.section`
       font-size: 14px;
       border-radius: 4px;
       cursor: pointer;
+    }
+  }
+
+  .content-comment_area {
+    > div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .content-comment_profile {
+      width: 56px;
+      height: 56px;
+      background-color: var(--color-background-tertiary);
+      border-radius: 50%;
+      margin-right: 20px;
+    }
+
+    button {
+      background-color: #fff;
+      color: var(--color-text-tertiary);
     }
   }
 
