@@ -9,6 +9,7 @@ import MainBanner from "@/components/MainBanner";
 import styled from "styled-components";
 
 export default function Home() {
+
   return (
     <div className="content main-content">
       <MainBanner></MainBanner>
