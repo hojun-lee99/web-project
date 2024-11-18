@@ -1,207 +1,188 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-
+import axios from '../../api/axios';
 
 type TitleProps = {
   cate: string;
 };
 
 export default function CardDefault({ cate }: TitleProps) {
+  const category = cate;
+  const [loadMovies, setLoadMovies] = useState<any[]>([]);
+
+  // 영화 데이터를 가져오는 함수
+  const fetchMovies = async (movieCate: string) => {
+    try {
+      const response = await axios.get('/movie/' + movieCate, {
+        params: { language: 'ko-KR', page: 1 },
+      });
+      const movies = response.data.results;
+      setLoadMovies(movies);
+      console.log(movieCate + ':')
+      console.log(movies)
+    } catch (error) {
+      console.error('Error fetching random movies:', error);
+    }
+  };
+
+  // useEffect를 사용해 데이터 로드
+  useEffect(() => {
+    if (category === 'HOTRank') {
+      fetchMovies('popular');
+    } else if (category === 'Dday') {
+      fetchMovies('upcoming');
+    }
+  }, []);
+
   return (
     <CardListWrap>
-      {cate === "HOTRank" && (
-        // 나중에 api연결해서 추가적으로 정보 받아서 map 돌리기
+      {/* HOTRank 카테고리 */}
+      {cate === 'HOTRank' && (
         <>
-          <CardWrap>
-            <div className="card-photo">
-              <div className="card-PhotoTxt">1</div>
-              <div className="card-logo"></div>
-            </div>
-            <div className='card-text-wrap'>
-              <div className="card-movie-title">영화제목</div>
-              <div className="card-movie-desc">영화정보</div>
-            </div>
-          </CardWrap>
-          <CardWrap>
-            <div className="card-photo">
-              <div className="card-PhotoTxt">2</div>
-              <div className="card-logo"></div>
-            </div>
-            <div className='card-text-wrap'>
-              <div className="card-movie-title">영화제목</div>
-              <div className="card-movie-desc">영화정보</div>
-            </div>
-          </CardWrap>
-          <CardWrap>
-            <div className="card-photo">
-              <div className="card-PhotoTxt">3</div>
-              <div className="card-logo"></div>
-            </div>
-            <div className='card-text-wrap'>
-              <div className="card-movie-title">영화제목</div>
-              <div className="card-movie-desc">영화정보</div>
-            </div>
-          </CardWrap>
-          <CardWrap>
-            <div className="card-photo">
-              <div className="card-PhotoTxt">4</div>
-              <div className="card-logo"></div>
-            </div>
-            <div className='card-text-wrap'>
-              <div className="card-movie-title">영화제목</div>
-              <div className="card-movie-desc">영화정보</div>
-            </div>
-          </CardWrap>
-          <CardWrap>
-            <div className="card-photo">
-              <div className="card-PhotoTxt">5</div>
-              <div className="card-logo"></div>
-            </div>
-            <div className='card-text-wrap'>
-              <div className="card-movie-title">영화제목</div>
-              <div className="card-movie-desc">영화정보</div>
-            </div>
-          </CardWrap>
+          {loadMovies.slice(0, 5).map((movie, index) => (
+            <CardWrap key={movie.id}>
+              <div className="card-photo">
+                <div className="card-PhotoTxt">{index + 1}</div>
+                <div className="card-logo"></div>
+                <img
+                  src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                  alt={movie.title}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+              </div>
+              <div className='card-text-wrap'>
+                <div className="card-movie-title">{movie.title}</div>
+                <div className="card-movie-desc">{new Date(movie.release_date).getFullYear()} | {movie.original_language.toUpperCase()}</div>
+              </div>
+            </CardWrap>
+          ))}
         </>
       )}
-      {cate === "Dday" && (
+
+      {/* Dday 카테고리 */}
+      {cate === 'Dday' && (
         <>
-          <CardWrap>
-            <div className="card-photo">
-              <div className="card-PhotoTxt">D-1</div>
-              <div className="card-logo"></div>
-              <div className="card-WTS">+ 보고싶어요 <span className='cardWTSScr'>000</span></div>
-            </div>
-            <div className='card-text-wrap'>
-              <div className="card-movie-title">영화제목</div>
-              <div className="card-movie-desc">영화정보 <span className="card-movie-viewCnt">예매율 및 관객수</span></div>
-            </div>
-          </CardWrap>
-          <CardWrap>
-            <div className="card-photo">
-              <div className="card-PhotoTxt">D-1</div>
-              <div className="card-logo"></div>
-              <div className="card-WTS">+ 보고싶어요 <span className='cardWTSScr'>000</span></div>
-            </div>
-            <div className='card-text-wrap'>
-              <div className="card-movie-title">영화제목</div>
-              <div className="card-movie-desc">영화정보 <span className="card-movie-viewCnt">예매율 및 관객수</span></div>
-            </div>
-          </CardWrap>
-          <CardWrap>
-            <div className="card-photo">
-              <div className="card-PhotoTxt">D-1</div>
-              <div className="card-logo"></div>
-              <div className="card-WTS">+ 보고싶어요 <span className='cardWTSScr'>000</span></div>
-            </div>1
-            <div className='card-text-wrap'>
-              <div className="card-movie-title">영화제목</div>
-              <div className="card-movie-desc">영화정보 <span className="card-movie-viewCnt">예매율 및 관객수</span></div>
-            </div>
-          </CardWrap>
-          <CardWrap>
-            <div className="card-photo">
-              <div className="card-PhotoTxt">D-1</div>
-              <div className="card-logo"></div>
-              <div className="card-WTS">+ 보고싶어요 <span className='cardWTSScr'>000</span></div>
-            </div>
-            <div className='card-text-wrap'>
-              <div className="card-movie-title">영화제목</div>
-              <div className="card-movie-desc">영화정보 <span className="card-movie-viewCnt">예매율 및 관객수</span></div>
-            </div>
-          </CardWrap>
-          <CardWrap>
-            <div className="card-photo">
-              <div className="card-PhotoTxt">D-1</div>
-              <div className="card-logo"></div>
-              <div className="card-WTS">+ 보고싶어요 <span className='cardWTSScr'>000</span></div>
-            </div>
-            <div className='card-text-wrap'>
-              <div className="card-movie-title">영화제목</div>
-              <div className="card-movie-desc">영화정보 <span className="card-movie-viewCnt">예매율 및 관객수</span></div>
-            </div>
-          </CardWrap>
+          {loadMovies.slice(0, 5).map((movie, index) => (
+            <CardWrap key={movie.id}>
+              <div className="card-photo">
+                <div className="card-PhotoTxt">D-1</div>
+                <div className="card-logo"></div>
+                <div className="card-WTS">
+                  + 보고싶어요 <span className="cardWTSScr">000</span>
+                </div>
+                <img
+                  src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                  alt={movie.title}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+              </div>
+              <div className="card-text-wrap">
+                <div className="card-movie-title">{movie.title}</div>
+                <div className="card-movie-desc">
+                  {new Date(movie.release_date).getFullYear()} | {movie.original_language.toUpperCase()} <span className="card-movie-viewCnt">예매율 및 관객수</span>
+                </div>
+              </div>
+            </CardWrap>
+          ))}
         </>
       )}
     </CardListWrap>
   );
 }
 
+// 스타일 정의
 const CardListWrap = styled.div`
-  display:flex;
-  justify-content:space-between;
-`
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+`;
 
 const CardWrap = styled.div`
-  width:100%;
-  height:auto;
-  max-width:248px;
-  max-height:423px;
+  width: 100%;
+  max-width: 248px;
+  height: auto;
+  max-height: 423px;
 
-  .card-photo{
-    height:355px;
-    max-height:355px;
-    background-color:#C7C7C7;
-    border-radius:4px;
-    overflow:hidden;
-    padding:10px;
-    box-sizing:border-box;
-    position:relative;
+  .card-photo {
+    height: 355px;
+    border-radius: 4px;
+    overflow: hidden;
+    padding: 10px;
+    position: relative;
+    z-index:1;
+
+    img{
+      position:absolute;
+      left:0;
+      top:0;
+      z-index:-1;
+    }
 
     .card-PhotoTxt {
-      display:inline-block;
-      width:auto;
-      background-color:#101113;
-      color:#fff;
-      padding:3px 6px;
-      min-width:28px;
-      line-height:22px;
-      text-align:center;
-      float:left;
-      border-radius:4px;
+      background-color: #101113;
+      color: #fff;
+      padding: 3px 6px;
+      border-radius: 4px;
+      position: absolute;
+      top: 10px;
+      left: 10px;
     }
-    .card-logo{
-      float:right;
-      background-color:#fff;
-      width:30px;
-      height:30px;
-      border-radius:15px;
+
+    .card-logo {
+      background-color: #fff;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      position: absolute;
+      top: 10px;
+      right: 10px;
     }
-    .card-WTS{
-      clear:both;
-      background-color:#101113;
-      color:#fff;
-      position:absolute;
-      width:100%;
-      line-height:16px;
-      padding:10px;
-      bottom:-0;
-      left:-0;
+
+    .card-WTS {
+      background-color: #101113;
+      color: #fff;
+      width: 100%;
+      padding: 10px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
     }
-    .cardWTSScr{
-      float:right;
+
+    .cardWTSScr {
+      float: right;
     }
   }
 
-  .card-text-wrap{
-    padding:5px 10px 0 0;
+  .card-text-wrap {
+    padding: 10px 0;
 
     .card-movie-title {
-      font-size:16px;
-      font-weight:500;
-      line-height:22px;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 22px;
     }
+
     .card-movie-desc {
-      font-size:14px;
-      font-weight:400;
-      line-height:20px;
+      font-size: 14px;
+      color: #555;
     }
+
     .card-movie-viewCnt {
-      font-size:13px;
-      font-weight:400;
-      line-height:20px;
-      color:#00B9AE;
+      font-size: 13px;
+      color: #00b9ae;
     }
   }
-`
+`;
+
+
