@@ -44,6 +44,9 @@ export default function Header() {
             <li>
               <Link href="/webtoons">웹툰</Link>
             </li>
+            <li>
+              <Link href="/community">커뮤니티</Link>
+            </li>
           </MenuList>
         </nav>
         <User>
@@ -97,12 +100,12 @@ const Logo = styled.h1`
 
 const MenuList = styled.ul`
   display: flex;
-  gap: 40px;
-  margin-left: 40px;
+  gap: 28px;
+  margin-left: 28px;
 
   li {
     color: var(--color-text-primary);
-    font-size: 20px;
+    font-size: 18px;
     opacity: 20%;
     font-weight: 600;
   }
@@ -111,7 +114,7 @@ const MenuList = styled.ul`
 const InputWrap = styled.div`
   input {
     padding: 10px;
-    font-size: 14px;
+    font-size: 13px;
     color: var(--color-text-tertiary);
     background: var(--color-background-secondary);
     border-radius: 4px;
@@ -127,6 +130,10 @@ const User = styled.div`
 
 const Evaluation = styled.div`
   margin: 0 20px;
+
+  a {
+    font-size: 15px;
+  }
 `;
 
 const UserProfile = styled.div`

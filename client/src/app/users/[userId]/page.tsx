@@ -22,6 +22,7 @@ export default function UserPage({ params }: { params: { userId: string } }) {
 
           <UserClender>
             <Title>캘린더</Title>
+            <div>라이브러리</div>
           </UserClender>
 
           <UserArchive>
