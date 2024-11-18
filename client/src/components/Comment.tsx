@@ -9,7 +9,9 @@ export default function Comment() {
         <p>
           코멘트<span>450+</span>
         </p>
-        <a href="#">더보기</a>
+        <a className="comment-more" href="#">
+          더보기
+        </a>
       </header>
       <CommentList>
         <li className="comment-item">
