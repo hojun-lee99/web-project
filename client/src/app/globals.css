@@ -65,16 +65,6 @@
 
   --color-border-primary: #e0e0e0;
 
-  /* custom */
-  --color-txt-black: #141414;
-  --color-txt-sub: #5e5e64;
-  --color-txt-sub2: #747474;
-
-  --color-border: #e0e0e0;
-
-  --color-black: #101113;
-
-  --color-main: #00b9ae;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -90,7 +80,7 @@ body {
   overflow-x: hidden;
   min-height: 100%;
   background-color: var(--color-background-primary);
-  color: var(--color-txt-black);
+  color: var(--color-text-primary);
 }
 
 body {
