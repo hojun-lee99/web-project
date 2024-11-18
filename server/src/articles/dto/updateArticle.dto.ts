@@ -5,7 +5,7 @@ export class UpdateArticleDto {
   access_toekn: string;
 }
 
-export class updateArticle {
+export class UpdateArticle {
   id: number;
   title?: string;
   content?: string;
