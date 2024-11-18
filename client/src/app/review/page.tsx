@@ -6,6 +6,21 @@ import styled from 'styled-components';
 import StarRating from '../../components/StarRating';
 import ReviewPopup from '../../components/ReviewPopup';
 
+export const movieFilter = {
+  영화: ['HOT 트렌드', '주간 트렌드', '인기 영화', '최고 평점 영화'],
+  장르: [
+    '느와르',
+    '히어로',
+    '범죄',
+    '드라마',
+    '코미디',
+    '로맨스/멜로',
+    '스릴러',
+    '로맨틱코미디',
+    '가족',
+  ],
+};
+
 const messages = [
   {
     min: 1,
