@@ -17,6 +17,7 @@ export default function Contents() {
   const category = 'movies';
   const movieId = 550; // 영화 클릭했을 때 id 값 받아서 쓰는걸로 수정 useRouter 서버컴포넌트에서 사용안함
   const myReview = false; //임시 UI확인
+  const myRating = 3; //임시 내가 평가한 별점이 있다면
 
   useEffect(() => {
     fetchData(movieId);
@@ -106,7 +107,7 @@ export default function Contents() {
           </div>
           <div>
             <div className="content-rating">
-              <StarRating name={movie.id} />
+              <StarRating name={movie.id} myRating={myRating} />
               <p className="content-rating_value">
                 <span>
                   {movie.vote_average
