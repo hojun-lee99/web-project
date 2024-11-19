@@ -1,6 +1,7 @@
 'use client';
 
 import styled from 'styled-components';
+import React, { useState } from 'react';
 
 interface PopupProps {
   isOpen: boolean;
@@ -8,7 +9,13 @@ interface PopupProps {
 }
 
 export default function CommentPopup({ isOpen, onClose }: PopupProps) {
+  const [text, setText] = useState('');
+
   if (!isOpen) return null;
+
+  const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(event.target.value);
+  };
 
   return (
     <PopupWrapper>
@@ -19,11 +26,15 @@ export default function CommentPopup({ isOpen, onClose }: PopupProps) {
         </PopupHeader>
         <PopupInner>
           <Textarea>
-            <textarea>이 작품에 대한 생각을 자유롭게 표현해 주세요.</textarea>
+            <textarea
+              value={text}
+              onChange={handleTextChange} // 이벤트 핸들러 추가
+              placeholder="이 작품에 대한 생각을 자유롭게 표현해 주세요."
+            ></textarea>
           </Textarea>
           <div className="save">
             <p>
-              <span>0</span>/<span>10000</span>
+              <span>{text.length}</span>/<span>10000</span>
             </p>
             <button type="button">저장</button>
           </div>
