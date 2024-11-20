@@ -96,6 +96,7 @@ export default function CardDefault({ cate }: TitleProps) {
           ))}
         </>
       )}
+
     </CardListWrap>
   );
 }
