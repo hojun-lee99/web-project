@@ -1,8 +1,8 @@
 import { Body, Controller, Post, UseGuards, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { RegisterDto } from './dto';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { LoginDto, RegisterDto } from './dto';
 
 @ApiTags('auth API')
 @Controller('auth')
@@ -21,6 +21,7 @@ export class AuthController {
     status: 400,
     description: '잘못된 요청',
   })
+  @ApiBody({ type: RegisterDto })
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
     const { email, password, nickname } = registerDto;
@@ -44,6 +45,7 @@ export class AuthController {
     status: 401,
     description: '인증 실패',
   })
+  @ApiBody({ type: LoginDto })
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req) {
