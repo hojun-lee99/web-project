@@ -1,8 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateArticle, updateArticle } from './dto';
+import { CreateArticle, UpdateArticle } from './dto';
 
-// TODO access 토큰 검증 메서드 작성
 @Injectable()
 export class ArticlesService {
   constructor(private prisma: PrismaService) {}
@@ -50,27 +53,42 @@ export class ArticlesService {
     return article;
   }
 
-  async update(updateArticle: updateArticle) {
-    try {
-      const { id, ...updateData } = updateArticle;
-      return await this.prisma.article.update({
-        where: { id },
-        data: updateData,
-      });
-    } catch (error) {
-      throw new NotFoundException(
-        `Article with Id ${updateArticle.id} not found`,
-      );
-    }
-  }
+  async update(updateArticle: UpdateArticle) {
+    const { id, userId, ...updateData } = updateArticle;
 
-  async remove(id: number) {
-    try {
-      return await this.prisma.article.delete({
-        where: { id },
-      });
-    } catch (error) {
+    const existingArticle = await this.prisma.article.findUnique({
+      where: { id },
+    });
+
+    if (!existingArticle) {
       throw new NotFoundException(`Article with Id ${id} not found`);
     }
+
+    if (existingArticle.authorId !== userId) {
+      throw new UnauthorizedException('You can only update your own articles');
+    }
+
+    return await this.prisma.article.update({
+      where: { id },
+      data: updateData,
+    });
+  }
+
+  async remove(id: number, userId: number) {
+    const existingArticle = await this.prisma.article.findUnique({
+      where: { id },
+    });
+
+    if (!existingArticle) {
+      throw new NotFoundException(`Article with Id ${id} not found`);
+    }
+
+    if (existingArticle.authorId !== userId) {
+      throw new UnauthorizedException('You can only delete your own article');
+    }
+
+    return await this.prisma.article.delete({
+      where: { id },
+    });
   }
 }

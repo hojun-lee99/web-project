@@ -7,22 +7,26 @@ import {
   Post,
   Put,
   Query,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { CreateArticle, CreateArticleDto, UpdateArticleDto } from './dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('articles')
 export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() createArticleDto: CreateArticleDto) {
-    //TODO 토큰 검증 수정
-    const { title, content, access_tocken } = createArticleDto;
+  async create(@Request() req, @Body() createArticleDto: CreateArticleDto) {
+    const { title, content, categoryId } = createArticleDto;
     const createArticle: CreateArticle = {
       title: title,
       content: content,
-      authorId: Number(access_tocken),
+      categoryId: categoryId,
+      authorId: req.user.userId,
     };
     return this.articlesService.create(createArticle);
   }
@@ -40,19 +44,23 @@ export class ArticlesController {
     return await this.articlesService.findOne(+id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
   async update(
+    @Request() req,
     @Param('id') id: string,
     @Body() updateArticleDto: UpdateArticleDto,
   ) {
-    //TODO 토큰 검증
-    const { access_tocken, ...updateArticleData } = updateArticleDto;
-    return await this.articlesService.update(updateArticleData);
+    return await this.articlesService.update({
+      ...updateArticleDto,
+      id: +id,
+      userId: req.user.userId,
+    });
   }
 
-  //? 토큰 받아서 검증해야 할듯?
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return await this.articlesService.remove(+id);
+  async remove(@Request() req, @Param('id') id: string) {
+    return await this.articlesService.remove(+id, req.user.userId);
   }
 }
