@@ -16,7 +16,7 @@ export default function MainBanner() {
     // 영화 데이터를 가져오는 함수
     const fetchMovies = async () => {
         try {
-            const response = await axios.get('/movie/popular', {
+            const response = await axios.get('/movie/now_playing', {
                 params: { language: 'ko-KR', page: 1 },
             });
             const movies = response.data.results;
@@ -109,6 +109,7 @@ const SlideTxtWrap = styled.div`
   .slide-movie-desc {
     font-size: 16px;
     line-height: 20px;
+    height:100px;
     color: #747474;
     margin-bottom: 10px;
     max-width:800px;
