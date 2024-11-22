@@ -2,13 +2,29 @@
 
 import styled from 'styled-components';
 import React, { useState } from 'react';
+import Comment from './Comment';
+
+interface CommentItem {
+  id: string; // 유저 닉네임
+  rating: number; // 평점
+  text: string; // 코멘트 내용
+}
 
 interface PopupProps {
   isOpen: boolean;
   onClose: () => void;
+  type: 'view' | 'writer'; // UI타입
+  movieTitle?: string; // 영화 제목
+  commentData?: CommentItem[];
 }
 
-export default function CommentPopup({ isOpen, onClose }: PopupProps) {
+export default function CommentPopup({
+  isOpen,
+  onClose,
+  type,
+  movieTitle,
+  commentData,
+}: PopupProps) {
   const [text, setText] = useState('');
 
   if (!isOpen) return null;
@@ -19,27 +35,46 @@ export default function CommentPopup({ isOpen, onClose }: PopupProps) {
 
   return (
     <PopupWrapper>
-      <PopupContent>
-        <PopupHeader>
-          <p>데드풀과 울버린</p>
-          <button onClick={onClose}>X</button>
-        </PopupHeader>
-        <PopupInner>
-          <Textarea>
-            <textarea
-              value={text}
-              onChange={handleTextChange} // 이벤트 핸들러 추가
-              placeholder="이 작품에 대한 생각을 자유롭게 표현해 주세요."
-            ></textarea>
-          </Textarea>
-          <div className="save">
-            <p>
-              <span>{text.length}</span>/<span>10000</span>
-            </p>
-            <button type="button">저장</button>
-          </div>
-        </PopupInner>
-      </PopupContent>
+      {type === 'writer' && (
+        <PopupContent>
+          <PopupHeader>
+            <p>{movieTitle || '영화 제목 없음'}</p>
+            <button onClick={onClose}>X</button>
+          </PopupHeader>
+          <PopupInner isView={false}>
+            {/* writer 상태 */}
+            <Textarea>
+              <textarea
+                value={text}
+                onChange={handleTextChange}
+                placeholder="이 작품에 대한 생각을 자유롭게 표현해 주세요."
+              ></textarea>
+            </Textarea>
+            <div className="save">
+              <p>
+                <span>{text.length}</span>/<span>10000</span>
+              </p>
+              <button type="button">저장</button>
+            </div>
+          </PopupInner>
+        </PopupContent>
+      )}
+      {type === 'view' && (
+        <PopupContent>
+          <PopupHeader>
+            <p>코멘트</p>
+            <button onClick={onClose}>X</button>
+          </PopupHeader>
+          <PopupInner isView={true}>
+            {/* view 상태 */}
+            {commentData && commentData.length > 0 ? (
+              <Comment content={commentData} isPopup={true} /> // Comment 컴포넌트 사용
+            ) : (
+              <p>코멘트가 없습니다.</p>
+            )}
+          </PopupInner>
+        </PopupContent>
+      )}
     </PopupWrapper>
   );
 }
@@ -91,12 +126,14 @@ const PopupHeader = styled.div`
   }
 `;
 
-const PopupInner = styled.div`
+const PopupInner = styled.div<{ isView: boolean }>`
   width: 100%;
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  overflow-y: ${({ isView }) => (isView ? 'auto' : 'initial')};
+  padding-right: ${({ isView }) => (isView ? '10px' : '0')};
 
   button {
     padding: 10px;
