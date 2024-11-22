@@ -2,112 +2,53 @@
 
 import styled from 'styled-components';
 
-export default function Comment() {
+interface CommentItem {
+  id: string; // 유저 닉네임
+  rating: number; // 평점
+  text: string; // 코멘트 내용
+}
+
+interface CommentProps {
+  content: CommentItem[]; // 코멘트 데이터 배열
+  isPopup?: boolean; // 팝업 상태 여부
+}
+
+export default function Comment({ content, isPopup = false }: CommentProps) {
   return (
-    <CommentWrap>
-      <header>
-        <p>
-          코멘트<span>450+</span>
-        </p>
-        <a className="comment-more" href="#">
-          더보기
-        </a>
-      </header>
-      <CommentList>
-        <li className="comment-item">
-          <div className="comment-user">
-            <div>
-              <div className="comment-photo"></div>
-              <div className="comment-id">닉네임</div>
+    <CommentWrap isPopup={isPopup}>
+      <CommentList isPopup={isPopup}>
+        {content.map((item, index) => (
+          <li className="comment-item" key={index}>
+            <div className="comment-user">
+              <div>
+                <div className="comment-photo"></div>
+                <div className="comment-id">{item.id}</div>
+              </div>
+              <div className="comment-rating">{item.rating.toFixed(1)}</div>
             </div>
-            <div className="comment-rating">4.0</div>
-          </div>
-          <div className="comment-text">짧을때</div>
-        </li>
-        <li className="comment-item">
-          <div className="comment-user">
-            <div>
-              <div className="comment-photo"></div>
-              <div className="comment-id">닉네임</div>
-            </div>
-            <div className="comment-rating">4.0</div>
-          </div>
-          <div className="comment-text">예시 데이터</div>
-        </li>
-        <li className="comment-item">
-          <div className="comment-user">
-            <div>
-              <div className="comment-photo"></div>
-              <div className="comment-id">닉네임</div>
-            </div>
-            <div className="comment-rating">4.0</div>
-          </div>
-          <div className="comment-text">
-            억지 글래디에이터 감성 주입에 잔인한 액션 추가 영화 글래디에이터 2는
-            전쟁영화의 거장으로 불리는 리들리스콧 감독의 역작으로, 그의 작품깨나
-            봤다
-          </div>
-        </li>
-        <li className="comment-item">
-          <div className="comment-user">
-            <div>
-              <div className="comment-photo"></div>
-              <div className="comment-id">닉네임</div>
-            </div>
-            <div className="comment-rating">4.0</div>
-          </div>
-          <div className="comment-text">
-            억지 글래디에이터 감성 주입에 잔인한 액션 추가 영화 글래디에이터 2는
-            전쟁영화의 거장으로 불리는 리들리스콧 감독의 역작으로, 그의 작품깨나
-            봤다 싶은 관객들은 이번에도 황홀스러운 전쟁씬과 전작과 상응하는
-            재미의 기대를 걸고 극장에 재미의 기대를 걸고 극장에 기대를 걸고
-            극장에
-          </div>
-        </li>
+            <div className="comment-text">{item.text}</div>
+          </li>
+        ))}
       </CommentList>
     </CommentWrap>
   );
 }
 
-const CommentWrap = styled.div`
-  header {
-    display: flex;
-    margin-bottom: 20px;
-    justify-content: space-between;
-    align-items: center;
-
-    p {
-      display: flex;
-      font-size: 24px;
-      align-items: center;
-      font-weight: 600;
-
-      span {
-        display: inline-block;
-        margin-left: 8px;
-        line-height: 20px;
-        font-size: 15px;
-        font-weight: 400;
-        color: var(--color-primary-accent);
-      }
-    }
-
-    a {
-      font-size: 14px;
-      color: var(--color-primary-accent);
-    }
-  }
+const CommentWrap = styled.div<{ isPopup: boolean }>`
+  width: 100%;
+  height: ${({ isPopup }) => (isPopup ? '100%' : 'auto')};
 `;
 
-const CommentList = styled.ul`
+const CommentList = styled.ul<{ isPopup: boolean }>`
   width: 100%;
   width: 100%;
   display: flex;
+  flex-direction: ${({ isPopup }) => (isPopup ? 'column' : 'row')};
   gap: 20px;
   flex-wrap: wrap;
 
   .comment-item {
-    width: calc(25% - (60px / 4));
+    width: ${({ isPopup }) => (isPopup ? '100%' : 'calc(25% - (60px / 4))')};
     background-color: var(--color-background-secondary);
     padding: 10px;
     border-radius: 6px;
@@ -153,7 +94,7 @@ const CommentList = styled.ul`
     padding-top: 10px;
     font-size: 15px;
     color: #5e5e64;
-    height: 140px;
+    height: ${({ isPopup }) => (isPopup ? 'auto' : '138px')};
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 6;
