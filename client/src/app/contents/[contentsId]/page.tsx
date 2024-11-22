@@ -13,11 +13,36 @@ import CommentPopup from '../../../components/CommentPopup';
 export default function Contents() {
   const [movie, setMovie] = useState<{ [key: string]: any } | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [popupType, setPopupType] = useState<'view' | 'writer'>('view');
 
   const category = 'movies';
   const movieId = 550; // 영화 클릭했을 때 id 값 받아서 쓰는걸로 수정 useRouter 서버컴포넌트에서 사용안함
   const myReview = false; //임시 UI확인
   const myRating = 3; //임시 내가 평가한 별점이 있다면
+
+  const commentData = [
+    { id: 'User1', rating: 4.0, text: '짧은 코멘트입니다.' },
+    { id: 'User2', rating: 3.5, text: '예시 데이터' },
+    {
+      id: 'User3',
+      rating: 5.0,
+      text: '억지 글래디에이터 감성 주입에 잔인한 액션 추가...',
+    },
+    {
+      id: 'User4',
+      rating: 2.5,
+      text: '영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...불리는',
+    },
+    {
+      id: 'User5',
+      rating: 2.5,
+      text: '영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...불리는',
+    },
+    { id: 'User6', rating: 4.5, text: '놀라운 영화였습니다. 정말 강추합니다!' },
+    { id: 'User7', rating: 3.0, text: '평범한 수준의 영화였습니다.' },
+    { id: 'User8', rating: 4.8, text: '강렬한 액션이 인상 깊었습니다.' },
+    { id: 'User9', rating: 1.5, text: '스토리가 빈약하고 실망스러웠습니다.' },
+  ];
 
   useEffect(() => {
     fetchData(movieId);
@@ -38,8 +63,16 @@ export default function Contents() {
     return <div>Loading...</div>;
   }
 
-  const openPopup = () => setIsPopupOpen(true);
-  const closePopup = () => setIsPopupOpen(false);
+  const openPopup = (type: 'view' | 'writer') => {
+    console.log('Opening popup with type:', type); // 디버깅용
+    setPopupType(type); // Popup 타입 업데이트
+    setIsPopupOpen(true); // Popup 열기
+  };
+
+  const closePopup = () => {
+    console.log('Closing popup'); // 디버깅용
+    setIsPopupOpen(false); // Popup 닫기
+  };
 
   // 연령 등급 처리 로직
   const getAgeRating = () => {
@@ -137,7 +170,7 @@ export default function Contents() {
                     이 작품에 대한 <span>닉네임</span>님의 평가를 글로
                     남겨보세요.
                   </div>
-                  <button type="button" onClick={openPopup}>
+                  <button type="button" onClick={() => openPopup('writer')}>
                     코멘트 남기기
                   </button>
                 </div>
@@ -146,10 +179,19 @@ export default function Contents() {
             <div className="content-description">{movie.overview}</div>
           </div>
         </ContentInfo2>
+
         <PeopleInfo data={{ category, movieId }} />
-        <CommentWrap>
-          <Comment />
-        </CommentWrap>
+
+        <CommentListWrap>
+          <header>
+            <p>
+              코멘트<span>{commentData.length}+</span>
+            </p>
+            <button onClick={() => openPopup('view')}>더보기</button>
+          </header>
+          {/* 최대 8개만 전달 */}
+          <Comment content={commentData.slice(0, 8)} />
+        </CommentListWrap>
 
         <SliderWrap>
           <header>
@@ -167,7 +209,13 @@ export default function Contents() {
       </div>
 
       {/* Popup 컴포넌트 표시 */}
-      <CommentPopup isOpen={isPopupOpen} onClose={closePopup} />
+      <CommentPopup
+        isOpen={isPopupOpen}
+        onClose={closePopup}
+        type={popupType}
+        movieTitle={popupType === 'writer' ? movie.title : undefined}
+        commentData={popupType === 'view' ? commentData : undefined}
+      />
     </div>
   );
 }
@@ -319,6 +367,40 @@ const SliderWrap = styled.section`
     p {
       font-size: 24px;
       font-weight: 600;
+    }
+  }
+`;
+
+const CommentListWrap = styled.div`
+  margin-top: 60px;
+  header {
+    display: flex;
+    margin-bottom: 20px;
+    justify-content: space-between;
+    align-items: center;
+
+    p {
+      display: flex;
+      font-size: 24px;
+      align-items: center;
+      font-weight: 600;
+
+      span {
+        display: inline-block;
+        margin-left: 8px;
+        line-height: 20px;
+        font-size: 15px;
+        font-weight: 400;
+        color: var(--color-primary-accent);
+      }
+    }
+
+    button {
+      font-size: 14px;
+      color: var(--color-primary-accent);
+      background: none;
+      border: none;
+      cursor: pointer;
     }
   }
 `;
