@@ -31,7 +31,17 @@ export class ArticlesController {
   @ApiResponse({
     status: 201,
     description: '게시글이 성공적으로 생성됨',
-    type: CreateArticle,
+    schema: {
+      example: {
+        id: 2,
+        title: 'string',
+        content: 'string',
+        authorId: 1,
+        categoryId: 0,
+        createdAt: '2024-11-23T08:01:12.975Z',
+        updatedAt: '2024-11-23T08:01:12.975Z',
+      },
+    },
   })
   @ApiResponse({ status: 401, description: '인증되지 않은 요청' })
   @ApiBearerAuth()
@@ -65,19 +75,23 @@ export class ArticlesController {
     status: 200,
     description: '게시글 목록 조회 성공',
     schema: {
-      properties: {
-        data: {
-          type: 'array',
-          items: { $ref: '#/components/schemas/CreateArticle' },
-        },
-        meta: {
-          type: 'object',
-          properties: {
-            total: { type: 'number' },
-            page: { type: 'number' },
-            limit: { type: 'number' },
-            totalPages: { type: 'number' },
+      example: {
+        data: [
+          {
+            id: 2,
+            title: 'string',
+            content: 'string',
+            authorId: 1,
+            categoryId: 0,
+            createdAt: '2024-11-23T08:01:12.975Z',
+            updatedAt: '2024-11-23T08:01:12.975Z',
           },
+        ],
+        meta: {
+          total: 1,
+          page: 1,
+          limit: 10,
+          totalPages: 1,
         },
       },
     },
@@ -95,7 +109,17 @@ export class ArticlesController {
   @ApiResponse({
     status: 200,
     description: '게시글 조회 성공',
-    type: CreateArticle,
+    schema: {
+      example: {
+        id: 2,
+        title: 'string',
+        content: 'string',
+        authorId: 1,
+        categoryId: 0,
+        createdAt: '2024-11-23T08:01:12.975Z',
+        updatedAt: '2024-11-23T08:01:12.975Z',
+      },
+    },
   })
   @ApiResponse({ status: 404, description: '게시글을 찾을 수 없음' })
   @Get(':id')
@@ -108,7 +132,17 @@ export class ArticlesController {
   @ApiResponse({
     status: 200,
     description: '게시글 수정 성공',
-    type: CreateArticle,
+    schema: {
+      example: {
+        id: 2,
+        title: 'string123',
+        content: 'string123',
+        authorId: 1,
+        categoryId: 0,
+        createdAt: '2024-11-23T08:01:12.975Z',
+        updatedAt: '2024-11-23T08:11:54.173Z',
+      },
+    },
   })
   @ApiResponse({ status: 401, description: '인증되지 않은 요청' })
   @ApiResponse({ status: 403, description: '권한 없음' })
