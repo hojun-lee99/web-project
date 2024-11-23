@@ -6,12 +6,38 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useDebounce } from '../hooks/useDebounce';
 
+import LoginPopup from '../components/LoginPopup';
+
+interface AlarmProps {
+  hasAlarm: boolean;
+}
+
 export default function Header() {
   const userID = 'dddddd';
 
   const [searchValue, setSearchValue] = useState('');
-  const debouncedSearchValue = useDebounce(searchValue, 500); // 디바운스된 값 사용 (500ms)
+  const debouncedSearchValue = useDebounce(searchValue, 500);
   const router = useRouter();
+
+  //알람
+  const [hasAlarm, setHasAlarm] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const toggleVisibility = () => {
+    setIsVisible((prev) => !prev);
+  };
+
+  //로그인
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
+  const [popupState, setPopupState] = useState<'login' | 'signup' | null>(null);
+
+  const openPopup = (state: 'login' | 'signup') => {
+    setPopupState(state);
+  };
+
+  const closePopup = () => {
+    setPopupState(null);
+  };
 
   // 디바운스된 값이 변경될 때 URL 이동
   useEffect(() => {
@@ -58,14 +84,49 @@ export default function Header() {
               onChange={handleChange}
             />
           </InputWrap>
-          <Evaluation>
-            <Link href="/review">평가하기</Link>
-          </Evaluation>
-          <Link href={`/users/${userID}`}>
-            <UserProfile></UserProfile>
-          </Link>
+
+          {isLoggedIn ? (
+            <>
+              {/* 로그인 상태일 때 */}
+              <Evaluation>
+                <Link href="/review">평가하기</Link>
+              </Evaluation>
+              <Alarm hasAlarm={hasAlarm}>
+                <button onClick={toggleVisibility}>
+                  <i className="fa fa-bell"></i>
+                </button>
+                {isVisible && (
+                  <>
+                    {hasAlarm ? (
+                      <ul className="alarm-list">
+                        <li>보고싶어하신 ㅇㅇㅇ인 새로 등록되었어요.</li>
+                        <li>글제목에 댓글이 달렸습니다.</li>
+                        <li>글제목에 댓글이 달렸습니다.</li>
+                      </ul>
+                    ) : (
+                      <div className="alarm-list">등록된 알람이 없습니다.</div>
+                    )}
+                  </>
+                )}
+              </Alarm>
+              <Link href={`/users/${userID}`}>
+                <UserProfile />
+              </Link>
+            </>
+          ) : (
+            <>
+              {/* 비로그인 상태일 때 */}
+              <LoginButtons>
+                <button onClick={() => openPopup('login')}>로그인</button>
+                <button onClick={() => openPopup('signup')}>회원가입</button>
+              </LoginButtons>
+            </>
+          )}
         </User>
       </HeaderInner>
+
+      {/* 팝업 렌더링 */}
+      {popupState && <LoginPopup type={popupState} onClose={closePopup} />}
     </HeaderWrap>
   );
 }
@@ -141,4 +202,80 @@ const UserProfile = styled.div`
   height: 26px;
   border-radius: 50%;
   background: #d9d9d9;
+`;
+
+const Alarm = styled.div<{ hasAlarm: boolean }>`
+  position: relative;
+
+  button {
+    border: none;
+    cursor: pointer;
+    margin-right: 20px;
+    background: none;
+    position: relative;
+
+    i::after {
+      content: '';
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: ${({ hasAlarm }) =>
+        hasAlarm ? 'var(--color-primary-accent)' : 'transparent'};
+      border: ${({ hasAlarm }) => (hasAlarm ? '2px solid #fff' : 'none')};
+    }
+  }
+
+  .alarm-list {
+    display: ${({ hasAlarm }) => (hasAlarm ? 'block' : 'true')};
+    position: absolute;
+    top: 35px;
+    left: -190px;
+    z-index: 100;
+    background-color: #fff;
+    width: 270px;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 6px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--color-border-primary);
+  }
+
+  div.alarm-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+  }
+
+  ul.alarm-list {
+    height: fit-content;
+    max-height: 170px;
+    overflow: auto;
+
+    li {
+      padding: 6px 0;
+      border-bottom: 1px solid var(--color-border-primary);
+      color: var(--color-text-tertiary);
+    }
+  }
+`;
+
+const LoginButtons = styled.div`
+  button {
+    background: none;
+    border: none;
+    margin-left: 20px;
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  button:last-of-type {
+    border: 1px solid var(--color-border-primary);
+    padding: 6px 8px;
+    border-radius: 4px;
+  }
 `;
