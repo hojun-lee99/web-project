@@ -27,17 +27,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('Auth', '인증 관련 API')
     .addTag('Articles', '게시글 관련 API')
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearor',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT token',
-        in: 'header',
-      },
-      'access-token',
-    )
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
