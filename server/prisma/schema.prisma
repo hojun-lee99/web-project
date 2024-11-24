@@ -19,20 +19,96 @@ enum Role {
 }
 
 model User {
-  id        Int  @id @default(autoincrement())
-  email     String  @unique
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
   password  String
-  nickname  String  @unique
+  nickname  String    @unique
+  role      Role      @default(USER)
+  
+  // Relations
+  reviews   Review[]
+  ratings   Rating[]
+  posts     Post[]
+  comments  Comment[]
 
-  role      Role  @default(USER)
-
-  createdAt       DateTime    @default(now()) @map("created_at")
-  updatedAt       DateTime    @updatedAt @map("updated_at")
-  deletedAt       DateTime?   @map("deleted_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
   @@index([email])
   @@index([nickname])
   @@map("users")
+}
+
+enum ContentType {
+  MOVIE
+  SERIES
+  BOOK
+  WEBTOON
+}
+
+model Review {
+  id          Int         @id @default(autoincrement())
+  content     String      @db.Text
+  contentId   String      // 외부 API의 컨텐츠 ID
+  contentType ContentType
+  userId      Int
+  user        User        @relation(fields: [userId], references: [id])
+  
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  @@index([contentId])
+  @@index([userId])
+  @@map("reviews")
+}
+
+model Rating {
+  id          Int         @id @default(autoincrement())
+  score       Int         @db.TinyInt // 1-5 점수
+  contentId   String      // 외부 API의 컨텐츠 ID
+  contentType ContentType
+  userId      Int
+  user        User        @relation(fields: [userId], references: [id])
+
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  @@unique([userId, contentId, contentType])
+  @@index([contentId])
+  @@index([userId])
+  @@map("ratings")
+}
+
+model Post {
+  id          Int       @id @default(autoincrement())
+  title       String
+  content     String    @db.Text
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  comments    Comment[]
+
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("posts")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String   @db.Text
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id])
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([postId])
+  @@index([userId])
+  @@map("comments")
 }
 
 model Article {
