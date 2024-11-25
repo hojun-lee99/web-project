@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import './globals.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import Head from 'next/head';
 
 export const metadata: Metadata = {
   title: 'MOVIEPEDIA',
@@ -21,6 +20,14 @@ export default function RootLayout({
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
           rel="stylesheet"
         />
+        <link
+          href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css"
+          rel="stylesheet"
+        />
+        <script
+          src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"
+          defer
+        ></script>
       </head>
       <body>
         <div className="wrap">

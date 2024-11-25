@@ -6,6 +6,7 @@ import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import UserCalender from '../../../components/UserCalender';
 
 interface DataType {
   movie: number;
@@ -54,7 +55,7 @@ export default function UserPage({ params }: { params: { userId: string } }) {
 
           <UserClender>
             <Title>캘린더</Title>
-            <div>라이브러리 추가예정</div>
+            <UserCalender />
           </UserClender>
 
           <UserArchive>
