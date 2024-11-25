@@ -28,7 +28,7 @@ export default function Header() {
   };
 
   //로그인
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // 로그인 상태
   const [popupState, setPopupState] = useState<'login' | 'signup' | null>(null);
 
   const openPopup = (state: 'login' | 'signup') => {
