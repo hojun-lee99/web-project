@@ -11,7 +11,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommunityService } from './community.service';
-import { CreatePost, CreatePostDto, UpdatePostDto } from './dto';
+import {
+  CreateCommentDto,
+  CreatePost,
+  CreatePostDto,
+  UpdateCommentDto,
+  UpdatePostDto,
+} from './dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import {
   ApiBearerAuth,
@@ -215,4 +221,119 @@ export class CommunityController {
   }
 
   /**         댓글 CRUD          */
+  @ApiOperation({ summary: '댓글 생성' })
+  @ApiResponse({
+    status: 201,
+    description: '댓글이 성공적으로 생성됨',
+    schema: {
+      example: {
+        id: 1,
+        content: 'string',
+        postId: 1,
+        userId: 1,
+        createdAt: '2024-11-23T08:01:12.975Z',
+        updatedAt: '2024-11-23T08:01:12.975Z',
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: '인증되지 않은 요청' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post('comment')
+  async createComment(
+    @Request() req,
+    @Body() createCommentDte: CreateCommentDto,
+  ) {
+    return await this.communityService.createCommnet({
+      ...createCommentDte,
+      userId: req.user.userId,
+    });
+  }
+  @ApiOperation({ summary: '게시글의 댓글 목록 조회' })
+  @ApiParam({ name: 'postId', description: '게시글 ID' })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: '페이지 번호 (기본값: 1)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '댓글 목록 조회 성공',
+    schema: {
+      example: {
+        data: [
+          {
+            id: 1,
+            content: 'string',
+            postId: 1,
+            userId: 1,
+            createdAt: '2024-11-23T08:01:12.975Z',
+            updatedAt: '2024-11-23T08:01:12.975Z',
+          },
+        ],
+        meta: {
+          total: 1,
+          page: 1,
+          limit: 10,
+          totalPages: 1,
+        },
+      },
+    },
+  })
+  @Get('post/:postId/comments')
+  async findComments(
+    @Param('postId') postId: string,
+    @Query('page') page: number = 1,
+  ) {
+    const limit = 10; // 고정된 limit 값
+    return await this.communityService.findComments(+postId, { page, limit });
+  }
+
+  @ApiOperation({ summary: '댓글 수정' })
+  @ApiParam({ name: 'id', description: '댓글 ID' })
+  @ApiResponse({
+    status: 200,
+    description: '댓글 수정 성공',
+    schema: {
+      example: {
+        id: 1,
+        content: 'updated string',
+        postId: 1,
+        userId: 1,
+        createdAt: '2024-11-23T08:01:12.975Z',
+        updatedAt: '2024-11-23T08:11:54.173Z',
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: '인증되지 않은 요청' })
+  @ApiResponse({ status: 403, description: '권한 없음' })
+  @ApiResponse({ status: 404, description: '댓글을 찾을 수 없음' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Put('comment/:id')
+  async updateComment(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() updateCommentDto: UpdateCommentDto,
+  ) {
+    return await this.communityService.updateComment({
+      id: +id,
+      userId: req.user.userId,
+      content: updateCommentDto.content,
+    });
+  }
+
+  @ApiOperation({ summary: '댓글 삭제' })
+  @ApiParam({ name: 'id', description: '댓글 ID' })
+  @ApiResponse({ status: 200, description: '댓글 삭제 성공' })
+  @ApiResponse({ status: 401, description: '인증되지 않은 요청' })
+  @ApiResponse({ status: 403, description: '권한 없음' })
+  @ApiResponse({ status: 404, description: '댓글을 찾을 수 없음' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Delete('comment/:id')
+  async removeComment(@Request() req, @Param('id') id: string) {
+    return await this.communityService.removeComment(+id, req.user.userId);
+  }
 }

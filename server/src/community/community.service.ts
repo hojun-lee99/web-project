@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreatePost, UpdatePost } from './dto';
+import { CreateComment, CreatePost, UpdateComment, UpdatePost } from './dto';
 
 @Injectable()
 export class CommunityService {
@@ -133,6 +133,105 @@ export class CommunityService {
     }
 
     return await this.prisma.post.delete({
+      where: { id },
+    });
+  }
+
+  async createCommnet(createComment: CreateComment) {
+    const { content, postId, userId } = createComment;
+    const post = await this.prisma.post.findUnique({
+      where: { id: postId },
+    });
+
+    if (!post) {
+      throw new NotFoundException(`Post with Id ${postId} not found`);
+    }
+
+    return await this.prisma.comment.create({
+      data: {
+        content,
+        postId,
+        userId,
+      },
+    });
+  }
+
+  async findComments(
+    postId: number,
+    { page, limit }: { page: number; limit: number },
+  ) {
+    const skip = (page - 1) * limit;
+
+    // Check if post exists
+    const post = await this.prisma.post.findUnique({
+      where: { id: postId },
+    });
+
+    if (!post) {
+      throw new NotFoundException(`Post with ID ${postId} not found`);
+    }
+
+    const [comments, total] = await Promise.all([
+      this.prisma.comment.findMany({
+        where: { postId },
+        skip,
+        take: limit,
+        orderBy: {
+          createdAt: 'asc',
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              nickname: true,
+            },
+          },
+        },
+      }),
+      this.prisma.comment.count({
+        where: { postId },
+      }),
+    ]);
+
+    return {
+      data: comments,
+      meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+    };
+  }
+
+  async updateComment(updateComment: UpdateComment) {
+    const { id, userId, content } = updateComment;
+    const existingComment = await this.prisma.comment.findUnique({
+      where: { id },
+    });
+
+    if (!existingComment) {
+      throw new NotFoundException(`Comment with Id ${id} not found`);
+    }
+
+    if (existingComment.userId !== userId) {
+      throw new UnauthorizedException('You can only update your own comments');
+    }
+
+    return await this.prisma.comment.update({
+      where: { id },
+      data: { content },
+    });
+  }
+  async removeComment(id: number, userId: number) {
+    const existingComment = await this.prisma.comment.findUnique({
+      where: { id },
+    });
+
+    if (!existingComment) {
+      throw new NotFoundException(`Comment with ID ${id} not found`);
+    }
+
+    if (existingComment.userId !== userId) {
+      throw new UnauthorizedException('You can only delete your own comments');
+    }
+
+    return await this.prisma.comment.delete({
       where: { id },
     });
   }
