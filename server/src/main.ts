@@ -26,7 +26,7 @@ async function bootstrap() {
     .setDescription('인프런 프로젝트를 위한 RESTful API')
     .setVersion('1.0')
     .addTag('Auth', '인증 관련 API')
-    .addTag('Articles', '게시글 관련 API')
+    .addTag('Community', '커뮤니티 관련 API')
     .addBearerAuth()
     .build();
 

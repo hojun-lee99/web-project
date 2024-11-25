@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateArticleDto {
+export class CreatePostDto {
   @ApiProperty({ description: '게시글 제목' })
   title: string;
 
@@ -11,7 +11,7 @@ export class CreateArticleDto {
   categoryId: number;
 }
 
-export class CreateArticle {
+export class CreatePost {
   @ApiProperty({ description: '게시글 제목' })
   title: string;
 
@@ -22,5 +22,5 @@ export class CreateArticle {
   categoryId: number;
 
   @ApiProperty({ description: '작성자 ID' })
-  authorId: number;
+  userId: number;
 }

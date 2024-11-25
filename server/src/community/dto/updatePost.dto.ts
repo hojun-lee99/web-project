@@ -1,7 +1,7 @@
 // update-article.dto.ts
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export class UpdateArticleDto {
+export class UpdatePostDto {
   @ApiPropertyOptional({ description: '수정할 게시글 제목' })
   title?: string;
 
@@ -9,7 +9,7 @@ export class UpdateArticleDto {
   content?: string;
 }
 
-export class UpdateArticle {
+export class UpdatePost {
   @ApiProperty({ description: '게시글 ID' })
   id: number;
 
