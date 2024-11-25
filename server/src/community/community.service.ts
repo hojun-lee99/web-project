@@ -10,6 +10,51 @@ import { CreatePost, UpdatePost } from './dto';
 export class CommunityService {
   constructor(private prisma: PrismaService) {}
 
+  async findMainPosts() {
+    const [recent, category0, category1, category2] = await Promise.all([
+      this.prisma.post.findMany({
+        take: 5,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+      this.prisma.post.findMany({
+        where: {
+          categoryId: 0,
+        },
+        take: 5,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+      this.prisma.post.findMany({
+        where: {
+          categoryId: 1,
+        },
+        take: 5,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+      this.prisma.post.findMany({
+        where: {
+          categoryId: 2,
+        },
+        take: 5,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+    ]);
+
+    return {
+      recent,
+      category0,
+      category1,
+      category2,
+    };
+  }
+
   async create(createPost: CreatePost) {
     return await this.prisma.post.create({
       data: createPost,

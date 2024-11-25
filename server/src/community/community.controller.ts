@@ -27,12 +27,45 @@ import {
 export class CommunityController {
   constructor(private readonly communityService: CommunityService) {}
 
+  @ApiOperation({ summary: '메이 페이지 게시글 목록 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '메인 페이지 게시글 목록 조회 성공',
+    schema: {
+      example: {
+        recent: [
+          {
+            id: 1,
+            title: 'Recent post',
+            content: 'Content',
+            userId: 1,
+            categoryId: 0,
+            createdAt: '2024-11-23T08:01:12.975Z',
+            updatedAt: '2024-11-23T08:01:12.975Z',
+          },
+        ],
+        category0: [
+          {
+            id: 2,
+            title: 'Category 0 post',
+            content: 'Content',
+            userId: 1,
+            categoryId: 0,
+            createdAt: '2024-11-23T08:01:12.975Z',
+            updatedAt: '2024-11-23T08:01:12.975Z',
+          },
+        ],
+        category1: [], // Similar structure
+        category2: [], // Similar structure
+      },
+    },
+  })
   @Get()
   async find() {
-    return;
+    return await this.communityService.findMainPosts();
   }
 
-  //^ 커뮤니티 게시글 관련 CRUD
+  /**       개시글 CRUD          */
   @ApiOperation({ summary: '게시글 생성' })
   @ApiResponse({
     status: 201,
@@ -180,4 +213,6 @@ export class CommunityController {
   async remove(@Request() req, @Param('id') id: string) {
     return await this.communityService.remove(+id, req.user.userId);
   }
+
+  /**         댓글 CRUD          */
 }
