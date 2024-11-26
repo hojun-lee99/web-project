@@ -27,6 +27,7 @@ const data: DataType = {
   books: 0,
   webtoons: 0,
 };
+const totalItems = Object.values(data).reduce((acc, value) => acc + value, 0);
 
 const categories: CategoryItem[] = [
   { key: 'movie', label: '영화', count: data.movie },
@@ -62,7 +63,7 @@ export default function UserPage({ params }: { params: { userId: string } }) {
             <Title>
               <div>
                 보관함 <span>보관함갯수 +</span>
-                <span>100</span>
+                <span>{totalItems}</span> {/* 데이터 합계 표시 */}
               </div>
               <div>
                 <button type="button">내가 남긴 코멘트</button>
@@ -78,7 +79,6 @@ export default function UserPage({ params }: { params: { userId: string } }) {
                       spaceBetween={20}
                       slidesPerView={8}
                       navigation
-                      pagination={{ clickable: true }}
                     >
                       {Array.from({ length: category.count }).map(
                         (_, index) => (
