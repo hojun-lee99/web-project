@@ -97,15 +97,13 @@ export default function Review() {
   const getChoiceText = () => {
     switch (activeTab) {
       case 'movie':
-        return '영화';
+        return 'movie';
       case 'series':
-        return '시리즈';
+        return 'series';
       case 'book':
-        return '책';
+        return 'book';
       case 'webtoon':
-        return '웹툰';
-      default:
-        return '선택';
+        return 'webtoon';
     }
   };
 
@@ -144,7 +142,15 @@ export default function Review() {
             </Tab>
           </Tabs>
           <Choice>
-            <div onClick={handleRandomClick}>랜덤 {getChoiceText()}</div>
+            <div onClick={handleRandomClick}>
+              {(() => {
+                const choice = getChoiceText();
+                if (choice === 'movie') return '랜덤 영화';
+                if (choice === 'series') return '랜덤 시리즈';
+                if (choice === 'book') return '랜덤 책';
+                if (choice === 'webtoon') return '랜덤 웹툰';
+              })()}
+            </div>
             <span>평가하고 싶은 장르를 선택해 주세요.</span>
           </Choice>
           <TabContent>
