@@ -48,6 +48,7 @@ const CardListWrap = styled.div`
 `
 
 const CardWrap = styled.div`
+cursor:poiner;
   max-width:430px;
   max-height:324px;
   width:100%;

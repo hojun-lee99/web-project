@@ -78,6 +78,7 @@ const CardListWrap = styled.div`
 `
 
 const CardWrap = styled.div`
+  cursor:pointer;
   max-width:430px;
   max-height:182px;
   height:182px;

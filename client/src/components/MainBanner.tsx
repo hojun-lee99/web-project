@@ -6,11 +6,31 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import styled from 'styled-components';
+import { useRouter } from 'next/navigation';
+
 
 import { useState, useEffect } from 'react';
 import axios from '../api/axios';
 
 export default function MainBanner() {
+
+    const router = useRouter();
+
+    const openDetail = (id: number, type: 'movie' | 'person' | 'collection') => {
+
+        const basePath = {
+            movie: '/movie',
+            person: '/person',
+            collection: '/collection',
+        };
+
+        if (basePath[type]) {
+            router.push(`/contents/${basePath[type]}/${id}`);
+        } else {
+            console.error('err');
+        }
+    };
+
     const [loadMovies, setLoadMovies] = useState<any[]>([]);
 
     // 영화 데이터를 가져오는 함수
@@ -42,7 +62,7 @@ export default function MainBanner() {
         // style={{ margin: -84 + 'px' }}
         >
             {loadMovies.slice(0, 5).map((movie) => (
-                <SwiperSlide key={movie.id}>
+                <SwiperSlide key={movie.id} onClick={() => openDetail(movie.id, 'movie')}>
                     <SlideInnerWrap background={`https://image.tmdb.org/t/p/original${movie.poster_path}`}>
                         <SlideTxtWrap>
                             <div className="slide-movie-title">{movie.title}</div>
