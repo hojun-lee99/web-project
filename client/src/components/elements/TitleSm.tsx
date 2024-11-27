@@ -1,6 +1,7 @@
 'use client';
 
 import styled from 'styled-components';
+import "../../app/globals.css"
 
 type TitleProps = {
   title: string;
@@ -25,7 +26,7 @@ const PageTitleSm = styled.h3`
   justify-content: space-between;
 
   a {
-    color: #7e7e7e;
+    color: var(--color-primary-accent);
     font-size: 15px;
     line-height: 20px;
   }

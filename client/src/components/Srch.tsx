@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from '../api/axios';
 import TitleSm from './elements/TitleSm';
+import { useRouter } from 'next/navigation';
 
 type Movie = {
   id: number;
@@ -41,6 +42,24 @@ type CardSrchProps = {
 };
 
 export default function CardSrch({ srchProps }: CardSrchProps) {
+
+  const router = useRouter();
+
+  const openDetail = (id: number, type: 'movie' | 'person' | 'collection') => {
+
+    const basePath = {
+      movie: '/movie',
+      person: '/person',
+      collection: '/collection',
+    };
+
+    if (basePath[type]) {
+      router.push(`/contents/${basePath[type]}/${id}`);
+    } else {
+      console.error('err');
+    }
+  };
+
   const [loadMovies, setLoadMovies] = useState<Movie[]>([]);
   const [loadPeople, setLoadPeople] = useState<People[]>([]);
   const [loadCollection, setLoadCollection] = useState<Collection[]>([]);
@@ -84,7 +103,7 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
   return (
     <>
       <CardListWrap>
-        <TitleSm title={"영화"} viewMore={false} />
+        <TitleSm title={"영화"} viewMore={true} />
         {!loading && !error && loadMovies.length === 0 && loadPeople.length === 0 && (
           <p>검색 결과가 없습니다.</p>
         )}
@@ -94,7 +113,7 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
 
         {!loading &&
           loadMovies.slice(0, 5).map((movie) => (
-            <CardWrap key={movie.id}>
+            <CardWrap key={movie.id} onClick={() => openDetail(movie.id, 'movie')}>
               <div className="card-photo">
                 {movie.poster_path ? (
                   <img
@@ -127,7 +146,8 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
         <TitleSm title={"사람"} viewMore={false} />
         {!loading &&
           loadPeople.slice(0, 3).map((people) => (
-            <CardSideWrap key={people.id}>
+            <CardSideWrap key={people.id} className='cardSideWrap'
+            >
               <div className="card-photo">
                 {people.profile_path ? (
                   <img
@@ -164,7 +184,7 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
         <TitleSm title={"컬렉션"} viewMore={false} />
         {!loading &&
           loadCollection.slice(0, 3).map((collection) => (
-            <CardSideWrap key={collection.id}>
+            <CardSideWrap key={collection.id} className='cardSideWrap'>
               <div className="card-photo">
                 {collection.poster_path ? (
                   <img
@@ -208,9 +228,9 @@ const CardListWrap = styled.div`
 `;
 
 const CardListWrapCol = styled.div`
+width:100%;
   display:flex;
   flex-direction: column;
-  max-width:496px;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 10px;
@@ -220,6 +240,7 @@ const CardWrap = styled.div`
   width: 100%;
   max-width: 248px;
   height: auto;
+  cursor: pointer;
 
   .card-photo {
     height: 355px;
@@ -258,9 +279,11 @@ const Placeholder = styled.div`
 const CardSideWrap = styled.div`
     display:flex;
     width: 100%;
-    max-width: 496px;
     gap:10px;
+    cursor:pointer;
 
+        max-width: 496px;
+        width: 100%;
   .card-photo {
     width:67px;
     height: 99px;
