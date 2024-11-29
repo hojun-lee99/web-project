@@ -13,6 +13,7 @@ export class RatingsService {
 
   async create(createRating: CreateRating) {
     try {
+      console.log('createRating' + createRating);
       return await this.prisma.rating.create({
         data: createRating,
       });
