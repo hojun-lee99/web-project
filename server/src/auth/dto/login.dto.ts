@@ -9,7 +9,7 @@ import {
 
 export class LoginDto {
   @ApiProperty({
-    example: 'user@example.com',
+    example: 'test1@example.com',
     description: '사용자 이메일',
     required: true,
   })
@@ -18,7 +18,7 @@ export class LoginDto {
   email: string;
 
   @ApiProperty({
-    example: 'password123!',
+    example: 'test1',
     description: '사용자 비밀번호 (최소 6자)',
     required: true,
     minLength: 8,
