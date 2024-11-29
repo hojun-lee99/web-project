@@ -1,11 +1,15 @@
 'use client';
 
 import styled from 'styled-components';
+import { useRouter } from 'next/navigation';
+import { openDetail } from '@/hooks/openDetail';
 
 export default function CardArticel() {
+  const router = useRouter();
+  const category = 'article';
   return (
     <CardListWrap>
-      <CardWrap>
+      <CardWrap onClick={() => openDetail(router, 0, category)}>
         <div className="article-photo"></div>
         <div className='article-text-wrap'>
           <div className="article-user-wrap">
@@ -16,7 +20,7 @@ export default function CardArticel() {
           <div className="article-movie-desc">아티클 정보</div>
         </div>
       </CardWrap>
-      <CardWrap>
+      <CardWrap onClick={() => openDetail(router, 0, category)}>
         <div className="article-photo"></div>
         <div className='article-text-wrap'>
           <div className="article-user-wrap">
@@ -27,7 +31,7 @@ export default function CardArticel() {
           <div className="article-movie-desc">아티클 정보</div>
         </div>
       </CardWrap>
-      <CardWrap>
+      <CardWrap onClick={() => openDetail(router, 0, category)}>
         <div className="article-photo"></div>
         <div className='article-text-wrap'>
           <div className="article-user-wrap">

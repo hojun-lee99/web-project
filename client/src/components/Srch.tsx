@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import axios from '../api/axios';
 import TitleSm from './elements/TitleSm';
 import { useRouter } from 'next/navigation';
+import { openDetail } from '@/hooks/openDetail';
 
 type Movie = {
   id: number;
@@ -45,21 +46,6 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
 
   const router = useRouter();
 
-  const openDetail = (id: number, type: 'movie' | 'person' | 'collection') => {
-
-    const basePath = {
-      movie: '/movie',
-      person: '/person',
-      collection: '/collection',
-    };
-
-    if (basePath[type]) {
-      router.push(`/contents/${basePath[type]}/${id}`);
-    } else {
-      console.error('err');
-    }
-  };
-
   const [loadMovies, setLoadMovies] = useState<Movie[]>([]);
   const [loadPeople, setLoadPeople] = useState<People[]>([]);
   const [loadCollection, setLoadCollection] = useState<Collection[]>([]);
@@ -85,7 +71,7 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
       setLoadPeople(response2.data.results || []);
       setLoadCollection(response3.data.results || []);
 
-      console.log(response3.data.results)
+      console.log(response2.data.results)
     } catch (err) {
       setError('데이터를 불러오는 데 실패했습니다.');
       console.error(err);
@@ -113,7 +99,7 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
 
         {!loading &&
           loadMovies.slice(0, 5).map((movie) => (
-            <CardWrap key={movie.id} onClick={() => openDetail(movie.id, 'movie')}>
+            <CardWrap key={movie.id} onClick={() => openDetail(router, movie.id, 'movie')}>
               <div className="card-photo">
                 {movie.poster_path ? (
                   <img
@@ -146,8 +132,7 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
         <TitleSm title={"사람"} viewMore={false} />
         {!loading &&
           loadPeople.slice(0, 3).map((people) => (
-            <CardSideWrap key={people.id} className='cardSideWrap'
-            >
+            <CardSideWrap key={people.id} onClick={() => openDetail(router, people.id, 'people')} className='cardSideWrap'>
               <div className="card-photo">
                 {people.profile_path ? (
                   <img
@@ -184,7 +169,7 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
         <TitleSm title={"컬렉션"} viewMore={false} />
         {!loading &&
           loadCollection.slice(0, 3).map((collection) => (
-            <CardSideWrap key={collection.id} className='cardSideWrap'>
+            <CardSideWrap key={collection.id} onClick={() => openDetail(router, collection.id, 'collection')} className='cardSideWrap'>
               <div className="card-photo">
                 {collection.poster_path ? (
                   <img

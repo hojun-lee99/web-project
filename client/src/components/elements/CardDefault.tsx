@@ -4,29 +4,15 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from '../../api/axios';
 import { useRouter } from 'next/navigation';
+import { openDetail } from '@/hooks/openDetail';
+
 
 type TitleProps = {
   cate: string;
 };
 
 export default function CardDefault({ cate }: TitleProps) {
-
   const router = useRouter();
-
-  const openDetail = (id: number, type: 'movie' | 'person' | 'collection') => {
-
-    const basePath = {
-      movie: '/movie',
-      person: '/person',
-      collection: '/collection',
-    };
-
-    if (basePath[type]) {
-      router.push(`/contents/${basePath[type]}/${id}`);
-    } else {
-      console.error('err');
-    }
-  };
 
   const category = cate;
   const [loadMovies, setLoadMovies] = useState<any[]>([]);
@@ -61,7 +47,7 @@ export default function CardDefault({ cate }: TitleProps) {
       {cate === 'HOTRank' && (
         <>
           {loadMovies.slice(0, 5).map((movie, index) => (
-            <CardWrap key={movie.id} onClick={() => openDetail(movie.id, 'movie')}>
+            <CardWrap key={movie.id} onClick={() => openDetail(router, movie.id, 'movie')}>
               <div className="card-photo">
                 <div className="card-PhotoTxt">{index + 1}</div>
                 <div className="card-logo"></div>
@@ -88,7 +74,7 @@ export default function CardDefault({ cate }: TitleProps) {
       {cate === 'Dday' && (
         <>
           {loadMovies.slice(0, 5).map((movie, index) => (
-            <CardWrap key={movie.id} onClick={() => openDetail(movie.id, 'movie')}>
+            <CardWrap key={movie.id} onClick={() => openDetail(router, movie.id, 'movie')}>
               <div className="card-photo">
                 <div className="card-PhotoTxt">D-1</div>
                 <div className="card-logo"></div>

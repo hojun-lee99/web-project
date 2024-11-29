@@ -1,11 +1,16 @@
 'use client';
 
 import styled from 'styled-components';
+import { useRouter } from 'next/navigation';
+import { openDetail } from '@/hooks/openDetail';
 
 export default function CardComment() {
+  const router = useRouter();
+  const category = 'comment';
+
   return (
     <CardListWrap>
-      <CardWrap>
+      <CardWrap onClick={() => openDetail(router, 0, category)}>
         <div className="comment-user">
           <div className='comment-user-inner'>
             <div className="comment-user-photo"></div>
@@ -26,7 +31,7 @@ export default function CardComment() {
           <div className="comment-reply-Cnt">댓글수</div>
         </div>
       </CardWrap>
-      <CardWrap>
+      <CardWrap onClick={() => openDetail(router, 0, category)}>
         <div className="comment-user">
           <div className='comment-user-inner'>
             <div className="comment-user-photo"></div>
@@ -47,7 +52,7 @@ export default function CardComment() {
           <div className="comment-reply-Cnt">댓글수</div>
         </div>
       </CardWrap>
-      <CardWrap>
+      <CardWrap onClick={() => openDetail(router, 0, category)}>
         <div className="comment-user">
           <div className='comment-user-inner'>
             <div className="comment-user-photo"></div>

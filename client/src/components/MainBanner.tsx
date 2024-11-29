@@ -7,33 +7,16 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import styled from 'styled-components';
 import { useRouter } from 'next/navigation';
-
+import { openDetail } from '@/hooks/openDetail';
 
 import { useState, useEffect } from 'react';
 import axios from '../api/axios';
 
 export default function MainBanner() {
-
     const router = useRouter();
-
-    const openDetail = (id: number, type: 'movie' | 'person' | 'collection') => {
-
-        const basePath = {
-            movie: '/movie',
-            person: '/person',
-            collection: '/collection',
-        };
-
-        if (basePath[type]) {
-            router.push(`/contents/${basePath[type]}/${id}`);
-        } else {
-            console.error('err');
-        }
-    };
 
     const [loadMovies, setLoadMovies] = useState<any[]>([]);
 
-    // 영화 데이터를 가져오는 함수
     const fetchMovies = async () => {
         try {
             const response = await axios.get('/movie/now_playing', {
@@ -47,22 +30,14 @@ export default function MainBanner() {
         }
     };
 
-    // useEffect를 사용해 데이터 로드
     useEffect(() => {
         fetchMovies();
     }, []);
 
     return (
-        <Swiper
-            modules={[Navigation, Pagination]}
-            spaceBetween={0}
-            slidesPerView={1}
-            navigation
-            className="swiper"
-        // style={{ margin: -84 + 'px' }}
-        >
+        <Swiper modules={[Navigation, Pagination]} spaceBetween={0} slidesPerView={1} navigation className="swiper">
             {loadMovies.slice(0, 5).map((movie) => (
-                <SwiperSlide key={movie.id} onClick={() => openDetail(movie.id, 'movie')}>
+                <SwiperSlide key={movie.id} onClick={() => openDetail(router, movie.id, 'movie')}>
                     <SlideInnerWrap background={`https://image.tmdb.org/t/p/original${movie.poster_path}`}>
                         <SlideTxtWrap>
                             <div className="slide-movie-title">{movie.title}</div>
@@ -77,6 +52,7 @@ export default function MainBanner() {
         </Swiper>
     );
 }
+
 
 // 스타일 정의
 const SlideInnerWrap = styled.div<{ background: string }>`
@@ -125,12 +101,18 @@ const SlideTxtWrap = styled.div`
     margin-bottom: 20px;
     position: relative;
   }
-  .slide-movie-info,
+  .slide-movie-info{
+    font-size: 16px;
+    line-height: 20px;
+    color: var(--color-text-secondary);
+    margin-bottom: 10px;
+    max-width:800px;
+  }
   .slide-movie-desc {
     font-size: 16px;
     line-height: 20px;
     height:100px;
-    color: #747474;
+    color: var(--color-text-secondary);
     margin-bottom: 10px;
     max-width:800px;
   }
