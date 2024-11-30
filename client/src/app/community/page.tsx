@@ -1,119 +1,115 @@
 'use client';
 
-import styled from 'styled-components';
 import Link from 'next/link';
+import styled from 'styled-components';
+import PostList from '../../components/PostList';
 
-export default function Community() {
+const fakePost = [
+  {
+    id: 1,
+    title: '첫 번째 게시글 제목',
+    author: '사용자1',
+    date: '2024-11-28',
+    category: '카테고리',
+    content:
+      '첫 번째 게시글의 내용입니다. 이 게시글은 임시로 작성된 내용입니다.',
+  },
+  {
+    id: 2,
+    title: '두 번째 게시글 제목',
+    author: '사용자2',
+    date: '2024-11-27',
+    category: '카테고리',
+    content: '두 번째 게시글의 내용입니다. 자유롭게 읽고 의견을 남겨주세요!',
+  },
+  {
+    id: 3,
+    title: '세 번째 게시글 제목',
+    author: '사용자3',
+    date: '2024-11-26',
+    category: '카테고리',
+    content: '세 번째 게시글의 내용입니다. 도움이 필요합니다. 의견 부탁드려요.',
+  },
+  {
+    id: 4,
+    title: '네 번째 게시글 제목',
+    author: '사용자4',
+    date: '2024-11-25',
+    category: '카테고리',
+    content: '네 번째 게시글의 내용입니다. 유용한 자료를 공유합니다!',
+  },
+  {
+    id: 5,
+    title: '다섯 번째 게시글 제목',
+    author: '사용자5',
+    date: '2024-11-24',
+    category: '카테고리',
+    content: '다섯 번째 게시글의 내용입니다. 새로운 공지사항을 확인하세요.',
+  },
+];
+
+const PostArea = ({
+  type,
+  title,
+  link,
+  posts,
+}: {
+  type: 'notice' | 'post';
+  title: string;
+  link: string;
+  posts: typeof fakePost;
+}) => {
   return (
-    <div className="content">
-      <div className="content-inner">
-        <CommunityHeader>
-          <WriteButton type="button">
-            <div>
-              <div className="profile"></div>
-              <div>나누고 싶은 생각이 있으신가요?</div>
-            </div>
-            <i></i>
-          </WriteButton>
-        </CommunityHeader>
-        <Post>
-          <PostMenu>
-            <input type="text" placeholder="게시글 검색" />
-            <ul>
-              <li>메뉴1</li>
-              <li>메뉴1</li>
-              <li>메뉴1</li>
-              <li>메뉴1</li>
-              <li>메뉴1</li>
-            </ul>
-          </PostMenu>
-          <PostList>
-            <PostArea>
-              <div className="post-title">
-                <p className="post-title_text">공지사항</p>
-                <Link href="/community/notice" className="post-more">
-                  더보기
-                </Link>
-              </div>
-              <ul className="post-list">
-                <li className="post-item">
-                  <div>
-                    <span className="post-item_category">카테고리</span>
-                    <span className="post-item_name">게시글 제목</span>
-                  </div>
-                  <div className="post-item_info">
-                    <span className="post-item_author">작성자</span>
-                    <span className="post-item_date">날짜</span>
-                    <div className="post-item_comment">
-                      <i></i> 10
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </PostArea>
-          </PostList>
-        </Post>
+    <PostAreaWrapper>
+      <div className="post-title">
+        <p className="post-title_text">{title}</p>
+        <Link href={link} className="post-more">
+          더보기
+        </Link>
       </div>
-    </div>
+      <PostList posts={posts} type={type} />
+    </PostAreaWrapper>
+  );
+};
+
+export default function CommunityPage() {
+  return (
+    <>
+      <PostArea
+        type="notice"
+        title="공지사항"
+        link="/community/notice"
+        posts={fakePost}
+      />
+      <PostArea
+        type="post"
+        title="최신글"
+        link="/community/latest"
+        posts={fakePost}
+      />
+      <PostListRow>
+        <PostArea
+          type="post"
+          title="카테고리1"
+          link="/community/category1"
+          posts={fakePost}
+        />
+        <PostArea
+          type="post"
+          title="카테고리2"
+          link="/community/category2"
+          posts={fakePost}
+        />
+      </PostListRow>
+    </>
   );
 }
 
-const CommunityHeader = styled.div`
-  width: 100%;
-  padding: 20px 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 36px;
-`;
-
-const WriteButton = styled.button`
-  width: 100%;
-  max-width: 749px;
-  padding: 20px 49px;
-  border-radius: 999px;
-  background-color: var(--color-background-secondary);
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-
-  > div {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .profile {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background-color: #d9d9d9;
-  }
-
-  i {
-    display: block;
-    width: 36px;
-    height: 36px;
-    background: url('/icon-pen-line.svg');
-  }
-`;
-
-const Post = styled.div`
-  display: flex;
-  gap: 36px;
-`;
-
-const PostMenu = styled.div`
-  width: 280px;
-`;
-
-const PostList = styled.div`
+const PostAreaWrapper = styled.div`
+  margin-bottom: 30px;
   width: 100%;
   flex: 1;
-`;
-const PostArea = styled.div`
+
   .post-title {
     width: 100%;
     display: flex;
@@ -134,61 +130,10 @@ const PostArea = styled.div`
       border: none;
     }
   }
+`;
 
-  .post-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 0;
-    cursor: pointer;
-  }
-
-  .post-item_category {
-    color: var(--color-text-tertiary);
-    font-size: 12px;
-    margin-right: 20px;
-  }
-
-  .post-item_name {
-    font-size: 16px;
-    font-weight: 600;
-  }
-
-  .post-item_info {
-    display: flex;
-    gap: 10px;
-    font-size: 12px;
-    color: var(--color-text-tertiary);
-    align-items: center;
-  }
-
-  .post-item_author {
-    position: relative;
-    padding-right: 4px;
-
-    &::after {
-      content: '';
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      border-radius: 50%;
-      background-color: var(--color-text-tertiary);
-      top: 50%;
-      right: -4px;
-      transform: translateY(-50%);
-    }
-  }
-
-  .post-item_comment {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-
-    i {
-      display: inline-block;
-      width: 21px;
-      height: 21px;
-      background: url('/icon-message-circle-dots.svg');
-    }
-  }
+const PostListRow = styled.div`
+  display: flex;
+  width: 100%;
+  gap: 36px;
 `;
