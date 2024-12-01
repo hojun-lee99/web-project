@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import axios from '../api/axios';
 import TitleSm from './elements/TitleSm';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 type Movie = {
   id: number;
@@ -42,11 +43,9 @@ type CardSrchProps = {
 };
 
 export default function CardSrch({ srchProps }: CardSrchProps) {
-
   const router = useRouter();
 
   const openDetail = (id: number, type: 'movie' | 'person' | 'collection') => {
-
     const basePath = {
       movie: '/movie',
       person: '/person',
@@ -85,7 +84,7 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
       setLoadPeople(response2.data.results || []);
       setLoadCollection(response3.data.results || []);
 
-      console.log(response3.data.results)
+      console.log(response3.data.results);
     } catch (err) {
       setError('데이터를 불러오는 데 실패했습니다.');
       console.error(err);
@@ -103,27 +102,29 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
   return (
     <>
       <CardListWrap>
-        <TitleSm title={"영화"} viewMore={true} />
-        {!loading && !error && loadMovies.length === 0 && loadPeople.length === 0 && (
-          <p>검색 결과가 없습니다.</p>
-        )}
+        <TitleSm title={'영화'} viewMore={true} />
+        {!loading &&
+          !error &&
+          loadMovies.length === 0 &&
+          loadPeople.length === 0 && <p>검색 결과가 없습니다.</p>}
 
         {loading && <p>로딩 중...</p>}
         {error && <p>{error}</p>}
 
         {!loading &&
           loadMovies.slice(0, 5).map((movie) => (
-            <CardWrap key={movie.id} onClick={() => openDetail(movie.id, 'movie')}>
+            <CardWrap
+              key={movie.id}
+              onClick={() => openDetail(movie.id, 'movie')}
+            >
               <div className="card-photo">
                 {movie.poster_path ? (
-                  <img
+                  <Image
                     src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
                     alt={movie.title}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                    }}
+                    layout="fill"
+                    objectFit="cover" // 이미지 비율 유지하며 채우기
+                    objectPosition="center" // 이미지 위치 조정
                   />
                 ) : (
                   <Placeholder>No Image</Placeholder>
@@ -132,8 +133,10 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
               <div className="card-text-wrap">
                 <div className="card-movie-title">{movie.title}</div>
                 <div className="card-movie-desc">
-                  {movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A'} |{' '}
-                  {movie.original_language.toUpperCase()}
+                  {movie.release_date
+                    ? new Date(movie.release_date).getFullYear()
+                    : 'N/A'}{' '}
+                  | {movie.original_language.toUpperCase()}
                 </div>
               </div>
             </CardWrap>
@@ -143,21 +146,18 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
       <DivideBar />
 
       <CardListWrapCol>
-        <TitleSm title={"사람"} viewMore={false} />
+        <TitleSm title={'사람'} viewMore={false} />
         {!loading &&
           loadPeople.slice(0, 3).map((people) => (
-            <CardSideWrap key={people.id} className='cardSideWrap'
-            >
+            <CardSideWrap key={people.id} className="cardSideWrap">
               <div className="card-photo">
                 {people.profile_path ? (
-                  <img
+                  <Image
                     src={`https://image.tmdb.org/t/p/w200${people.profile_path}`}
                     alt={people.name}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                    }}
+                    layout="fill"
+                    objectFit="cover" // 이미지 비율 유지하며 채우기
+                    objectPosition="center" // 이미지 위치 조정
                   />
                 ) : (
                   <Placeholder>No Image</Placeholder>
@@ -168,9 +168,9 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
                 <div className="card-movie-desc">
                   {people.known_for && people.known_for.length > 0
                     ? people.known_for
-                      .slice(0, 3)
-                      .map((item) => item.title || item.name)
-                      .join(', ')
+                        .slice(0, 3)
+                        .map((item) => item.title || item.name)
+                        .join(', ')
                     : '대표작 없음'}
                 </div>
               </div>
@@ -181,30 +181,29 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
       <DivideBar />
 
       <CardListWrapCol>
-        <TitleSm title={"컬렉션"} viewMore={false} />
+        <TitleSm title={'컬렉션'} viewMore={false} />
         {!loading &&
           loadCollection.slice(0, 3).map((collection) => (
-            <CardSideWrap key={collection.id} className='cardSideWrap'>
+            <CardSideWrap key={collection.id} className="cardSideWrap">
               <div className="card-photo">
                 {collection.poster_path ? (
-                  <img
+                  <Image
                     src={`https://image.tmdb.org/t/p/w200${collection.poster_path}`}
                     alt={collection.original_name}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                    }}
+                    layout="fill"
+                    objectFit="cover" // 이미지 비율 유지하며 채우기
+                    objectPosition="center" // 이미지 위치 조정
                   />
                 ) : (
                   <Placeholder>No Image</Placeholder>
                 )}
               </div>
               <div className="card-text-wrap">
-                <div className="card-movie-title">{collection.original_name}</div>
+                <div className="card-movie-title">
+                  {collection.original_name}
+                </div>
                 <div className="card-movie-desc">
-                  {collection.overview
-                    ? (collection.overview) : '대표작 없음'}
+                  {collection.overview ? collection.overview : '대표작 없음'}
                 </div>
               </div>
             </CardSideWrap>
@@ -217,7 +216,7 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
 const DivideBar = styled.div`
   padding-top: 42px;
   border-bottom: 1px solid #e0e0e0;
-  padding-bottom:36px;
+  padding-bottom: 36px;
 `;
 
 const CardListWrap = styled.div`
@@ -228,8 +227,8 @@ const CardListWrap = styled.div`
 `;
 
 const CardListWrapCol = styled.div`
-width:100%;
-  display:flex;
+  width: 100%;
+  display: flex;
   flex-direction: column;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -277,15 +276,15 @@ const Placeholder = styled.div`
 `;
 
 const CardSideWrap = styled.div`
-    display:flex;
-    width: 100%;
-    gap:10px;
-    cursor:pointer;
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  cursor: pointer;
 
-        max-width: 496px;
-        width: 100%;
+  max-width: 496px;
+  width: 100%;
   .card-photo {
-    width:67px;
+    width: 67px;
     height: 99px;
     border-radius: 4px;
     overflow: hidden;
@@ -294,11 +293,11 @@ const CardSideWrap = styled.div`
 
   .card-text-wrap {
     padding: 10px 0;
-    border-bottom:1px solid #E0E0E0;
-    display:flex;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
     flex-direction: column;
     justify-content: center;
-    flex:1;
+    flex: 1;
 
     .card-movie-title {
       font-size: 16px;
@@ -314,7 +313,7 @@ const CardSideWrap = styled.div`
       word-break: break-word;
       display: -webkit-box;
       -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical
+      -webkit-box-orient: vertical;
     }
   }
 `;
