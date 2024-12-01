@@ -1,45 +1,45 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import axios from '../../api/axios';
 import { useRouter } from 'next/navigation';
 import { openDetail } from '@/hooks/openDetail';
+import Image from 'next/image';
 
+type TitleProps = { cate: string };
 
-type TitleProps = {
-  cate: string;
-};
+interface Movie {
+  id: number;
+  title: string;
+  poster_path: string;
+  release_date: string;
+  original_language: string;
+}
 
 export default function CardDefault({ cate }: TitleProps) {
   const router = useRouter();
-
   const category = cate;
-  const [loadMovies, setLoadMovies] = useState<any[]>([]);
+  const [loadMovies, setLoadMovies] = useState<Movie[]>([]);
 
-  // 영화 데이터를 가져오는 함수
-  const fetchMovies = async (movieCate: string) => {
+  const fetchMovies = useCallback(async (movieCate: string) => {
     try {
       const response = await axios.get('/movie/' + movieCate, {
         params: { language: 'ko-KR', page: 1 },
       });
-      const movies = response.data.results;
-      setLoadMovies(movies);
-      console.log(movieCate + ':')
-      console.log(movies)
+      setLoadMovies(response.data.results);
     } catch (error) {
-      console.error('Error fetching random movies:', error);
+      console.error('Error fetching movies:', error);
     }
-  };
+  }, []);
 
-  // useEffect를 사용해 데이터 로드
   useEffect(() => {
     if (category === 'HOTRank') {
       fetchMovies('popular');
     } else if (category === 'Dday') {
       fetchMovies('upcoming');
     }
-  }, []);
+  }, [category, fetchMovies]);
 
   return (
     <CardListWrap>
@@ -51,19 +51,22 @@ export default function CardDefault({ cate }: TitleProps) {
               <div className="card-photo">
                 <div className="card-PhotoTxt">{index + 1}</div>
                 <div className="card-logo"></div>
-                <img
-                  src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
-                  alt={movie.title}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                  }}
-                />
+                <div className="card-photo-wrap">
+                  <Image
+                    src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                    alt={movie.title}
+                    layout="fill"
+                    style={{ objectFit: 'cover' }}
+                    objectFit="cover"
+                    objectPosition="center"
+                  />
+                </div>
               </div>
               <div className='card-text-wrap'>
                 <div className="card-movie-title">{movie.title}</div>
-                <div className="card-movie-desc">{new Date(movie.release_date).getFullYear()} | {movie.original_language.toUpperCase()}</div>
+                <div className="card-movie-desc">
+                  {new Date(movie.release_date).getFullYear()} | {movie.original_language.toUpperCase()}
+                </div>
               </div>
             </CardWrap>
           ))}
@@ -73,39 +76,35 @@ export default function CardDefault({ cate }: TitleProps) {
       {/* Dday 카테고리 */}
       {cate === 'Dday' && (
         <>
-          {loadMovies.slice(0, 5).map((movie, index) => (
+          {loadMovies.slice(0, 5).map((movie) => (
             <CardWrap key={movie.id} onClick={() => openDetail(router, movie.id, 'movie')}>
               <div className="card-photo">
                 <div className="card-PhotoTxt">D-1</div>
-                <div className="card-logo"></div>
-                <div className="card-WTS">
-                  + 보고싶어요 <span className="cardWTSScr">000</span>
+                <div className="card-photo-wrap">
+                  <Image
+                    src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                    alt={movie.title}
+                    layout="fill"
+                    style={{ objectFit: 'cover' }}
+                    objectFit="cover"
+                    objectPosition="center"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
                 </div>
-                <img
-                  src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
-                  alt={movie.title}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                  }}
-                />
               </div>
               <div className="card-text-wrap">
                 <div className="card-movie-title">{movie.title}</div>
                 <div className="card-movie-desc">
-                  {new Date(movie.release_date).getFullYear()} | {movie.original_language.toUpperCase()} <span className="card-movie-viewCnt">예매율 및 관객수</span>
+                  {new Date(movie.release_date).getFullYear()} | {movie.original_language.toUpperCase()}
                 </div>
               </div>
             </CardWrap>
           ))}
         </>
       )}
-
     </CardListWrap>
   );
 }
-
 // 스타일 정의
 const CardListWrap = styled.div`
   display: flex;
@@ -122,6 +121,7 @@ const CardWrap = styled.div`
   cursor:pointer;
 
   .card-photo {
+    width:228px;
     height: 355px;
     border-radius: 4px;
     overflow: hidden;
@@ -129,11 +129,14 @@ const CardWrap = styled.div`
     position: relative;
     z-index:1;
 
-    img{
+    .card-photo-wrap{
       position:absolute;
       left:0;
       top:0;
       z-index:-1;
+      width: 280px;
+      height: 350px;
+      background-color: var(--color-background-secondary);
     }
 
     .card-PhotoTxt {

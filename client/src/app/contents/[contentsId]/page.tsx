@@ -127,8 +127,8 @@ export default function Contents() {
               <span className="content-genre">
                 {movie.genres && movie.genres.length > 0
                   ? movie.genres
-                      .map((genre: { id: number; name: string }) => genre.name)
-                      .join(', ')
+                    .map((genre: { id: number; name: string }) => genre.name)
+                    .join(', ')
                   : '장르'}
               </span>
               <span className="content-country">
@@ -140,9 +140,8 @@ export default function Contents() {
             <p>
               <span className="content-runtime">
                 {movie.runtime
-                  ? `${Math.floor(movie.runtime / 60)}시간 ${
-                      movie.runtime % 60
-                    }분`
+                  ? `${Math.floor(movie.runtime / 60)}시간 ${movie.runtime % 60
+                  }분`
                   : '러닝타임'}
               </span>
               <span className="content-rating">{getAgeRating()}</span>
@@ -156,7 +155,10 @@ export default function Contents() {
             <Image
               src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
               alt={`${movie.title} Poster`}
+              layout="fill"
               style={{ objectFit: 'cover' }}
+              objectFit="cover" // 이미지 비율 유지하며 채우기
+              objectPosition="center" // 이미지 위치 조정
             />
           </div>
           <div>
@@ -299,10 +301,12 @@ const ContentInfo2 = styled.section`
   }
 
   .content-poster {
+    position:relative;
     width: 280px;
     height: 400px;
     background-color: var(--color-background-secondary);
   }
+    
 
   .content-rating {
     display: flex;

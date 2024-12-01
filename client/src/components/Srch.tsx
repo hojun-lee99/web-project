@@ -6,6 +6,7 @@ import axios from '../api/axios';
 import TitleSm from './elements/TitleSm';
 import { useRouter } from 'next/navigation';
 import { openDetail } from '@/hooks/openDetail';
+import Image from 'next/image';
 
 type Movie = {
   id: number;

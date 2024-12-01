@@ -1,4 +1,6 @@
-export const openDetail = (router: any, id: number, type: 'movie' | 'people' | 'collection' | 'comment' | 'article') => {
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context';
+
+export const openDetail = (router: AppRouterInstance, id: number, type: 'movie' | 'people' | 'collection' | 'comment' | 'article') => {
     if (type === 'movie') {
         router.push(`/contents/${id}`);
     } else if (type === 'people') {
