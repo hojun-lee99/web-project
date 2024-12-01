@@ -5,21 +5,15 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import StarRating from '../../components/StarRating';
 import ReviewPopup from '../../components/ReviewPopup';
+import Image from 'next/image';
 
-export const movieFilter = {
-  영화: ['HOT 트렌드', '주간 트렌드', '인기 영화', '최고 평점 영화'],
-  장르: [
-    '느와르',
-    '히어로',
-    '범죄',
-    '드라마',
-    '코미디',
-    '로맨스/멜로',
-    '스릴러',
-    '로맨틱코미디',
-    '가족',
-  ],
-};
+interface Movie {
+  id: number;
+  title: string;
+  poster_path: string;
+  release_date: string;
+  original_language: string;
+}
 
 const messages = [
   {
@@ -42,7 +36,7 @@ const messages = [
 export default function Review() {
   const [activeTab, setActiveTab] = useState('movie');
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [randomMovies, setRandomMovies] = useState<any[]>([]);
+  const [randomMovies, setRandomMovies] = useState<Movie[]>([]);
 
   const [reviewCounts, setReviewCounts] = useState<Record<string, number>>({
     movie: 0,
@@ -159,14 +153,12 @@ export default function Review() {
                 {randomMovies.map((movie) => (
                   <li key={movie.id}>
                     <div className="poster">
-                      <img
+                      <Image
                         src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
                         alt={movie.title}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                        }}
+                        layout="fill"
+                        objectFit="cover" // 이미지 비율 유지하며 채우기
+                        objectPosition="center" // 이미지 위치 조정
                       />
                     </div>
                     <div className="info">
@@ -290,6 +282,7 @@ const MovieList = styled.ul`
   }
 
   .poster {
+    position: relative;
     width: 74px;
     height: 106px;
     background-color: var(--color-background-tertiary);

@@ -1,7 +1,5 @@
 'use client';
 
-import styled from 'styled-components';
-
 export default function Series() {
   return (
     <div className="content">

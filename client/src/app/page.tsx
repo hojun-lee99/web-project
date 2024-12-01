@@ -1,33 +1,30 @@
 'use client';
 
-import CardDefault from "@/components/elements/CardDefault";
-import TitleSm from "@/components/elements/TitleSm";
-import CardComment from "@/components/elements/CardComment";
-import CardArticel from "@/components/elements/CardArticel";
-import MainBanner from "@/components/MainBanner";
-
-import styled from "styled-components";
+import CardDefault from '@/components/elements/CardDefault';
+import TitleSm from '@/components/elements/TitleSm';
+import CardComment from '@/components/elements/CardComment';
+import CardArticel from '@/components/elements/CardArticel';
+import MainBanner from '@/components/MainBanner';
 
 export default function Home() {
-
   return (
     <div className="content main-content">
       <MainBanner></MainBanner>
       <div className="content-inner">
-        <TitleSm title={"HOT 랭킹"} viewMore={false} />
-        <CardDefault cate={"HOTRank"} />
+        <TitleSm title={'HOT 랭킹'} viewMore={false} />
+        <CardDefault cate={'HOTRank'} />
       </div>
       <div className="content-inner">
-        <TitleSm title={"지금 뜨는 코멘트"} viewMore={true} />
+        <TitleSm title={'지금 뜨는 코멘트'} viewMore={true} />
         <CardComment />
       </div>
       <div className="content-inner">
-        <TitleSm title={"아티클"} viewMore={false} />
+        <TitleSm title={'아티클'} viewMore={false} />
         <CardArticel />
       </div>
       <div className="content-inner">
-        <TitleSm title={"공개예정작"} viewMore={true} />
-        <CardDefault cate={"Dday"} />
+        <TitleSm title={'공개예정작'} viewMore={true} />
+        <CardDefault cate={'Dday'} />
       </div>
     </div>
   );
