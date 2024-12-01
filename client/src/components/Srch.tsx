@@ -88,7 +88,7 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
   return (
     <>
       <CardListWrap>
-        <TitleSm title={'영화'} viewMore={true} />
+        <TitleSm title={'영화'} viewMore={true} cate={''} />
         {!loading &&
           !error &&
           loadMovies.length === 0 &&
@@ -129,7 +129,7 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
       <DivideBar />
 
       <CardListWrapCol>
-        <TitleSm title={'사람'} viewMore={false} />
+        <TitleSm title={'사람'} viewMore={false} cate={''} />
         {!loading &&
           loadPeople.slice(0, 3).map((people) => (
             <CardSideWrap key={people.id} onClick={() => openDetail(router, people.id, 'people')} className='cardSideWrap'>
@@ -164,7 +164,7 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
       <DivideBar />
 
       <CardListWrapCol>
-        <TitleSm title={'컬렉션'} viewMore={false} />
+        <TitleSm title={'컬렉션'} viewMore={false} cate={''} />
         {!loading &&
           loadCollection.slice(0, 3).map((collection) => (
             <CardSideWrap key={collection.id} onClick={() => openDetail(router, collection.id, 'collection')} className='cardSideWrap'>

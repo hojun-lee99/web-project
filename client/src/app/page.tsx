@@ -11,19 +11,19 @@ export default function Home() {
     <div className="content main-content">
       <MainBanner></MainBanner>
       <div className="content-inner">
-        <TitleSm title={'HOT 랭킹'} viewMore={false} />
+        <TitleSm title={'HOT 랭킹'} viewMore={true} cate={'rank'} />
         <CardDefault cate={'HOTRank'} />
       </div>
       <div className="content-inner">
-        <TitleSm title={'지금 뜨는 코멘트'} viewMore={true} />
+        <TitleSm title={'지금 뜨는 코멘트'} viewMore={true} cate={'hotComment'} />
         <CardComment />
       </div>
       <div className="content-inner">
-        <TitleSm title={'아티클'} viewMore={false} />
+        <TitleSm title={'아티클'} viewMore={true} cate={'article'} />
         <CardArticel />
       </div>
       <div className="content-inner">
-        <TitleSm title={'공개예정작'} viewMore={true} />
+        <TitleSm title={'공개예정작'} viewMore={true} cate={'upcoming'} />
         <CardDefault cate={'Dday'} />
       </div>
     </div>

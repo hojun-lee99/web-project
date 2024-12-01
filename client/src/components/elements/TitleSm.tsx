@@ -2,17 +2,23 @@
 
 import styled from 'styled-components';
 import "../../app/globals.css"
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
 
 type TitleProps = {
   title: string;
   viewMore: boolean; // viewMore을 TitleProps에 포함
+  cate: string;
 };
 
-export default function TitleSm({ title, viewMore }: TitleProps) {
+export default function TitleSm({ title, viewMore, cate }: TitleProps) {
+  const router = useRouter();
+
   return (
     <PageTitleSm>
       {title}
-      {viewMore && <a href="#">더보기</a>}
+      {viewMore && <a onClick={() => router.push(`/${cate}`)}>더보기</a>}
     </PageTitleSm>
   );
 }
@@ -29,5 +35,6 @@ const PageTitleSm = styled.h3`
     color: var(--color-primary-accent);
     font-size: 15px;
     line-height: 20px;
+    cursor:pointer;
   }
 `;
