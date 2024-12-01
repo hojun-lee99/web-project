@@ -44,12 +44,7 @@ export default function UserPage({ params }: { params: { userId: string } }) {
       <div className="content-inner">
         <UserWrap>
           <UserProfile>
-            <div className="user-img">
-              <img
-                src="https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=500&h=500&q=80"
-                alt={userId}
-              />
-            </div>
+            <div className="user-img">유저이미지 넣기</div>
             <p className="user-id">{userId}</p>
             <p className="user-email">유저이메일@naver.com</p>
           </UserProfile>
@@ -171,6 +166,7 @@ const UserProfile = styled.section`
     border-radius: 50%;
     overflow: hidden;
     margin-bottom: 16px;
+    background-color: #ddd;
 
     img {
       width: 100%;

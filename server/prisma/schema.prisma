@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -65,7 +65,7 @@ model Review {
 
 model Rating {
   id          Int         @id @default(autoincrement())
-  score       Int         @db.TinyInt // 1-5 점수
+  score       Int         
   contentId   String      // 외부 API의 컨텐츠 ID
   contentType ContentType
   userId      Int

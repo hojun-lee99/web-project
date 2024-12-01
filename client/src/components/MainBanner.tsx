@@ -12,45 +12,54 @@ import { openDetail } from '@/hooks/openDetail';
 import { useState, useEffect } from 'react';
 import axios from '../api/axios';
 
+interface Movie {
+  id: number;
+  title: string;
+  poster_path: string;
+  release_date: string;
+  original_language: string;
+  overview: string;
+}
+
 export default function MainBanner() {
-    const router = useRouter();
+  const router = useRouter();
 
-    const [loadMovies, setLoadMovies] = useState<any[]>([]);
+  const [loadMovies, setLoadMovies] = useState<Movie[]>([]);
 
-    const fetchMovies = async () => {
-        try {
-            const response = await axios.get('/movie/now_playing', {
-                params: { language: 'ko-KR', page: 1 },
-            });
-            const movies = response.data.results;
-            setLoadMovies(movies);
-            console.log(movies);
-        } catch (error) {
-            console.error('Error fetching:', error);
-        }
-    };
+  const fetchMovies = async () => {
+    try {
+      const response = await axios.get('/movie/now_playing', {
+        params: { language: 'ko-KR', page: 1 },
+      });
+      const movies = response.data.results;
+      setLoadMovies(movies);
+      console.log(movies);
+    } catch (error) {
+      console.error('Error fetching:', error);
+    }
+  };
 
-    useEffect(() => {
-        fetchMovies();
-    }, []);
+  useEffect(() => {
+    fetchMovies();
+  }, []);
 
-    return (
-        <Swiper modules={[Navigation, Pagination]} spaceBetween={0} slidesPerView={1} navigation className="swiper">
-            {loadMovies.slice(0, 5).map((movie) => (
-                <SwiperSlide key={movie.id} onClick={() => openDetail(router, movie.id, 'movie')}>
-                    <SlideInnerWrap background={`https://image.tmdb.org/t/p/original${movie.poster_path}`}>
-                        <SlideTxtWrap>
-                            <div className="slide-movie-title">{movie.title}</div>
-                            <div className="slide-movie-info">
-                                {new Date(movie.release_date).getFullYear()} | {movie.original_language.toUpperCase()}
-                            </div>
-                            <div className="slide-movie-desc">{movie.overview}</div>
-                        </SlideTxtWrap>
-                    </SlideInnerWrap>
-                </SwiperSlide>
-            ))}
-        </Swiper>
-    );
+  return (
+    <Swiper modules={[Navigation, Pagination]} spaceBetween={0} slidesPerView={1} navigation className="swiper">
+      {loadMovies.slice(0, 5).map((movie) => (
+        <SwiperSlide key={movie.id} onClick={() => openDetail(router, movie.id, 'movie')}>
+          <SlideInnerWrap background={`https://image.tmdb.org/t/p/original${movie.poster_path}`}>
+            <SlideTxtWrap>
+              <div className="slide-movie-title">{movie.title}</div>
+              <div className="slide-movie-info">
+                {new Date(movie.release_date).getFullYear()} | {movie.original_language.toUpperCase()}
+              </div>
+              <div className="slide-movie-desc">{movie.overview}</div>
+            </SlideTxtWrap>
+          </SlideInnerWrap>
+        </SwiperSlide>
+      ))}
+    </Swiper>
+  );
 }
 
 
@@ -74,23 +83,27 @@ const SlideTxtWrap = styled.div`
     position: absolute;
     width: 100%;
     height: 100%;
-    background: linear-gradient(0deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
+    background: linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(255, 255, 255, 0) 100%
+    );
     top: 0;
     left: 0;
     z-index: -1;
   }
-    &::before {
-    display:none;
+  &::before {
+    display: none;
     content: '';
     position: absolute;
     width: 100%;
     height: 100%;
-    background: rgba(255,255,255,.3);
+    background: rgba(255, 255, 255, 0.3);
     top: 0;
     left: 0;
     z-index: -1;
   }
-    
+
   z-index: 1;
   max-width: 1320px;
   width: 100%;
@@ -114,6 +127,6 @@ const SlideTxtWrap = styled.div`
     height:100px;
     color: var(--color-text-secondary);
     margin-bottom: 10px;
-    max-width:800px;
+    max-width: 800px;
   }
 `;

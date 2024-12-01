@@ -1,16 +1,97 @@
 'use client';
 
 import styled from 'styled-components';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 
 export default function UserCalender() {
   const calendarRef = useRef<HTMLDivElement>(null);
-  const [calendarInstance, setCalendarInstance] = useState<any>(null); // 캘린더 인스턴스 저장
-  const [currentDate, setCurrentDate] = useState<string>(''); // 현재 년도와 월 저장
+  const [calendarInstance, setCalendarInstance] = useState<CalendarType | null>(
+    null,
+  );
+  const [currentDate, setCurrentDate] = useState<string>('');
+
+  // 타입 정의
+  type CalendarEvent = {
+    id: string;
+    calendarId: string;
+    title: string;
+    category: 'time' | 'allday';
+    start: Date | string;
+    end: Date | string;
+    color?: string;
+    bgColor?: string;
+    borderColor?: string;
+    dragBgColor?: string;
+  };
+
+  type CalendarOptions = {
+    defaultView: 'month' | 'week' | 'day';
+    useCreationPopup?: boolean;
+    useDetailPopup?: boolean;
+    calendars?: Array<{
+      id: string;
+      name: string;
+      color?: string;
+      bgColor?: string;
+      borderColor?: string;
+      dragBgColor?: string;
+    }>;
+  };
+
+  type CalendarType = {
+    getDate(): Date;
+    next(): void;
+    prev(): void;
+    today(): void;
+    createEvents(events: CalendarEvent[]): void;
+  };
+
+  // 오늘 날짜에 텍스트 데이터 추가 함수 (useCallback으로 메모이제이션)
+  const addTodayEvent = useCallback((calendar: CalendarType) => {
+    const today = new Date();
+    const todayStart = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+      9,
+      0,
+    );
+    const todayEnd = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+      11,
+      0,
+    );
+
+    calendar.createEvents([
+      {
+        id: 'today-event',
+        calendarId: '1',
+        title: '오늘의 일정',
+        category: 'time',
+        start: todayStart,
+        end: todayEnd,
+      },
+    ]);
+  }, []);
 
   useEffect(() => {
     if (calendarRef.current && typeof window !== 'undefined') {
-      const Calendar = (window as any).tui.Calendar;
+      // `window.tui.Calendar`에 정확한 타입 지정
+      const Calendar: new (
+        container: HTMLElement,
+        options: CalendarOptions,
+      ) => CalendarType = (
+        window as typeof window & {
+          tui: {
+            Calendar: new (
+              container: HTMLElement,
+              options: CalendarOptions,
+            ) => CalendarType;
+          };
+        }
+      ).tui.Calendar;
 
       const calendar = new Calendar(calendarRef.current, {
         defaultView: 'month',
@@ -28,7 +109,7 @@ export default function UserCalender() {
         ],
       });
 
-      setCalendarInstance(calendar); // 캘린더 인스턴스를 상태에 저장
+      setCalendarInstance(calendar);
 
       // 현재 년/월 초기화
       const date = calendar.getDate();
@@ -61,39 +142,8 @@ export default function UserCalender() {
       // 오늘 날짜에 텍스트 데이터 추가
       addTodayEvent(calendar);
     }
-  }, []);
+  }, [addTodayEvent]);
 
-  // 오늘 날짜에 텍스트 데이터 추가
-  const addTodayEvent = (calendar: any) => {
-    const today = new Date(); // 오늘 날짜 가져오기
-    const todayStart = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate(),
-      9,
-      0,
-    ); // 오늘 오전 9시
-    const todayEnd = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate(),
-      11,
-      0,
-    ); // 오늘 오전 11시
-
-    calendar.createEvents([
-      {
-        id: 'today-event',
-        calendarId: '1',
-        title: '오늘의 일정',
-        category: 'time',
-        start: todayStart,
-        end: todayEnd,
-      },
-    ]);
-  };
-
-  // 이전 월로 이동
   const goPrev = () => {
     if (calendarInstance) {
       calendarInstance.prev();
@@ -101,7 +151,6 @@ export default function UserCalender() {
     }
   };
 
-  // 다음 월로 이동
   const goNext = () => {
     if (calendarInstance) {
       calendarInstance.next();
@@ -109,7 +158,6 @@ export default function UserCalender() {
     }
   };
 
-  // 오늘 날짜로 이동
   const goToday = () => {
     if (calendarInstance) {
       calendarInstance.today();
@@ -117,7 +165,6 @@ export default function UserCalender() {
     }
   };
 
-  // 현재 날짜 업데이트
   const updateCurrentDate = () => {
     if (calendarInstance) {
       const date = calendarInstance.getDate();

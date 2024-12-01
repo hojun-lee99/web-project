@@ -27,6 +27,8 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('Auth', '인증 관련 API')
     .addTag('Community', '커뮤니티 관련 API')
+    .addTag('Ratings', '별점 관련 API')
+    .addTag('Reviews', '리뷰 관련 API')
     .addBearerAuth()
     .build();
 

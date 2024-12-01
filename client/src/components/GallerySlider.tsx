@@ -8,6 +8,7 @@ import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import Image from 'next/image';
 
 interface GallerySliderProps {
   data: {
@@ -76,10 +77,12 @@ export default function GallerySlider({ data }: GallerySliderProps) {
           <SwiperSlide key={index}>
             <SlideContent isVideo={type === 'video'}>
               {type === 'image' ? (
-                <img
+                <Image
                   src={`https://image.tmdb.org/t/p/w500${item}`}
                   alt={`Still ${index + 1}`}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  layout="fill"
+                  objectFit="cover" // 이미지 비율 유지하며 채우기
+                  objectPosition="center" // 이미지 위치 조정
                 />
               ) : (
                 <iframe

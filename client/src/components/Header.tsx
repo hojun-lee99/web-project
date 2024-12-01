@@ -8,10 +8,6 @@ import { useDebounce } from '../hooks/useDebounce';
 
 import LoginPopup from '../components/LoginPopup';
 
-interface AlarmProps {
-  hasAlarm: boolean;
-}
-
 export default function Header() {
   const userID = 'dddddd';
 
@@ -20,7 +16,7 @@ export default function Header() {
   const router = useRouter();
 
   //알람
-  const [hasAlarm, setHasAlarm] = useState(false);
+  const [hasAlarm] = useState(false); //setHasAlarm
   const [isVisible, setIsVisible] = useState(false);
 
   const toggleVisibility = () => {
@@ -28,7 +24,7 @@ export default function Header() {
   };
 
   //로그인
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // 로그인 상태
+  const [isLoggedIn] = useState(true); // 로그인 상태 setIsLoggedIn
   const [popupState, setPopupState] = useState<'login' | 'signup' | null>(null);
 
   const openPopup = (state: 'login' | 'signup') => {

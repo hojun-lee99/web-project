@@ -1,7 +1,5 @@
 'use client';
 
-import styled from 'styled-components';
-
 export default function Write() {
   return (
     <div className="content">
