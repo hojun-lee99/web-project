@@ -2,9 +2,9 @@
 
 import styled from 'styled-components';
 
-export default function TitleLg() {
+export default function TitleLg({ title }) {
   return (
-    <PageTitleLg>페이지 제목</PageTitleLg>
+    <PageTitleLg>{title}</PageTitleLg>
   );
 }
 

@@ -4,82 +4,98 @@ import styled from 'styled-components';
 import { useRouter } from 'next/navigation';
 import { openDetail } from '@/hooks/openDetail';
 
-export default function CardComment() {
+
+type dir = {
+  direction: string; //'row' 혹은 'col'
+};
+
+export default function CardComment({ direction }: dir) {
   const router = useRouter();
   const category = 'comment';
 
   return (
-    <CardListWrap>
-      <CardWrap onClick={() => openDetail(router, 0, category)}>
-        <div className="comment-user">
-          <div className='comment-user-inner'>
-            <div className="comment-user-photo"></div>
-            <div className="comment-user-id">닉네임</div>
-            <div className="comment-user-logo"></div>
+    <>
+      <CardListWrap className={direction === 'col' ? 'column' : 'row'}>
+        <CardWrap className='cardWrap' onClick={() => openDetail(router, 0, category)}>
+          <div className="comment-user">
+            <div className='comment-user-inner'>
+              <div className="comment-user-photo"></div>
+              <div className="comment-user-id">닉네임</div>
+              <div className="comment-user-logo"></div>
+            </div>
+            <div className="comment-rating"></div>
           </div>
-          <div className="comment-rating"></div>
-        </div>
-        <div className='comment-cont'>
-          <div className="comment-photo"></div>
-          <div className="comment-text-wrap">
-            <div className="comment-title">리뷰 제목</div>
-            <div className="comment-desc">리뷰 내용 </div>
+          <div className='comment-cont'>
+            <div className="comment-photo"></div>
+            <div className="comment-text-wrap">
+              <div className="comment-title">리뷰 제목</div>
+              <div className="comment-desc">리뷰 내용 </div>
+            </div>
           </div>
-        </div>
-        <div className="comment-ico-wrap">
-          <div className="comment-thumbsUp-cnt">좋아요</div>
-          <div className="comment-reply-Cnt">댓글수</div>
-        </div>
-      </CardWrap>
-      <CardWrap onClick={() => openDetail(router, 0, category)}>
-        <div className="comment-user">
-          <div className='comment-user-inner'>
-            <div className="comment-user-photo"></div>
-            <div className="comment-user-id">닉네임</div>
-            <div className="comment-user-logo"></div>
+          <div className="comment-ico-wrap">
+            <div className="comment-thumbsUp-cnt">좋아요</div>
+            <div className="comment-reply-Cnt">댓글수</div>
           </div>
-          <div className="comment-rating"></div>
-        </div>
-        <div className='comment-cont'>
-          <div className="comment-photo"></div>
-          <div className="comment-text-wrap">
-            <div className="comment-title">리뷰 제목</div>
-            <div className="comment-desc">리뷰 내용 </div>
+        </CardWrap>
+        <CardWrap className='cardWrap' onClick={() => openDetail(router, 0, category)}>
+          <div className="comment-user">
+            <div className='comment-user-inner'>
+              <div className="comment-user-photo"></div>
+              <div className="comment-user-id">닉네임</div>
+              <div className="comment-user-logo"></div>
+            </div>
+            <div className="comment-rating"></div>
           </div>
-        </div>
-        <div className="comment-ico-wrap">
-          <div className="comment-thumbsUp-cnt">좋아요</div>
-          <div className="comment-reply-Cnt">댓글수</div>
-        </div>
-      </CardWrap>
-      <CardWrap onClick={() => openDetail(router, 0, category)}>
-        <div className="comment-user">
-          <div className='comment-user-inner'>
-            <div className="comment-user-photo"></div>
-            <div className="comment-user-id">닉네임</div>
-            <div className="comment-user-logo"></div>
+          <div className='comment-cont'>
+            <div className="comment-photo"></div>
+            <div className="comment-text-wrap">
+              <div className="comment-title">리뷰 제목</div>
+              <div className="comment-desc">리뷰 내용 </div>
+            </div>
           </div>
-          <div className="comment-rating"></div>
-        </div>
-        <div className='comment-cont'>
-          <div className="comment-photo"></div>
-          <div className="comment-text-wrap">
-            <div className="comment-title">리뷰 제목</div>
-            <div className="comment-desc">리뷰 내용 </div>
+          <div className="comment-ico-wrap">
+            <div className="comment-thumbsUp-cnt">좋아요</div>
+            <div className="comment-reply-Cnt">댓글수</div>
           </div>
-        </div>
-        <div className="comment-ico-wrap">
-          <div className="comment-thumbsUp-cnt">좋아요</div>
-          <div className="comment-reply-Cnt">댓글수</div>
-        </div>
-      </CardWrap>
-    </CardListWrap>
+        </CardWrap>
+        <CardWrap className='cardWrap' onClick={() => openDetail(router, 0, category)}>
+          <div className="comment-user">
+            <div className='comment-user-inner'>
+              <div className="comment-user-photo"></div>
+              <div className="comment-user-id">닉네임</div>
+              <div className="comment-user-logo"></div>
+            </div>
+            <div className="comment-rating"></div>
+          </div>
+          <div className='comment-cont'>
+            <div className="comment-photo"></div>
+            <div className="comment-text-wrap">
+              <div className="comment-title">리뷰 제목</div>
+              <div className="comment-desc">리뷰 내용 </div>
+            </div>
+          </div>
+          <div className="comment-ico-wrap">
+            <div className="comment-thumbsUp-cnt">좋아요</div>
+            <div className="comment-reply-Cnt">댓글수</div>
+          </div>
+        </CardWrap>
+      </CardListWrap>
+    </>
   );
 }
 
 const CardListWrap = styled.div`
   display:flex;
   justify-content:space-between;
+
+  &.column{
+    flex-wrap:wrap;
+    gap:20px;
+    .cardWrap{
+      width:100%;
+      max-width:100%;
+    }
+  }
 `
 
 const CardWrap = styled.div`

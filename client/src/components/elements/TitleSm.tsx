@@ -3,7 +3,7 @@
 import styled from 'styled-components';
 import "../../app/globals.css"
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 
 
 type TitleProps = {

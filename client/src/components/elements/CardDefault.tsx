@@ -24,9 +24,24 @@ export default function CardDefault({ cate }: TitleProps) {
 
   const fetchMovies = useCallback(async (movieCate: string) => {
     try {
-      const response = await axios.get('/movie/' + movieCate, {
-        params: { language: 'ko-KR', page: 1 },
-      });
+      let response
+      if (movieCate == 'top_rated') {
+        response = await axios.get('/movie/' + movieCate, {
+          params: { language: 'ko-KR', page: 1 },
+        });
+      } else if (movieCate == 'Dday') {
+        response = await axios.get('/movie/' + movieCate, {
+          params: { language: 'ko-KR', page: 1, dates: { "maximum": "2024-12-25", "minimum": "2024-12-04" }, },
+        });
+      } else if (movieCate == 'popular') {
+        response = await axios.get('/movie/' + movieCate, {
+          params: { language: 'ko-KR', page: 1 },
+        });
+      } else {
+        response = await axios.get('/movie/' + movieCate, {
+          params: { language: 'ko-KR', page: 1 },
+        });
+      }
       setLoadMovies(response.data.results);
     } catch (error) {
       console.error('Error fetching movies:', error);
@@ -79,7 +94,7 @@ export default function CardDefault({ cate }: TitleProps) {
           {loadMovies.slice(0, 5).map((movie) => (
             <CardWrap key={movie.id} onClick={() => openDetail(router, movie.id, 'movie')}>
               <div className="card-photo">
-                <div className="card-PhotoTxt">D-1</div>
+                <div className="card-PhotoTxt">{movie.release_date}</div>
                 <div className="card-photo-wrap">
                   <Image
                     src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
@@ -95,7 +110,12 @@ export default function CardDefault({ cate }: TitleProps) {
               <div className="card-text-wrap">
                 <div className="card-movie-title">{movie.title}</div>
                 <div className="card-movie-desc">
-                  {new Date(movie.release_date).getFullYear()} | {movie.original_language.toUpperCase()}
+                  {new Date(movie.release_date).getFullYear()} | <span className='popularity'>
+                    예상평점 {movie.vote_average}
+                  </span>
+                </div>
+                <div className="card-movie-info">
+
                 </div>
               </div>
             </CardWrap>
@@ -185,13 +205,17 @@ const CardWrap = styled.div`
 
     .card-movie-desc {
       font-size: 14px;
-      color: #555;
+      color: var(--color-text-secondary);
     }
 
     .card-movie-viewCnt {
       font-size: 13px;
-      color: #00b9ae;
+    color: var(--color-primary-accent)
     }
+  }
+
+  .popularity{
+    color: var(--color-primary-accent)
   }
 `;
 
