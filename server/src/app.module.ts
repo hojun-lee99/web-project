@@ -7,9 +7,18 @@ import { PrismaModule } from './prisma/prisma.module';
 import { CommunityModule } from './community/community.module';
 import { RatingsModule } from './ratings/ratings.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { ArticlesModule } from './articles/articles.module';
 
 @Module({
-  imports: [AuthModule, UsersModule, PrismaModule, CommunityModule, RatingsModule, ReviewsModule],
+  imports: [
+    AuthModule,
+    UsersModule,
+    PrismaModule,
+    CommunityModule,
+    RatingsModule,
+    ReviewsModule,
+    ArticlesModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
