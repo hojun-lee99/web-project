@@ -4,17 +4,18 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateArticleDto, UpdateArticleDto } from './types';
+import { Article } from './types';
 
 @Injectable()
 export class ArticlesService {
   constructor(private prisma: PrismaService) {}
 
-  async create(userId: number, createArticleDte: CreateArticleDto) {
+  async create(article: Article) {
     return this.prisma.article.create({
       data: {
-        ...createArticleDte,
-        userId,
+        title: article.title,
+        content: article.content,
+        userId: article.authorId,
       },
     });
   }
@@ -52,16 +53,19 @@ export class ArticlesService {
     return article;
   }
 
-  async update(id: number, userId: number, updateArticleDto: UpdateArticleDto) {
-    const article = await this.findOne(id);
+  async update(id: number, articleData: Partial<Article>) {
+    const existingArticle = await this.findOne(id);
 
-    if (article.userId !== userId) {
+    if (existingArticle.userId !== articleData.authorId) {
       throw new ForbiddenException('You can only update your own articles');
     }
 
     return this.prisma.article.update({
       where: { id },
-      data: updateArticleDto,
+      data: {
+        title: articleData.title,
+        content: articleData.content,
+      },
     });
   }
 

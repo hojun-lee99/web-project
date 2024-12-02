@@ -9,9 +9,10 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+
 import { ArticlesService } from './articles.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { CreateArticleDto, UpdateArticleDto } from './types/index';
+import { Article, CreateArticleDto, UpdateArticleDto } from './types/index';
 
 @Controller('articles')
 export class ArticlesController {
@@ -20,7 +21,12 @@ export class ArticlesController {
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Req() req, @Body() createArticleDte: CreateArticleDto) {
-    return this.articlesService.create(req.user.userId, createArticleDte);
+    const article: Article = {
+      title: createArticleDte.title,
+      content: createArticleDte.content,
+      authorId: req.user.userId,
+    };
+    return this.articlesService.create(article);
   }
 
   @Get()
@@ -40,7 +46,12 @@ export class ArticlesController {
     @Req() req,
     @Body() updateArticleDto: UpdateArticleDto,
   ) {
-    return this.articlesService.update(+id, req.user.userId, updateArticleDto);
+    const article: Partial<Article> = {
+      ...(updateArticleDto.title && { title: updateArticleDto.title }),
+      ...(updateArticleDto.content && { content: updateArticleDto.content }),
+      authorId: req.user.userId,
+    };
+    return this.articlesService.update(+id, article);
   }
 
   @UseGuards(JwtAuthGuard)
