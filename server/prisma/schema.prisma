@@ -30,6 +30,7 @@ model User {
   ratings   Rating[]
   posts     Post[]
   comments  Comment[]
+  articles Article[]
 
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
@@ -110,4 +111,18 @@ model Comment {
   @@index([postId])
   @@index([userId])
   @@map("comments")
+}
+
+model Article {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String   @db.Text
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("articles")
 }
