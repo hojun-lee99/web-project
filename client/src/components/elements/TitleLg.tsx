@@ -2,7 +2,11 @@
 
 import styled from 'styled-components';
 
-export default function TitleLg({ title }) {
+type TitleProps = {
+  title: string;
+};
+
+export default function TitleLg({ title }: TitleProps) {
   return (
     <PageTitleLg>{title}</PageTitleLg>
   );

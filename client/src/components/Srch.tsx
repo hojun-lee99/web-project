@@ -106,8 +106,11 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
                     src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
                     alt={movie.title}
                     layout="fill"
-                    objectFit="cover" // 이미지 비율 유지하며 채우기
-                    objectPosition="center" // 이미지 위치 조정
+                    style={{
+                      objectFit: 'cover', // 이미지 비율 유지하며 채우기
+                      objectPosition: 'center' // 이미지 중앙 정렬
+                    }}
+                    sizes="(max-width: 768px) 100%, (max-width: 1320px) 100%, 100%"
                   />
                 ) : (
                   <Placeholder>No Image</Placeholder>
@@ -139,8 +142,11 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
                     src={`https://image.tmdb.org/t/p/w200${people.profile_path}`}
                     alt={people.name}
                     layout="fill"
-                    objectFit="cover" // 이미지 비율 유지하며 채우기
-                    objectPosition="center" // 이미지 위치 조정
+                    style={{
+                      objectFit: 'cover', // 이미지 비율 유지하며 채우기
+                      objectPosition: 'center' // 이미지 중앙 정렬
+                    }}
+                    sizes="(max-width: 768px) 100%, (max-width: 1320px) 100%, 100%"
                   />
                 ) : (
                   <Placeholder>No Image</Placeholder>
@@ -174,8 +180,11 @@ export default function CardSrch({ srchProps }: CardSrchProps) {
                     src={`https://image.tmdb.org/t/p/w200${collection.poster_path}`}
                     alt={collection.original_name}
                     layout="fill"
-                    objectFit="cover" // 이미지 비율 유지하며 채우기
-                    objectPosition="center" // 이미지 위치 조정
+                    style={{
+                      objectFit: 'cover', // 이미지 비율 유지하며 채우기
+                      objectPosition: 'center' // 이미지 중앙 정렬
+                    }}
+                    sizes="(max-width: 768px) 100%, (max-width: 1320px) 100%, 100%"
                   />
                 ) : (
                   <Placeholder>No Image</Placeholder>

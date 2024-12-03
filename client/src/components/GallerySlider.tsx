@@ -81,8 +81,11 @@ export default function GallerySlider({ data }: GallerySliderProps) {
                   src={`https://image.tmdb.org/t/p/w500${item}`}
                   alt={`Still ${index + 1}`}
                   layout="fill"
-                  objectFit="cover" // 이미지 비율 유지하며 채우기
-                  objectPosition="center" // 이미지 위치 조정
+                  style={{
+                    objectFit: 'cover', // 이미지 비율 유지하며 채우기
+                    objectPosition: 'center' // 이미지 중앙 정렬
+                  }}
+                  sizes="(max-width: 768px) 33%, (max-width: 1320px) 24%, 33%"
                 />
               ) : (
                 <iframe
@@ -127,8 +130,8 @@ const SlideContent = styled.div<{ isVideo: boolean }>`
     width: 100%;
     height: 100%;
     ${({ isVideo }) =>
-      isVideo &&
-      `
+    isVideo &&
+    `
       position: absolute;
       top: 0;
       left: 0;

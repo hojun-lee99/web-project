@@ -156,9 +156,11 @@ export default function Contents() {
               src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
               alt={`${movie.title} Poster`}
               layout="fill"
-              style={{ objectFit: 'cover' }}
-              objectFit="cover" // 이미지 비율 유지하며 채우기
-              objectPosition="center" // 이미지 위치 조정
+              style={{
+                objectFit: 'cover', // 이미지 비율 유지하며 채우기
+                objectPosition: 'center' // 이미지 중앙 정렬
+              }}
+              sizes="(max-width: 768px) 33%, (max-width: 1320px) 24%, 33%"
             />
           </div>
           <div>

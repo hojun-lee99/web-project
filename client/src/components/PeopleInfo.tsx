@@ -74,8 +74,11 @@ export default function PeopleInfo({ data }: PeopleInfoProps) {
                     src={`https://image.tmdb.org/t/p/w200${director.profile_path}`}
                     alt={director.name}
                     layout="fill"
-                    objectFit="cover" // 이미지 비율 유지하며 채우기
-                    objectPosition="center" // 이미지 위치 조정
+                    style={{
+                      objectFit: 'cover', // 이미지 비율 유지하며 채우기
+                      objectPosition: 'center' // 이미지 중앙 정렬
+                    }}
+                    sizes="(max-width: 768px) 33%, (max-width: 1320px) 24%, 33%"
                   />
                 ) : (
                   <div>No Image</div>
@@ -98,8 +101,11 @@ export default function PeopleInfo({ data }: PeopleInfoProps) {
                     src={`https://image.tmdb.org/t/p/w200${actor.profile_path}`}
                     alt={actor.name}
                     layout="fill"
-                    objectFit="cover" // 이미지 비율 유지하며 채우기
-                    objectPosition="center" // 이미지 위치 조정
+                    style={{
+                      objectFit: 'cover', // 이미지 비율 유지하며 채우기
+                      objectPosition: 'center' // 이미지 중앙 정렬
+                    }}
+                    sizes="(max-width: 768px) 33%, (max-width: 1320px) 24%, 33%"
                   />
                 ) : (
                   <div>No Image</div>
