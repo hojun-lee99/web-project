@@ -13,7 +13,7 @@ export default function TitleLg({ title }: TitleProps) {
 }
 
 const PageTitleLg = styled.h2`
-  font-size:42px;
-  padding:12px 0 14px;
-  line-height:51px;
+  font-size: 42px;
+  padding: 12px 0 14px;
+  line-height: 51px;
 `;

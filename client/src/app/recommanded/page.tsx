@@ -1,11 +1,10 @@
 'use client';
 
-import TitleLg from "@/components/elements/TitleLg";
-import TitleSm from "@/components/elements/TitleSm";
-import TitleTab from "@/components/elements/TitleTab";
+import TitleLg from '@/components/elements/TitleLg';
+import TitleSm from '@/components/elements/TitleSm';
+import TitleTab from '@/components/elements/TitleTab';
 
 export default function Recommanded() {
-
   return (
     <div className="content">
       <div className="content-inner">

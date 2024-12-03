@@ -24,14 +24,18 @@ export default function CardDefault({ cate }: TitleProps) {
 
   const fetchMovies = useCallback(async (movieCate: string) => {
     try {
-      let response
+      let response;
       if (movieCate == 'top_rated') {
         response = await axios.get('/movie/' + movieCate, {
           params: { language: 'ko-KR', page: 1 },
         });
       } else if (movieCate == 'Dday') {
         response = await axios.get('/movie/' + movieCate, {
-          params: { language: 'ko-KR', page: 1, dates: { "maximum": "2024-12-25", "minimum": "2024-12-04" }, },
+          params: {
+            language: 'ko-KR',
+            page: 1,
+            dates: { maximum: '2024-12-25', minimum: '2024-12-04' },
+          },
         });
       } else if (movieCate == 'popular') {
         response = await axios.get('/movie/' + movieCate, {
@@ -63,7 +67,10 @@ export default function CardDefault({ cate }: TitleProps) {
       {cate === 'HOTRank' && (
         <>
           {loadMovies.slice(0, 5).map((movie, index) => (
-            <CardWrap key={movie.id} onClick={() => openDetail(router, movie.id, 'movie')}>
+            <CardWrap
+              key={movie.id}
+              onClick={() => openDetail(router, movie.id, 'movie')}
+            >
               <div className="card-photo">
                 <div className="card-PhotoTxt">{index + 1}</div>
                 <div className="card-logo"></div>
@@ -80,10 +87,11 @@ export default function CardDefault({ cate }: TitleProps) {
                   />
                 </div>
               </div>
-              <div className='card-text-wrap'>
+              <div className="card-text-wrap">
                 <div className="card-movie-title">{movie.title}</div>
                 <div className="card-movie-desc">
-                  {new Date(movie.release_date).getFullYear()} | {movie.original_language.toUpperCase()}
+                  {new Date(movie.release_date).getFullYear()} |{' '}
+                  {movie.original_language.toUpperCase()}
                 </div>
               </div>
             </CardWrap>
@@ -95,7 +103,10 @@ export default function CardDefault({ cate }: TitleProps) {
       {cate === 'Dday' && (
         <>
           {loadMovies.slice(0, 5).map((movie) => (
-            <CardWrap key={movie.id} onClick={() => openDetail(router, movie.id, 'movie')}>
+            <CardWrap
+              key={movie.id}
+              onClick={() => openDetail(router, movie.id, 'movie')}
+            >
               <div className="card-photo">
                 <div className="card-PhotoTxt">{movie.release_date}</div>
                 <div className="card-photo-wrap">
@@ -118,9 +129,7 @@ export default function CardDefault({ cate }: TitleProps) {
                     {/* 예상평점 {movie.vote_average} */}
                   </span>
                 </div>
-                <div className="card-movie-info">
-
-                </div>
+                <div className="card-movie-info"></div>
               </div>
             </CardWrap>
           ))}
@@ -142,22 +151,22 @@ const CardWrap = styled.div`
   max-width: 248px;
   height: auto;
   max-height: 423px;
-  cursor:pointer;
+  cursor: pointer;
 
   .card-photo {
-    width:228px;
+    width: 228px;
     height: 355px;
     border-radius: 4px;
     overflow: hidden;
     padding: 10px;
     position: relative;
-    z-index:1;
+    z-index: 1;
 
-    .card-photo-wrap{
-      position:absolute;
-      left:0;
-      top:0;
-      z-index:-1;
+    .card-photo-wrap {
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: -1;
       width: 280px;
       height: 350px;
       background-color: var(--color-background-secondary);
@@ -214,13 +223,11 @@ const CardWrap = styled.div`
 
     .card-movie-viewCnt {
       font-size: 13px;
-    color: var(--color-primary-accent)
+      color: var(--color-primary-accent);
     }
   }
 
-  .popularity{
-    color: var(--color-primary-accent)
+  .popularity {
+    color: var(--color-primary-accent);
   }
 `;
-
-
