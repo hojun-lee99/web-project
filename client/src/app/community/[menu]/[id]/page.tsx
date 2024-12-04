@@ -29,12 +29,171 @@ export default function Post() {
         </PostHeader>
         <PostText>게시물 내용</PostText>
         <PostComment>
-          <p>댓글</p>
+          <div className="comment-head">댓글</div>
+          <div className="comment-textarea">
+            <CommentTextarea placeholder="PostComment"></CommentTextarea>
+            <button className="comment-submit" type="button">
+              등록
+            </button>
+          </div>
+          <PostCommentList>
+            <ul>
+              <PostCommentItem>
+                <div className="comment-item-user">
+                  <div className="comment-item-head">
+                    <div>
+                      <div className="comment-user-profile"></div>
+                      <div className="comment-user-name">댓글작성자1</div>
+                      <div className="comment-date">1일전</div>
+                    </div>
+
+                    <div className="comment-reply-button">답글달기</div>
+                  </div>
+                  <div className="comment-item-user_text">댓글내용</div>
+                </div>
+
+                <PostCommentReply>
+                  <div className="comment-reply-textarea">
+                    <div className="comment-user-profile"></div>
+                    <div className="comment-textarea">
+                      <CommentTextarea placeholder="PostComment"></CommentTextarea>
+                      <button className="comment-submit" type="button">
+                        등록
+                      </button>
+                    </div>
+                  </div>
+
+                  <ul className="comment-reply-list">
+                    <li>
+                      <div className="comment-item-head">
+                        <div>
+                          <div className="comment-user-profile"></div>
+                          <div className="comment-user-name">답댓작성자</div>
+                          <div className="comment-date">1일전</div>
+                        </div>
+
+                        <div className="comment-reply-button">
+                          <button type="button">삭제</button>
+                          <button type="button">수정</button>
+                        </div>
+                      </div>
+                      <div className="comment-item-user_text">
+                        <div>답댓글내용</div>
+                      </div>
+                    </li>
+                  </ul>
+                </PostCommentReply>
+              </PostCommentItem>
+              <PostCommentItem>
+                <div className="comment-item-user">
+                  <div className="comment-item-head">
+                    <div>
+                      <div className="comment-user-profile"></div>
+                      <div className="comment-user-name">닉네임</div>
+                      <div className="comment-date">1일전</div>
+                    </div>
+
+                    <div className="comment-reply-button">답글달기</div>
+                  </div>
+                  <div className="comment-item-user_text">댓글내용</div>
+                </div>
+              </PostCommentItem>
+            </ul>
+          </PostCommentList>
         </PostComment>
       </PostLayout>
     </div>
   );
 }
+
+const PostCommentList = styled.div`
+  margin-top: 20px;
+`;
+
+const PostCommentItem = styled.li`
+  margin-top: 20px;
+
+  .comment-item-user {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .comment-item-head {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--color-border-primary);
+    padding: 10px 0;
+    align-items: center;
+  }
+
+  .comment-item-head > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .comment-user-profile {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ddd;
+  }
+
+  .comment-date {
+    font-size: 14px;
+    color: var(--color-text-tertiary);
+  }
+
+  .comment-item-user_text {
+    padding: 10px 0;
+    color: var(--color-text-tertiary);
+    margin-bottom: 40px;
+  }
+
+  .comment-user-name {
+    font-weight: 600;
+  }
+
+  .comment-reply-button {
+    font-size: 14px;
+    color: var(--color-primary-accent);
+  }
+`;
+
+const PostCommentReply = styled.div`
+  padding-left: 40px;
+  display: flex;
+  flex-direction: column;
+
+  .comment-reply-list {
+    margin-top: 20px;
+  }
+
+  .comment-reply-textarea {
+    display: flex;
+  }
+
+  .comment-user-profile {
+    margin-right: 10px;
+  }
+
+  .comment-textarea {
+    flex: 1;
+  }
+
+  .comment-reply-button {
+    display: flex;
+    gap: 10px;
+  }
+
+  .comment-reply-button button {
+    border: none;
+    background: none;
+    font-weight: 500;
+  }
+`;
 
 const BackButton = styled.div`
   color: var(--color-primary-accent);
@@ -109,9 +268,37 @@ const PostText = styled.div`
 
 const PostComment = styled.div`
   margin-top: 36px;
-  p {
+
+  .comment-head {
     font-size: 20px;
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
   }
+
+  .comment-textarea {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .comment-submit {
+    padding: 10px;
+    border: none;
+    color: var(--color-text-white);
+    background-color: var(--color-primary-accent);
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 80px;
+    margin-top: 10px;
+  }
+`;
+
+const CommentTextarea = styled.textarea`
+  resize: none;
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 4px;
 `;
