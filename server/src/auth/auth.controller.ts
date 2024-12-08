@@ -10,7 +10,7 @@ import {
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
-import { LoginDto, RegisterDto } from './dto';
+import { ApiSocialAuthResponse, LoginDto, RegisterDto } from './dto';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
@@ -102,6 +102,14 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
+  @ApiOperation({
+    summary: 'Google 로그인',
+    description: 'Google OAuth2 로그인 페이지로 리다이렉트합니다.',
+  })
+  @ApiResponse({
+    status: 302,
+    description: 'Google 로그인 페이지로 리다이렉트',
+  })
   @Get('google')
   @UseGuards(AuthGuard('google'))
   async googleAuth() {
@@ -112,6 +120,7 @@ export class AuthController {
     summary: 'Google 로그인 콜백',
     description: 'Google 로그인 후 처리를 진행한다.',
   })
+  @ApiSocialAuthResponse()
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req) {
@@ -130,12 +139,25 @@ export class AuthController {
     }
   }
 
+  @ApiOperation({
+    summary: 'Naver 로그인',
+    description: 'Naver OAuth 로그인 페이지로 리다이렉트합니다.',
+  })
+  @ApiResponse({
+    status: 302,
+    description: 'Naver 로그인 페이지로 리다이렉트',
+  })
   @Get('naver')
   @UseGuards(AuthGuard('naver'))
   async naverAuth() {
     // 네이버 로그인 페이지로 리다이렉트
   }
 
+  @ApiOperation({
+    summary: 'Naver 로그인 콜백',
+    description: 'Naver 로그인 후 처리를 진행합니다.',
+  })
+  @ApiSocialAuthResponse()
   @Get('naver/callback')
   @UseGuards(AuthGuard('naver'))
   async naverAuthRedirect(@Req() req) {
@@ -154,12 +176,25 @@ export class AuthController {
     }
   }
 
+  @ApiOperation({
+    summary: 'Kakao 로그인',
+    description: 'Kakao OAuth 로그인 페이지로 리다이렉트합니다.',
+  })
+  @ApiResponse({
+    status: 302,
+    description: 'Kakao 로그인 페이지로 리다이렉트',
+  })
   @Get('kakao')
   @UseGuards(AuthGuard('kakao'))
   async kakaoAuth() {
     // 카카오 로그인 페이지 리다이렉트
   }
 
+  @ApiOperation({
+    summary: 'Kakao 로그인 콜백',
+    description: 'Kakao 로그인 후 처리를 진행합니다.',
+  })
+  @ApiSocialAuthResponse()
   @Get('kakao/callback')
   @UseGuards(AuthGuard('kakao'))
   async kakaoAuthRedirect(@Req() req) {
