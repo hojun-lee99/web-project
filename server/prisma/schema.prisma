@@ -105,6 +105,10 @@ model Comment {
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
 
+  parentId  Int?
+  parent    Comment?  @relation("ReplyToComment", fields: [parentId], references: [id], onDelete: SetNull)
+  replies   Comment[] @relation("ReplyToComment")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
