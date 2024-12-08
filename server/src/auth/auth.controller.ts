@@ -6,7 +6,6 @@ import {
   Request,
   Get,
   Req,
-  HttpStatus,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
