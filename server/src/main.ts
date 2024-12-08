@@ -29,7 +29,7 @@ async function bootstrap() {
     .addTag('Community', '커뮤니티 관련 API')
     .addTag('Ratings', '별점 관련 API')
     .addTag('Reviews', '리뷰 관련 API')
-    .addTag('Articles', '아티클관련 API')
+    .addTag('Articles', '아티클 관련 API')
     .addBearerAuth()
     .build();
 

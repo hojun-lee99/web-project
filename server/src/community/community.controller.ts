@@ -33,7 +33,7 @@ import {
 export class CommunityController {
   constructor(private readonly communityService: CommunityService) {}
 
-  @ApiOperation({ summary: '메이 페이지 게시글 목록 조회' })
+  @ApiOperation({ summary: '메인 페이지 게시글 목록 조회' })
   @ApiResponse({
     status: 200,
     description: '메인 페이지 게시글 목록 조회 성공',
