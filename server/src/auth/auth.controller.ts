@@ -182,6 +182,7 @@ export class AuthController {
   async kakaoAuthRedirect(@Req() req) {
     return this.handleSocialAuth(req);
   }
+
   private async handleSocialAuth(
     req: any,
   ): Promise<TokenResponseDto | RegistrationRequiredDto> {
