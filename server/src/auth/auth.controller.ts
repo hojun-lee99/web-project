@@ -10,7 +10,13 @@ import {
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
-import { ApiSocialAuthResponse, LoginDto, RegisterDto } from './dto';
+import {
+  ApiSocialAuthResponse,
+  LoginDto,
+  RegisterDto,
+  RegistrationRequiredDto,
+  TokenResponseDto,
+} from './dto';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
@@ -124,19 +130,7 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req) {
-    const { email } = req.user;
-
-    const existingUser = await this.authService.findUserByEmail(email);
-
-    if (existingUser) {
-      return this.authService.login(existingUser);
-    } else {
-      return {
-        requireRegistration: true,
-        email,
-        message: 'Registration required',
-      };
-    }
+    return this.handleSocialAuth(req);
   }
 
   @ApiOperation({
@@ -161,19 +155,7 @@ export class AuthController {
   @Get('naver/callback')
   @UseGuards(AuthGuard('naver'))
   async naverAuthRedirect(@Req() req) {
-    const { email } = req.user;
-
-    const existingUser = await this.authService.findUserByEmail(email);
-
-    if (existingUser) {
-      return this.authService.login(existingUser);
-    } else {
-      return {
-        requireRegistration: true,
-        email,
-        message: 'Registration required',
-      };
-    }
+    return this.handleSocialAuth(req);
   }
 
   @ApiOperation({
@@ -198,8 +180,12 @@ export class AuthController {
   @Get('kakao/callback')
   @UseGuards(AuthGuard('kakao'))
   async kakaoAuthRedirect(@Req() req) {
+    return this.handleSocialAuth(req);
+  }
+  private async handleSocialAuth(
+    req: any,
+  ): Promise<TokenResponseDto | RegistrationRequiredDto> {
     const { email } = req.user;
-
     const existingUser = await this.authService.findUserByEmail(email);
 
     if (existingUser) {
