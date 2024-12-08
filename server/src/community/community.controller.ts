@@ -231,6 +231,7 @@ export class CommunityController {
         content: 'string',
         postId: 1,
         userId: 1,
+        parentId: null, // 대댓글인 경우 부모 댓글 ID
         createdAt: '2024-11-23T08:01:12.975Z',
         updatedAt: '2024-11-23T08:01:12.975Z',
       },

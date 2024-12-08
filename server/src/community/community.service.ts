@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -138,7 +139,7 @@ export class CommunityService {
   }
 
   async createCommnet(createComment: CreateComment) {
-    const { content, postId, userId } = createComment;
+    const { content, postId, userId, parentId } = createComment;
     const post = await this.prisma.post.findUnique({
       where: { id: postId },
     });
@@ -147,11 +148,28 @@ export class CommunityService {
       throw new NotFoundException(`Post with Id ${postId} not found`);
     }
 
+    if (parentId) {
+      const parentComment = await this.prisma.comment.findUnique({
+        where: { id: parentId },
+      });
+
+      if (!parentComment) {
+        throw new NotFoundException(
+          `Parent comment with Id ${parentId} not found`,
+        );
+      }
+
+      if (parentComment.parentId) {
+        throw new BadRequestException(`Cannot reply to a nested comment`);
+      }
+    }
+
     return await this.prisma.comment.create({
       data: {
         content,
         postId,
         userId,
+        parentId,
       },
     });
   }
@@ -162,7 +180,6 @@ export class CommunityService {
   ) {
     const skip = (page - 1) * limit;
 
-    // Check if post exists
     const post = await this.prisma.post.findUnique({
       where: { id: postId },
     });
@@ -173,7 +190,10 @@ export class CommunityService {
 
     const [comments, total] = await Promise.all([
       this.prisma.comment.findMany({
-        where: { postId },
+        where: {
+          postId,
+          OR: [{ parentId: null }, { parent: null }],
+        },
         skip,
         take: limit,
         orderBy: {
@@ -186,10 +206,23 @@ export class CommunityService {
               nickname: true,
             },
           },
+          replies: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  nickname: true,
+                },
+              },
+            },
+            orderBy: {
+              createdAt: 'asc',
+            },
+          },
         },
       }),
       this.prisma.comment.count({
-        where: { postId },
+        where: { postId, OR: [{ parentId: null }, { parent: null }] },
       }),
     ]);
 
