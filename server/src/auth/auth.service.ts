@@ -35,4 +35,8 @@ export class AuthService {
       nickname,
     });
   }
+
+  async findUserByEmail(email: string) {
+    return this.userService.findByEmail(email);
+  }
 }

@@ -1,8 +1,19 @@
-import { Body, Controller, Post, UseGuards, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  Request,
+  Get,
+  Req,
+  HttpStatus,
+} from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+
+import { LoginDto, RegisterDto } from './dto';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { LoginDto, RegisterDto } from './dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -90,5 +101,81 @@ export class AuthController {
   @Post('login')
   async login(@Request() req) {
     return this.authService.login(req.user);
+  }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth() {
+    // Google 로그인 페이지로 리다이렉트
+  }
+
+  @ApiOperation({
+    summary: 'Google 로그인 콜백',
+    description: 'Google 로그인 후 처리를 진행한다.',
+  })
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(@Req() req) {
+    const { email } = req.user;
+
+    const existingUser = await this.authService.findUserByEmail(email);
+
+    if (existingUser) {
+      return this.authService.login(existingUser);
+    } else {
+      return {
+        requireRegistration: true,
+        email,
+        message: 'Registration required',
+      };
+    }
+  }
+
+  @Get('naver')
+  @UseGuards(AuthGuard('naver'))
+  async naverAuth() {
+    // 네이버 로그인 페이지로 리다이렉트
+  }
+
+  @Get('naver/callback')
+  @UseGuards(AuthGuard('naver'))
+  async naverAuthRedirect(@Req() req) {
+    const { email } = req.user;
+
+    const existingUser = await this.authService.findUserByEmail(email);
+
+    if (existingUser) {
+      return this.authService.login(existingUser);
+    } else {
+      return {
+        requireRegistration: true,
+        email,
+        message: 'Registration required',
+      };
+    }
+  }
+
+  @Get('kakao')
+  @UseGuards(AuthGuard('kakao'))
+  async kakaoAuth() {
+    // 카카오 로그인 페이지 리다이렉트
+  }
+
+  @Get('kakao/callback')
+  @UseGuards(AuthGuard('kakao'))
+  async kakaoAuthRedirect(@Req() req) {
+    const { email } = req.user;
+
+    const existingUser = await this.authService.findUserByEmail(email);
+
+    if (existingUser) {
+      return this.authService.login(existingUser);
+    } else {
+      return {
+        requireRegistration: true,
+        email,
+        message: 'Registration required',
+      };
+    }
   }
 }
