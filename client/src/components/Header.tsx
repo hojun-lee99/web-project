@@ -40,6 +40,9 @@ export default function Header() {
     if (debouncedSearchValue.trim()) {
       router.push(`/search?q=${encodeURIComponent(debouncedSearchValue)}`);
     }
+    else {
+      router.push(`/search`);
+    }
   }, [debouncedSearchValue, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
