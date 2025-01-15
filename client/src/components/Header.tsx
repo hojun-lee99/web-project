@@ -41,7 +41,7 @@ export default function Header() {
       router.push(`/search?q=${encodeURIComponent(debouncedSearchValue)}`);
     }
     else {
-      router.push(`/search`);
+      router.push(`/`);
     }
   }, [debouncedSearchValue, router]);
 
