@@ -133,12 +133,6 @@ header {
 .content > .content-inner {
   margin-bottom: 120px;
 }
-
-/* mainPage mainBanner */
-.swiper {
-  position: relative;
-  z-index: -1;
-}
 .content.main-content .content-inner {
   margin-bottom: 30px;
 }
