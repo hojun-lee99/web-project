@@ -6,7 +6,15 @@ import CardComment from '@/components/elements/CardComment';
 import CardArticel from '@/components/elements/CardArticel';
 import MainBanner from '@/components/MainBanner';
 
+import { useAppSelector, useAppDispatch } from '../redux/hooks'
+import { selectLogin } from '@/redux/loginStateSlice';
+
 export default function Home() {
+  const count = useAppSelector(selectLogin);
+  const dispatch = useAppDispatch();
+
+  console.log(count);
+
   return (
     <div className="content main-content" >
       <MainBanner></MainBanner>
