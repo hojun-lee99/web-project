@@ -7,9 +7,9 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
-import { GoogleStrategy } from './strategies/google.strategy';
-import { NaverStrategy } from './strategies/naver.strategy';
-import { KakaoStrategy } from './strategies/kakao.strategy';
+// import { GoogleStrategy } from './strategies/google.strategy';
+// import { NaverStrategy } from './strategies/naver.strategy';
+// import { KakaoStrategy } from './strategies/kakao.strategy';
 
 @Module({
   imports: [
@@ -25,9 +25,9 @@ import { KakaoStrategy } from './strategies/kakao.strategy';
     AuthService,
     LocalStrategy,
     JwtStrategy,
-    GoogleStrategy,
-    NaverStrategy,
-    KakaoStrategy,
+    // GoogleStrategy,
+    // NaverStrategy,
+    // KakaoStrategy,
   ],
   exports: [AuthService],
 })
