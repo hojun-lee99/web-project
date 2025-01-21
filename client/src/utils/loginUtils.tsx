@@ -9,84 +9,86 @@ function checkClient(): boolean {
   return typeof window === undefined;
 }
 
-export function checkLoginLocalStorage(): boolean | void {
+export function checkLoginLocalStorage(): boolean {
   if (checkClient()) {
-    return;
+    throw { error: 'error' };
   }
+
   let ok: boolean = false;
   const check: string | null = localStorage.getItem(
     process.env.MY_LOGIN_USER as string,
   );
+
   if (check !== null) {
     ok = true;
   }
+
   return ok;
 }
 
-export function getLoginLocalStorage(): {
-  userid: string;
-  jwt: string;
-} | void | null {
+export function getLoginLocalStorage(): saveLocalStorage {
   if (checkClient()) {
-    return;
+    throw { error: 'error' };
   }
+
   let get: string | null | saveLocalStorage = localStorage.getItem(
     process.env.MY_LOGIN_USER as string,
   );
-  if (typeof get === 'string') {
-    get = JSON.parse(get) as saveLocalStorage;
+
+  if (get === null) {
+    throw { error: 'error' };
+  } else if (typeof get === 'string') {
+    get = saveLocalStorageJsonParse(get) as saveLocalStorage;
   }
+
   return get;
 }
 
-export function setLoginLocalStorage(
-  saveLocalStorage: saveLocalStorage,
-): boolean | void {
+export function setLoginLocalStorage(saveObj: saveLocalStorage): boolean {
   if (checkClient()) {
-    return;
+    throw { error: 'error' };
   }
-  JSON.parse;
+  const saveLocalStorage: string = saveLocalStorageJsonStringify(saveObj);
+  localStorage.setItem(process.env.MY_LOGIN_USER as string, saveLocalStorage);
+  return true;
 }
 
-export function saveLocalStorageJsonParse(
-  jsonStr: string,
-): saveLocalStorage | null {
+export function saveLocalStorageJsonParse(jsonStr: string): saveLocalStorage {
   let jsonObj: saveLocalStorage | null = null;
-  try {
-    jsonObj = JSON.parse(jsonStr);
-  } catch (error) {
-    jsonObj = null;
-    console.error(error);
-  }
+
+  const obj = JSON.parse(jsonStr);
+
+  saveLocalStorageCheck(obj);
+
+  jsonObj = obj as saveLocalStorage;
 
   return jsonObj;
 }
 
-export function jsonStringifysaveLocalStorageJsonStringify(
+export function saveLocalStorageJsonStringify(
   jsonObj: saveLocalStorage,
-): string | null {
+): string {
   let jsonStr: string | null = null;
 
-  if (saveLocalStorageCheck(jsonObj)) {
-    jsonStr = JSON.stringify(jsonObj);
-  }
+  saveLocalStorageCheck(jsonObj);
+
+  jsonStr = JSON.stringify(jsonObj);
+
   return jsonStr;
 }
 
-export function saveLocalStorageCheck(obj: saveLocalStorage): boolean {
-  let check = false;
+export function saveLocalStorageCheck(obj: saveLocalStorage): void {
   const keys: string[] = Object.keys(obj).filter(
     (key) => !(key in ({} as saveLocalStorage)),
   );
-  if (keys.length === 0) {
-    check = true;
+  if (keys.length !== 0) {
+    throw { message: 'error' };
   }
-  return check;
 }
 
 export function removeLoginLocalStorage(): void {
   if (checkClient()) {
-    return;
+    throw { error: 'error' };
   }
   localStorage.removeItem(process.env.MY_LOGIN_USER as string);
 }
