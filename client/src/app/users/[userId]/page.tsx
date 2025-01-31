@@ -31,9 +31,6 @@ const totalItems = Object.values(data).reduce((acc, value) => acc + value, 0);
 
 const categories: CategoryItem[] = [
   { key: 'movie', label: '영화', count: data.movie },
-  { key: 'series', label: '시리즈', count: data.series },
-  { key: 'books', label: '책', count: data.books },
-  { key: 'webtoons', label: '웹툰', count: data.webtoons },
 ];
 
 export default function UserPage({ params }: { params: { userId: string } }) {
