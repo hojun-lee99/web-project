@@ -1,5 +1,7 @@
 'use-client';
 
+import { error } from 'console';
+
 export type saveLocalStorage = {
   userid: string;
   jwt: string;
@@ -9,9 +11,13 @@ function checkClient(): boolean {
   return typeof window === undefined;
 }
 
+function notClientError() {
+  throw { error: 'not client' };
+}
+
 export function checkLoginLocalStorage(): boolean {
   if (checkClient()) {
-    throw { error: 'error' };
+    notClientError();
   }
 
   let ok: boolean = false;
@@ -28,7 +34,7 @@ export function checkLoginLocalStorage(): boolean {
 
 export function getLoginLocalStorage(): saveLocalStorage {
   if (checkClient()) {
-    throw { error: 'error' };
+    notClientError();
   }
 
   let get: string | null | saveLocalStorage = localStorage.getItem(
@@ -36,7 +42,7 @@ export function getLoginLocalStorage(): saveLocalStorage {
   );
 
   if (get === null) {
-    throw { error: 'error' };
+    throw { error: 'getLoginLocalStorageError' };
   } else if (typeof get === 'string') {
     get = saveLocalStorageJsonParse(get) as saveLocalStorage;
   }
@@ -46,7 +52,7 @@ export function getLoginLocalStorage(): saveLocalStorage {
 
 export function setLoginLocalStorage(saveObj: saveLocalStorage): boolean {
   if (checkClient()) {
-    throw { error: 'error' };
+    notClientError();
   }
   const saveLocalStorage: string = saveLocalStorageJsonStringify(saveObj);
   localStorage.setItem(process.env.MY_LOGIN_USER as string, saveLocalStorage);
@@ -78,17 +84,25 @@ export function saveLocalStorageJsonStringify(
 }
 
 export function saveLocalStorageCheck(obj: saveLocalStorage): void {
-  const keys: string[] = Object.keys(obj).filter(
-    (key) => !(key in ({} as saveLocalStorage)),
+  const requiredKeys1: (keyof saveLocalStorage)[] = ['userid', 'jwt'];
+  const requiredKeys2 = Object.fromEntries(
+    requiredKeys1.map((key) => [key, null]),
   );
-  if (keys.length !== 0) {
-    throw { message: 'error' };
+  const valid1 = requiredKeys1.every((key) => {
+    return key in obj;
+  });
+  const valid2 = Object.keys(obj).every((key) => {
+    return key in requiredKeys2;
+  });
+
+  if (!(valid1 && valid2)) {
+    throw { error: 'error' };
   }
 }
 
 export function removeLoginLocalStorage(): void {
   if (checkClient()) {
-    throw { error: 'error' };
+    notClientError();
   }
   localStorage.removeItem(process.env.MY_LOGIN_USER as string);
 }

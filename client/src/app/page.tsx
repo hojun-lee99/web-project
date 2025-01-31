@@ -6,7 +6,30 @@ import CardComment from '@/components/elements/CardComment';
 import CardArticel from '@/components/elements/CardArticel';
 import MainBanner from '@/components/MainBanner';
 
+import {
+  getLoginLocalStorage,
+  saveLocalStorage,
+  saveLocalStorageJsonParse,
+  saveLocalStorageJsonStringify,
+  setLoginLocalStorage,
+} from '@/utils/loginUtils';
+import { useEffect } from 'react';
+
 export default function Home() {
+  useEffect(() => {
+    try {
+      const asdf = {
+        userid: 'hello',
+        jwt: 'world',
+      } as saveLocalStorage;
+      setLoginLocalStorage(asdf);
+      const get = getLoginLocalStorage();
+      console.log(get);
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
   return (
     <div className="content main-content">
       <MainBanner></MainBanner>
