@@ -39,8 +39,7 @@ export default function Header() {
   useEffect(() => {
     if (debouncedSearchValue.trim()) {
       router.push(`/search?q=${encodeURIComponent(debouncedSearchValue)}`);
-    }
-    else {
+    } else {
       router.push(`/`);
     }
   }, [debouncedSearchValue, router]);
@@ -59,15 +58,6 @@ export default function Header() {
           <MenuList>
             <li>
               <Link href="/movies">영화</Link>
-            </li>
-            <li>
-              <Link href="/series">시리즈</Link>
-            </li>
-            <li>
-              <Link href="/books">책</Link>
-            </li>
-            <li>
-              <Link href="/webtoons">웹툰</Link>
             </li>
             <li>
               <Link href="/community">커뮤니티</Link>
