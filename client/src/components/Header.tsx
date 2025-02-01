@@ -39,8 +39,6 @@ export default function Header() {
   useEffect(() => {
     if (debouncedSearchValue.trim()) {
       router.push(`/search?q=${encodeURIComponent(debouncedSearchValue)}`);
-    } else {
-      router.push(`/`);
     }
   }, [debouncedSearchValue, router]);
 
