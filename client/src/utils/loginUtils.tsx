@@ -1,15 +1,16 @@
 'use-client';
 
-import { error } from 'console';
-
-export type saveLocalStorage = {
-  userid: string;
-  jwt: string;
-};
+import { backend } from '@/api/axios';
+export interface SaveLocalStorage {
+  userID: string;
+  onLogin: boolean;
+}
 
 function checkClient(): boolean {
   return typeof window === undefined;
 }
+
+export function requsetLogin() {}
 
 function notClientError() {
   throw { error: 'not client' };
@@ -32,47 +33,47 @@ export function checkLoginLocalStorage(): boolean {
   return ok;
 }
 
-export function getLoginLocalStorage(): saveLocalStorage {
+export function getLoginLocalStorage(): SaveLocalStorage {
   if (checkClient()) {
     notClientError();
   }
 
-  let get: string | null | saveLocalStorage = localStorage.getItem(
+  let get: string | null | SaveLocalStorage = localStorage.getItem(
     process.env.MY_LOGIN_USER as string,
   );
 
   if (get === null) {
     throw { error: 'getLoginLocalStorageError' };
   } else if (typeof get === 'string') {
-    get = saveLocalStorageJsonParse(get) as saveLocalStorage;
+    get = saveLocalStorageJsonParse(get) as SaveLocalStorage;
   }
 
   return get;
 }
 
-export function setLoginLocalStorage(saveObj: saveLocalStorage): boolean {
+export function setLoginLocalStorage(saveObj: SaveLocalStorage): boolean {
   if (checkClient()) {
     notClientError();
   }
-  const saveLocalStorage: string = saveLocalStorageJsonStringify(saveObj);
-  localStorage.setItem(process.env.MY_LOGIN_USER as string, saveLocalStorage);
+  const SaveLocalStorage: string = saveLocalStorageJsonStringify(saveObj);
+  localStorage.setItem(process.env.MY_LOGIN_USER as string, SaveLocalStorage);
   return true;
 }
 
-export function saveLocalStorageJsonParse(jsonStr: string): saveLocalStorage {
-  let jsonObj: saveLocalStorage | null = null;
+export function saveLocalStorageJsonParse(jsonStr: string): SaveLocalStorage {
+  let jsonObj: SaveLocalStorage | null = null;
 
   const obj = JSON.parse(jsonStr);
 
   saveLocalStorageCheck(obj);
 
-  jsonObj = obj as saveLocalStorage;
+  jsonObj = obj as SaveLocalStorage;
 
   return jsonObj;
 }
 
 export function saveLocalStorageJsonStringify(
-  jsonObj: saveLocalStorage,
+  jsonObj: SaveLocalStorage,
 ): string {
   let jsonStr: string | null = null;
 
@@ -83,8 +84,8 @@ export function saveLocalStorageJsonStringify(
   return jsonStr;
 }
 
-export function saveLocalStorageCheck(obj: saveLocalStorage): void {
-  const requiredKeys1: (keyof saveLocalStorage)[] = ['userid', 'jwt'];
+export function saveLocalStorageCheck(obj: SaveLocalStorage): void {
+  const requiredKeys1: (keyof SaveLocalStorage)[] = ['userID', 'onLogin'];
   const requiredKeys2 = Object.fromEntries(
     requiredKeys1.map((key) => [key, null]),
   );
