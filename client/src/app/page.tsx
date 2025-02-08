@@ -8,12 +8,35 @@ import MainBanner from '@/components/MainBanner';
 
 import {
   getLoginLocalStorage,
-  saveLocalStorageJsonParse,
-  saveLocalStorageJsonStringify,
+  SaveLocalStorage,
   setLoginLocalStorage,
 } from '@/utils/loginUtils';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { selectLoginState, userLogin } from '@/redux/loginStateSlice';
 
 export default function Home() {
+  const B = useAppSelector(selectLoginState);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    const A: SaveLocalStorage = {
+      onLogin: false,
+      timeout: new Date(),
+      userID: 'hello',
+      jwt: '',
+    };
+    setLoginLocalStorage(A);
+    console.log(getLoginLocalStorage());
+    console.log(B);
+    dispatch(
+      userLogin({ userID: '', jwt: '', onLogin: true, timeout: new Date() }),
+    );
+    console.log('aeaeae');
+  }, []);
+  useEffect(() => {
+    console.log('rerere');
+    // console.log(B);
+  }, [B]);
   return (
     <div className="content main-content">
       <MainBanner></MainBanner>

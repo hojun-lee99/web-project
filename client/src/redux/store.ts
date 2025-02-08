@@ -1,7 +1,7 @@
 'use client';
 
 import { configureStore } from '@reduxjs/toolkit';
-import userLogin from './test_counterSlice';
+import userLogin from './loginStateSlice';
 
 const store = configureStore({
   reducer: {
