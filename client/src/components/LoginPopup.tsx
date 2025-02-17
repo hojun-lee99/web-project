@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import Image from 'next/image';
+import { useAppDispatch } from '@/redux/hooks';
+import { userFakeLogin } from '@/redux/loginStateSlice';
 
 interface LoginPopupProps {
   type: 'login' | 'signup';
@@ -12,7 +14,7 @@ export default function LoginPopup({
   onClose,
 }: LoginPopupProps) {
   const [type, setType] = useState<'login' | 'signup'>(initialType);
-
+  const dispatch = useAppDispatch();
   return (
     <PopupWrapper onClick={onClose}>
       <PopupContent onClick={(e) => e.stopPropagation()}>
@@ -35,7 +37,14 @@ export default function LoginPopup({
                   />
                 </label>
 
-                <button className="login-button">로그인</button>
+                <button
+                  className="login-button"
+                  onClick={() => {
+                    dispatch(userFakeLogin());
+                  }}
+                >
+                  로그인
+                </button>
               </form>
               <div className="login-sign-up">
                 계정이 없으신가요?

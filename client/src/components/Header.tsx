@@ -7,6 +7,13 @@ import { useRouter } from 'next/navigation';
 import { useDebounce } from '../hooks/useDebounce';
 
 import LoginPopup from '../components/LoginPopup';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import {
+  selectLoginState,
+  userLoginInit,
+  userLogout,
+} from '@/redux/loginStateSlice';
+import { useLoginState } from '@/service/useLoginState';
 
 export default function Header() {
   const userID = 'dddddd';
@@ -26,6 +33,14 @@ export default function Header() {
   //로그인
   const [isLoggedIn] = useState(true); // 로그인 상태 setIsLoggedIn
   const [popupState, setPopupState] = useState<'login' | 'signup' | null>(null);
+
+  const loginState = useAppSelector(selectLoginState);
+  const dispatch = useAppDispatch();
+  // const { loginState, setLoginState } = useLoginState();
+  useEffect(() => {
+    // setLoginState('init');
+    dispatch(userLoginInit());
+  }, []);
 
   const openPopup = (state: 'login' | 'signup') => {
     setPopupState(state);
@@ -72,7 +87,8 @@ export default function Header() {
             />
           </InputWrap>
 
-          {isLoggedIn ? (
+          {/* {isLoggedIn ? ( */}
+          {loginState.onLogin ? (
             <>
               {/* 로그인 상태일 때 */}
               <Evaluation>
@@ -99,6 +115,13 @@ export default function Header() {
               <Link href={`/users/${userID}`}>
                 <UserProfile />
               </Link>
+              <div
+                onClick={() => {
+                  dispatch(userLogout());
+                }}
+              >
+                logout
+              </div>
             </>
           ) : (
             <>

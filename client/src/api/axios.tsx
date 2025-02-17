@@ -8,4 +8,10 @@ const instance: AxiosInstance = axios.create({
   },
 });
 
+const backend: AxiosInstance = axios.create({
+  baseURL: 'https://api.themoviedb.org/3',
+});
+
 export default instance;
+
+export { backend };
