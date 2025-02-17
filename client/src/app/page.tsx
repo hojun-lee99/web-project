@@ -23,10 +23,6 @@ export default function Home() {
         <CardComment direction="row" />
       </div>
       <div className="content-inner">
-        <TitleSm title={'아티클'} viewMore={true} cate={'article'} />
-        <CardArticel />
-      </div>
-      <div className="content-inner">
         <TitleSm title={'추천'} viewMore={true} cate={'recommanded'} />
         <CardDefault cate={'top_rated'} />
       </div>

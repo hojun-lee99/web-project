@@ -116,24 +116,6 @@ export default function Review() {
             >
               영화
             </Tab>
-            <Tab
-              onClick={() => handleTabClick('series')}
-              isActive={activeTab === 'series'}
-            >
-              시리즈
-            </Tab>
-            <Tab
-              onClick={() => handleTabClick('book')}
-              isActive={activeTab === 'book'}
-            >
-              책
-            </Tab>
-            <Tab
-              onClick={() => handleTabClick('webtoon')}
-              isActive={activeTab === 'webtoon'}
-            >
-              웹툰
-            </Tab>
           </Tabs>
           <Choice>
             <div onClick={handleRandomClick}>
@@ -159,7 +141,7 @@ export default function Review() {
                         layout="fill"
                         style={{
                           objectFit: 'cover', // 이미지 비율 유지하며 채우기
-                          objectPosition: 'center' // 이미지 중앙 정렬
+                          objectPosition: 'center', // 이미지 중앙 정렬
                         }}
                         sizes="(max-width: 768px) 33%, (max-width: 1320px) 24%, 33%"
                       />

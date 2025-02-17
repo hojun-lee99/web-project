@@ -73,15 +73,6 @@ export default function Header() {
               <Link href="/movies">영화</Link>
             </li>
             <li>
-              <Link href="/series">시리즈</Link>
-            </li>
-            <li>
-              <Link href="/books">책</Link>
-            </li>
-            <li>
-              <Link href="/webtoons">웹툰</Link>
-            </li>
-            <li>
               <Link href="/community">커뮤니티</Link>
             </li>
           </MenuList>
