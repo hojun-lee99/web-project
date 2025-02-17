@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 import App from './app';
+import Provider from './reduxProvider';
 
 export const metadata: Metadata = {
   title: 'MOVIEPEDIA',
@@ -31,7 +32,9 @@ export default function RootLayout({
       </head>
       <body>
         <div className="wrap">
-          <App>{children}</App>
+          <Provider>
+            <App>{children}</App>
+          </Provider>
         </div>
       </body>
     </html>

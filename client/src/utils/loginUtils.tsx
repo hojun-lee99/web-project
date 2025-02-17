@@ -1,11 +1,12 @@
 'use-client';
 
-import { backend } from '@/api/axios';
-export interface SaveLocalStorage {
+import { LoginState } from '@/redux/loginStateSlice';
+
+export interface SaveLocalStorage extends LoginState {
   userID: string;
   jwt: string;
   onLogin: boolean;
-  timeout: Date;
+  timeout: number;
 }
 
 function isSaveLocalStorage(arg: any): arg is SaveLocalStorage {
@@ -21,7 +22,7 @@ function isSaveLocalStorage(arg: any): arg is SaveLocalStorage {
   return true;
 }
 
-function checkClient(): boolean {
+export function checkClient(): boolean {
   return typeof window === undefined;
 }
 
@@ -38,7 +39,7 @@ export function checkLoginLocalStorage(): boolean {
 
   let ok: boolean = false;
   const check: string | null = localStorage.getItem(
-    process.env.MY_LOGIN_USER as string,
+    process.env.NEXT_PUBLIC_MY_LOGIN_USER as string,
   );
 
   if (check !== null) {
@@ -48,14 +49,16 @@ export function checkLoginLocalStorage(): boolean {
   return ok;
 }
 
-function timeoutLoginLocalStorage(time: SaveLocalStorage | Date): boolean {
+export function timeoutLoginLocalStorage(
+  time: SaveLocalStorage | Date,
+): boolean {
   let check = false;
   if (isSaveLocalStorage(time)) {
     check = timeoutChecksaveLocalStorage(time);
   } else {
     check = timeoutCheckDate(time);
   }
-  return false;
+  return check;
 }
 
 function timeoutCheckDate(date: Date): boolean {
@@ -65,7 +68,7 @@ function timeoutCheckDate(date: Date): boolean {
   if (check <= 0) {
     timeout = true;
   }
-  return false;
+  return timeout;
 }
 
 function timeoutChecksaveLocalStorage(
@@ -73,11 +76,11 @@ function timeoutChecksaveLocalStorage(
 ): boolean {
   let timeout = false;
   const now = new Date();
-  const check = saveLocalStorage.timeout.getTime() - now.getTime();
+  const check = saveLocalStorage.timeout - now.getTime();
   if (check <= 0) {
     timeout = true;
   }
-  return false;
+  return timeout;
 }
 
 export function getLoginLocalStorage(): SaveLocalStorage {
@@ -86,13 +89,13 @@ export function getLoginLocalStorage(): SaveLocalStorage {
   }
 
   let get: string | null | SaveLocalStorage = localStorage.getItem(
-    process.env.MY_LOGIN_USER as string,
+    process.env.NEXT_PUBLIC_MY_LOGIN_USER as string,
   );
 
   if (get === null) {
     throw { error: 'getLoginLocalStorageError' };
   } else if (typeof get === 'string') {
-    get = saveLocalStorageJsonParse(get) as SaveLocalStorage;
+    get = saveLocalStorageJsonParse(get);
   }
 
   return get;
@@ -104,7 +107,7 @@ export function setLoginLocalStorage(saveObj: SaveLocalStorage): boolean {
   }
   const SaveLocalStorage: string = saveLocalStorageJsonStringify(saveObj);
   window.localStorage.setItem(
-    process.env.MY_LOGIN_USER as string,
+    process.env.NEXT_PUBLIC_MY_LOGIN_USER as string,
     SaveLocalStorage,
   );
   return true;
@@ -116,8 +119,6 @@ export function saveLocalStorageJsonParse(jsonStr: string): SaveLocalStorage {
   const obj = JSON.parse(jsonStr);
 
   saveLocalStorageCheck(obj);
-
-  obj.timeout = new Date(obj.timeout);
 
   jsonObj = obj as SaveLocalStorage;
 
@@ -154,7 +155,7 @@ export function saveLocalStorageCheck(obj: SaveLocalStorage): void {
   });
 
   if (!(valid1 && valid2)) {
-    throw { error: 'error' };
+    throw { error: 'check error' };
   }
 }
 
@@ -162,5 +163,7 @@ export function removeLoginLocalStorage(): void {
   if (checkClient()) {
     notClientError();
   }
-  window.localStorage.removeItem(process.env.MY_LOGIN_USER as string);
+  window.localStorage.removeItem(
+    process.env.NEXT_PUBLIC_MY_LOGIN_USER as string,
+  );
 }

@@ -2,23 +2,21 @@
 
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from './store';
-import {
-  removeLoginLocalStorage,
-  SaveLocalStorage,
-  setLoginLocalStorage,
-} from '@/utils/loginUtils';
+import { LoginServiceImpl } from '@/service/LoginService';
 
-interface LoginState {
-  userID: string | null;
-  jwt: string | null;
-  timeout: Date | null;
+export interface LoginState {
+  userID: string;
+  jwt: string;
+  timeout: number;
   onLogin: boolean;
 }
 
+const loginService = new LoginServiceImpl();
+
 const initialState: LoginState = {
-  userID: null,
-  jwt: null,
-  timeout: null,
+  userID: '',
+  jwt: '',
+  timeout: 0,
   onLogin: false,
 };
 
@@ -27,35 +25,35 @@ export const loginStateSlice = createSlice({
   initialState: initialState,
   reducers: {
     userLogin: (state, action: PayloadAction<LoginState>) => {
-      state.userID = action.payload.userID;
-      state.jwt = action.payload.jwt;
-      state.onLogin = true;
-      setLoginLocalStorage({
-        userID: action.payload.userID,
-        onLogin: true,
-      } as SaveLocalStorage);
+      loginService.Login(action.payload);
+      return (state = loginService.getLoginState());
     },
     userLogout: (state) => {
-      state.userID = null;
-      state.jwt = null;
-      state.onLogin = false;
-      removeLoginLocalStorage();
+      loginService.Logout();
+      return (state = loginService.getLoginState());
     },
     userFakeLogin: (state) => {
-      state.userID = '';
-      state.jwt = '';
-      state.onLogin = true;
+      loginService.FakeLogin();
+      return (state = loginService.getLoginState());
+    },
+    userLoginTimeout: (state) => {
+      loginService.LoginTimeout();
+      return (state = loginService.getLoginState());
+    },
+    userLoginInit: (state) => {
+      return (state = loginService.getLoginState());
     },
   },
 });
 
-export const { userLogin, userLogout } = loginStateSlice.actions;
+export const {
+  userLogin,
+  userLogout,
+  userFakeLogin,
+  userLoginTimeout,
+  userLoginInit,
+} = loginStateSlice.actions;
 
 export const selectLoginState = (state: RootState) => state.userLogin;
-
-const fetchCount = createAsyncThunk('counter/fetchCount', async () => {
-  const response = null;
-  return response;
-});
 
 export default loginStateSlice.reducer;
