@@ -13,7 +13,6 @@ import {
   userLoginInit,
   userLogout,
 } from '@/redux/loginStateSlice';
-import { useLoginState } from '@/service/useLoginState';
 
 export default function Header() {
   const userID = 'dddddd';
@@ -31,14 +30,11 @@ export default function Header() {
   };
 
   //로그인
-  const [isLoggedIn] = useState(true); // 로그인 상태 setIsLoggedIn
   const [popupState, setPopupState] = useState<'login' | 'signup' | null>(null);
 
   const loginState = useAppSelector(selectLoginState);
   const dispatch = useAppDispatch();
-  // const { loginState, setLoginState } = useLoginState();
   useEffect(() => {
-    // setLoginState('init');
     dispatch(userLoginInit());
   }, []);
 

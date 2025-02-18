@@ -3,7 +3,6 @@
 import CardDefault from '@/components/elements/CardDefault';
 import TitleSm from '@/components/elements/TitleSm';
 import CardComment from '@/components/elements/CardComment';
-import CardArticel from '@/components/elements/CardArticel';
 import MainBanner from '@/components/MainBanner';
 
 export default function Home() {
