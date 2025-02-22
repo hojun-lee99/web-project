@@ -10,13 +10,11 @@ import LoginPopup from '../components/LoginPopup';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import {
   selectLoginState,
-  userLoginInit,
-  userLogout,
+  initUserData,
+  clearUserData,
 } from '@/redux/loginStateSlice';
 
 export default function Header() {
-  const userID = 'dddddd';
-
   const [searchValue, setSearchValue] = useState('');
   const debouncedSearchValue = useDebounce(searchValue, 500);
   const router = useRouter();
@@ -35,7 +33,7 @@ export default function Header() {
   const loginState = useAppSelector(selectLoginState);
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(userLoginInit());
+    dispatch(initUserData());
   }, []);
 
   const openPopup = (state: 'login' | 'signup') => {
@@ -108,12 +106,12 @@ export default function Header() {
                   </>
                 )}
               </Alarm>
-              <Link href={`/users/${userID}`}>
+              <Link href={`/users`}>
                 <UserProfile />
               </Link>
               <div
                 onClick={() => {
-                  dispatch(userLogout());
+                  dispatch(clearUserData());
                 }}
               >
                 logout

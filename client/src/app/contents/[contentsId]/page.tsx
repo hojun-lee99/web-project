@@ -5,7 +5,7 @@ import Comment from '../../../components/Comment';
 import PeopleInfo from '../../../components/PeopleInfo';
 import StarRating from '../../../components/StarRating';
 import GallerySlider from '../../../components/GallerySlider';
-import axios from '../../../api/axios';
+import axios, { fakeBackend } from '../../../api/axios';
 import CommentPopup from '../../../components/CommentPopup';
 import Image from 'next/image';
 
@@ -31,43 +31,34 @@ interface Movie {
   };
 }
 
-export default function Contents() {
+export default function Contents({
+  params,
+}: {
+  params: { contentsId: string };
+}) {
   const [movie, setMovie] = useState<Movie | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupType, setPopupType] = useState<'view' | 'writer'>('view');
+  const [commentData, setCommentData] = useState<
+    { id: string; rating: number; text: string }[] | []
+  >([]);
 
   const category = 'movies';
-  const movieId = 550; // 영화 클릭했을 때 id 값 받아서 쓰는걸로 수정 useRouter 서버컴포넌트에서 사용안함
+  // const movieId = 550; // 영화 클릭했을 때 id 값 받아서 쓰는걸로 수정 useRouter 서버컴포넌트에서 사용안함
+  const movieId = params.contentsId;
   const myReview = false; //임시 UI확인
   const myRating = 3; //임시 내가 평가한 별점이 있다면
 
-  const commentData = [
-    { id: 'User1', rating: 4.0, text: '짧은 코멘트입니다.' },
-    { id: 'User2', rating: 3.5, text: '예시 데이터' },
-    {
-      id: 'User3',
-      rating: 5.0,
-      text: '억지 글래디에이터 감성 주입에 잔인한 액션 추가...',
-    },
-    {
-      id: 'User4',
-      rating: 2.5,
-      text: '영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...불리는',
-    },
-    {
-      id: 'User5',
-      rating: 2.5,
-      text: '영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...영화 글래디에이터 2는 전쟁영화의 거장으로 불리는...불리는',
-    },
-    { id: 'User6', rating: 4.5, text: '놀라운 영화였습니다. 정말 강추합니다!' },
-    { id: 'User7', rating: 3.0, text: '평범한 수준의 영화였습니다.' },
-    { id: 'User8', rating: 4.8, text: '강렬한 액션이 인상 깊었습니다.' },
-    { id: 'User9', rating: 1.5, text: '스토리가 빈약하고 실망스러웠습니다.' },
-  ];
-
   useEffect(() => {
     fetchData(movieId);
+    (async () => {
+      setCommentData(await fakeBackend.getContentComment(movieId));
+    })();
   }, []);
+
+  useEffect(() => {
+    console.log(commentData);
+  }, [commentData]);
 
   const fetchData = async (id: string | number) => {
     try {
@@ -127,8 +118,8 @@ export default function Contents() {
               <span className="content-genre">
                 {movie.genres && movie.genres.length > 0
                   ? movie.genres
-                    .map((genre: { id: number; name: string }) => genre.name)
-                    .join(', ')
+                      .map((genre: { id: number; name: string }) => genre.name)
+                      .join(', ')
                   : '장르'}
               </span>
               <span className="content-country">
@@ -140,8 +131,9 @@ export default function Contents() {
             <p>
               <span className="content-runtime">
                 {movie.runtime
-                  ? `${Math.floor(movie.runtime / 60)}시간 ${movie.runtime % 60
-                  }분`
+                  ? `${Math.floor(movie.runtime / 60)}시간 ${
+                      movie.runtime % 60
+                    }분`
                   : '러닝타임'}
               </span>
               <span className="content-rating">{getAgeRating()}</span>
@@ -158,7 +150,7 @@ export default function Contents() {
               layout="fill"
               style={{
                 objectFit: 'cover', // 이미지 비율 유지하며 채우기
-                objectPosition: 'center' // 이미지 중앙 정렬
+                objectPosition: 'center', // 이미지 중앙 정렬
               }}
               sizes="(max-width: 768px) 33%, (max-width: 1320px) 24%, 33%"
             />
@@ -303,12 +295,11 @@ const ContentInfo2 = styled.section`
   }
 
   .content-poster {
-    position:relative;
+    position: relative;
     width: 280px;
     height: 400px;
     background-color: var(--color-background-secondary);
   }
-    
 
   .content-rating {
     display: flex;

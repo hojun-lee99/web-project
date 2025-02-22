@@ -2,7 +2,10 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import Image from 'next/image';
 import { useAppDispatch } from '@/redux/hooks';
-import { userFakeLogin } from '@/redux/loginStateSlice';
+import { setUserData, userFakeLogin } from '@/redux/loginStateSlice';
+import { backend, fakeBackend, UserFormData } from '@/api/axios';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { LoginServiceImpl } from '@/service/LoginService';
 
 interface LoginPopupProps {
   type: 'login' | 'signup';
@@ -14,7 +17,28 @@ export default function LoginPopup({
   onClose,
 }: LoginPopupProps) {
   const [type, setType] = useState<'login' | 'signup'>(initialType);
+  const [isSubmtting, setIsSubmtting] = useState<boolean>(false);
   const dispatch = useAppDispatch();
+  const {
+    register: registerLogin,
+    handleSubmit: handleSubmitLogin,
+    formState: { errors: errorsLogin },
+  } = useForm<UserFormData>();
+  const { register: resgisterSignup } = useForm<UserFormData>();
+  const onSubmitLogin: SubmitHandler<UserFormData> = async (data, e) => {
+    if (isSubmtting) {
+      e?.preventDefault();
+      return;
+    }
+    setIsSubmtting(true);
+    await dispatch(userFakeLogin(data));
+    onClose();
+    setIsSubmtting(false);
+  };
+  const onSubmitSignup: SubmitHandler<UserFormData> = (data) => {
+    console.log(data);
+  };
+  console.log(errorsLogin);
   return (
     <PopupWrapper onClick={onClose}>
       <PopupContent onClick={(e) => e.stopPropagation()}>
@@ -24,27 +48,39 @@ export default function LoginPopup({
           {type === 'login' ? (
             <div>
               <div className="login-title_text">로그인</div>
-              <form>
+              <form onSubmit={handleSubmitLogin(onSubmitLogin)}>
                 <label htmlFor="login-email">
-                  <input id="login-email" type="text" placeholder="이메일" />
+                  <input
+                    {...registerLogin('email', {
+                      required: true,
+                      pattern: {
+                        value:
+                          /^[A-Za-z][A-Za-z\d!@#$%^&*]+@[A-Za-z.]+\.[A-Za-z]+$/,
+                        message: 'Hello',
+                      },
+                    })}
+                    id="login-email"
+                    type="text"
+                    placeholder="이메일"
+                  />
                 </label>
 
                 <label htmlFor="login-password">
                   <input
+                    {...registerLogin('password', {
+                      required: true,
+                      pattern: {
+                        value:
+                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/i,
+                        message: 'HelloWolrd',
+                      },
+                    })}
                     id="login-password"
                     type="password"
                     placeholder="비밀번호"
                   />
                 </label>
-
-                <button
-                  className="login-button"
-                  onClick={() => {
-                    dispatch(userFakeLogin());
-                  }}
-                >
-                  로그인
-                </button>
+                <button className="login-button">로그인</button>
               </form>
               <div className="login-sign-up">
                 계정이 없으신가요?

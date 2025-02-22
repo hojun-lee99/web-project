@@ -3,7 +3,7 @@
 import { LoginState } from '@/redux/loginStateSlice';
 
 export interface SaveLocalStorage extends LoginState {
-  userID: string;
+  name: string;
   jwt: string;
   onLogin: boolean;
   timeout: number;
@@ -17,6 +17,9 @@ function isSaveLocalStorage(arg: any): arg is SaveLocalStorage {
     return false;
   }
   if (arg.timeout === 'undefined') {
+    return false;
+  }
+  if (arg.jwt === 'undefined') {
     return false;
   }
   return true;
@@ -139,7 +142,7 @@ export function saveLocalStorageJsonStringify(
 
 export function saveLocalStorageCheck(obj: SaveLocalStorage): void {
   const requiredKeys1: (keyof SaveLocalStorage)[] = [
-    'userID',
+    'name',
     'jwt',
     'onLogin',
     'timeout',

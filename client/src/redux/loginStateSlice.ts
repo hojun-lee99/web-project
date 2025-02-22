@@ -3,9 +3,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
 import { LoginServiceImpl } from '@/service/LoginService';
+import { UserFormData } from '@/api/axios';
 
 export interface LoginState {
-  userID: string;
+  name: string;
   jwt: string;
   timeout: number;
   onLogin: boolean;
@@ -14,7 +15,7 @@ export interface LoginState {
 const loginService = new LoginServiceImpl();
 
 const initialState: LoginState = {
-  userID: '',
+  name: '',
   jwt: '',
   timeout: 0,
   onLogin: false,
@@ -24,34 +25,32 @@ export const loginStateSlice = createSlice({
   name: 'userLogin',
   initialState: initialState,
   reducers: {
-    userLogin: (state, action: PayloadAction<LoginState>) => {
-      loginService.Login(action.payload);
-      return (state = loginService.getLoginState());
-    },
-    userLogout: () => {
-      loginService.Logout();
+    setUserData: () => {
       return loginService.getLoginState();
     },
-    userFakeLogin: () => {
-      loginService.FakeLogin();
+    clearUserData: () => {
+      loginService.logout();
       return loginService.getLoginState();
     },
-    userLoginTimeout: () => {
-      loginService.LoginTimeout();
+    userFakeLogin: (state, action: PayloadAction<UserFormData>) => {
       return loginService.getLoginState();
     },
-    userLoginInit: () => {
+    timeoutUserData: () => {
+      loginService.loginTimeout();
+      return loginService.getLoginState();
+    },
+    initUserData: () => {
       return loginService.getLoginState();
     },
   },
 });
 
 export const {
-  userLogin,
-  userLogout,
+  setUserData,
+  clearUserData,
   userFakeLogin,
-  userLoginTimeout,
-  userLoginInit,
+  timeoutUserData,
+  initUserData,
 } = loginStateSlice.actions;
 
 export const selectLoginState = (state: RootState) => state.userLogin;

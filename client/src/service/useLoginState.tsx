@@ -5,28 +5,28 @@ import { LoginState } from '@/redux/loginStateSlice';
 export const useLoginState = () => {
   const loginService = new LoginServiceImpl();
   const [loginState, set] = useState<LoginState>({
-    userID: '',
+    name: '',
     jwt: '',
     timeout: 0,
     onLogin: false,
   });
 
-  const setLoginState = (name: string, args?:any) => {
+  const setLoginState = (name: string, args?: any) => {
     switch (name) {
       case 'login':
-        loginService.Login(args);
+        loginService.setUserData(args);
         set(loginService.getLoginState());
         break;
       case 'logout':
-        loginService.Logout();
+        loginService.clearUserData();
         set(loginService.getLoginState());
         break;
       case 'fakeLogin':
-        loginService.FakeLogin();
+        loginService.fakeLogin(args);
         set(loginService.getLoginState());
         break;
       case 'loginTimeout':
-        loginService.LoginTimeout();
+        loginService.loginTimeout();
         set(loginService.getLoginState());
         break;
       case 'init':
