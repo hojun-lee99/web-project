@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LoginService, LoginServiceImpl } from './LoginService';
+import { LoginServiceImpl } from './LoginService';
 import { LoginState } from '@/redux/loginStateSlice';
 
 export const useLoginState = () => {
@@ -11,7 +11,7 @@ export const useLoginState = () => {
     onLogin: false,
   });
 
-  const setLoginState = (name: string, args?: any) => {
+  const setLoginState = (name: string, args?:any) => {
     switch (name) {
       case 'login':
         loginService.Login(args);

@@ -35,7 +35,7 @@ export class LoginServiceImpl implements LoginService {
     let loginState: SaveLocalStorage;
     try {
       loginState = getLoginLocalStorage();
-    } catch (error) {
+    } catch {
       loginState = { userID: '', jwt: '', onLogin: false, timeout: 0 };
     }
     return loginState;

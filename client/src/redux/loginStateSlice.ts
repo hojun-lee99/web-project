@@ -1,6 +1,6 @@
 'use client';
 
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
 import { LoginServiceImpl } from '@/service/LoginService';
 
@@ -28,20 +28,20 @@ export const loginStateSlice = createSlice({
       loginService.Login(action.payload);
       return (state = loginService.getLoginState());
     },
-    userLogout: (state) => {
+    userLogout: () => {
       loginService.Logout();
-      return (state = loginService.getLoginState());
+      return loginService.getLoginState();
     },
-    userFakeLogin: (state) => {
+    userFakeLogin: () => {
       loginService.FakeLogin();
-      return (state = loginService.getLoginState());
+      return loginService.getLoginState();
     },
-    userLoginTimeout: (state) => {
+    userLoginTimeout: () => {
       loginService.LoginTimeout();
-      return (state = loginService.getLoginState());
+      return loginService.getLoginState();
     },
-    userLoginInit: (state) => {
-      return (state = loginService.getLoginState());
+    userLoginInit: () => {
+      return loginService.getLoginState();
     },
   },
 });
