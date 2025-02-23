@@ -55,6 +55,15 @@ export class LoginServiceImpl implements LoginService {
   static async singup(loginObj: UserFormData): Promise<boolean> {
     let message = true;
     try {
+      const response = await backend.post('api/signup', loginObj);
+    } catch (error) {
+      message = false;
+    }
+    return message;
+  }
+  static async fakeSingup(loginObj: UserFormData): Promise<boolean> {
+    let message = true;
+    try {
       const response = await fakeBackend.signup(loginObj);
     } catch (error) {
       message = false;
