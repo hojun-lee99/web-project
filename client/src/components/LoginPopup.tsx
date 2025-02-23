@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useAppDispatch } from '@/redux/hooks';
-import { setUserData, userFakeLogin } from '@/redux/loginStateSlice';
+import { initUserData } from '@/redux/loginStateSlice';
 import { backend, fakeBackend, UserFormData } from '@/api/axios';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { LoginServiceImpl } from '@/service/LoginService';
@@ -19,26 +19,47 @@ export default function LoginPopup({
   const [type, setType] = useState<'login' | 'signup'>(initialType);
   const [isSubmtting, setIsSubmtting] = useState<boolean>(false);
   const dispatch = useAppDispatch();
+
   const {
     register: registerLogin,
     handleSubmit: handleSubmitLogin,
+    setError: setErrorLogin,
     formState: { errors: errorsLogin },
-  } = useForm<UserFormData>();
+  } = useForm<UserFormData>({ mode: 'onSubmit', reValidateMode: 'onSubmit' });
+
   const { register: resgisterSignup } = useForm<UserFormData>();
+
   const onSubmitLogin: SubmitHandler<UserFormData> = async (data, e) => {
     if (isSubmtting) {
       e?.preventDefault();
       return;
     }
     setIsSubmtting(true);
-    await dispatch(userFakeLogin(data));
-    onClose();
+    const response = await LoginServiceImpl.fakeLogin(data);
+    if (response) {
+      onClose();
+    } else {
+      setErrorLogin('root', { type: 'World', message: 'Hello World' });
+    }
+    dispatch(initUserData());
     setIsSubmtting(false);
   };
+
   const onSubmitSignup: SubmitHandler<UserFormData> = (data) => {
     console.log(data);
   };
-  console.log(errorsLogin);
+
+  useEffect(() => {
+    console.log(errorsLogin);
+  }, [errorsLogin]);
+
+  const emailPattern =
+    /^[a-zA-Z0-9._%+-]+@([a-zA-Z]+(-[a-zA-Z]+)*\.)+[a-zA-Z]{2,}$/;
+  const passwordParttern =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,12}$/i;
+  const emailErrorText = '이메일형식';
+  const passwordErrorText =
+    '소문자, 대문자, 특수문자(!@#$%^&*)를 사용한 8이상 12이하';
   return (
     <PopupWrapper onClick={onClose}>
       <PopupContent onClick={(e) => e.stopPropagation()}>
@@ -55,8 +76,8 @@ export default function LoginPopup({
                       required: true,
                       pattern: {
                         value:
-                          /^[A-Za-z][A-Za-z\d!@#$%^&*]+@[A-Za-z.]+\.[A-Za-z]+$/,
-                        message: 'Hello',
+                          /^[a-zA-Z0-9._%+-]+@([a-zA-Z]+(-[a-zA-Z]+)*\.)+[a-zA-Z]{2,}$/,
+                        message: '이메일형식',
                       },
                     })}
                     id="login-email"
@@ -64,15 +85,18 @@ export default function LoginPopup({
                     placeholder="이메일"
                   />
                 </label>
-
+                {errorsLogin.email && (
+                  <p className="error-text">{errorsLogin.email.message}</p>
+                )}
                 <label htmlFor="login-password">
                   <input
                     {...registerLogin('password', {
                       required: true,
                       pattern: {
                         value:
-                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/i,
-                        message: 'HelloWolrd',
+                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,12}$/i,
+                        message:
+                          '소문자, 대문자, 특수문자를 사용한 8이상 12이하',
                       },
                     })}
                     id="login-password"
@@ -80,11 +104,26 @@ export default function LoginPopup({
                     placeholder="비밀번호"
                   />
                 </label>
+                {errorsLogin.password && (
+                  <p className="error-text">{errorsLogin.password.message}</p>
+                )}
+                {errorsLogin.root && (
+                  <p className="error-text">{errorsLogin.root.message}</p>
+                )}
                 <button className="login-button">로그인</button>
               </form>
               <div className="login-sign-up">
                 계정이 없으신가요?
-                <button type="button" onClick={() => setType('signup')}>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    if (isSubmtting) {
+                      e.preventDefault();
+                      return;
+                    }
+                    setType('signup');
+                  }}
+                >
                   회원가입
                 </button>
               </div>
@@ -223,6 +262,11 @@ const Login = styled.div`
     border-radius: 4px;
     padding: 10px;
     margin-top: 10px;
+  }
+
+  .error-text {
+    font-size: 12px;
+    color: red;
   }
 
   .login-sign-up {

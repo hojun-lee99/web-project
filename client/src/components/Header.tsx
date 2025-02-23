@@ -8,11 +8,8 @@ import { useDebounce } from '../hooks/useDebounce';
 
 import LoginPopup from '../components/LoginPopup';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import {
-  selectLoginState,
-  initUserData,
-  clearUserData,
-} from '@/redux/loginStateSlice';
+import { selectLoginState, initUserData } from '@/redux/loginStateSlice';
+import { LoginServiceImpl } from '@/service/LoginService';
 
 export default function Header() {
   const [searchValue, setSearchValue] = useState('');
@@ -111,7 +108,8 @@ export default function Header() {
               </Link>
               <div
                 onClick={() => {
-                  dispatch(clearUserData());
+                  LoginServiceImpl.clearUserData();
+                  dispatch(initUserData());
                 }}
               >
                 logout

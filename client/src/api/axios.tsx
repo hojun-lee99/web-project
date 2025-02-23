@@ -22,7 +22,7 @@ const backend: AxiosInstance = axios.create({
 
 const fakeBackend = {
   timeout: 1000,
-  async getLogin(userData: UserFormData): Promise<AxiosResponse> {
+  async login(userData: UserFormData): Promise<AxiosResponse> {
     await new Promise((resolve) => {
       return setTimeout(resolve, this.timeout);
     });
@@ -30,16 +30,28 @@ const fakeBackend = {
       data: {
         name: userData.email,
         jwt: userData.password,
-      } as SaveLocalStorage,
+      },
       status: 200,
       statusText: 'OK',
     } as AxiosResponse;
   },
-  async getLogout() {
+  async logout() {
     await new Promise((resolve) => {
       return setTimeout(resolve, this.timeout);
     });
     return true;
+  },
+  async signup(userData: UserFormData): Promise<AxiosResponse> {
+    await new Promise((resolve) => {
+      return setTimeout(resolve, this.timeout);
+    });
+    return {
+      data: {
+        message: 'Hello',
+      },
+      status: 200,
+      statusText: 'OK',
+    } as AxiosResponse;
   },
   async getContentComment(movieId: string) {
     await new Promise((resolve) => {
