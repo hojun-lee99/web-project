@@ -30,8 +30,6 @@ export class AuthService {
   async localLogin(prototype: LocalLoginPrototype, provider: Provider) {
     const { email, password } = prototype;
 
-    const hashedPassword = await this.hashPassword(password);
-
     const user = await this.usersPrisma.findOneByEmail(email);
 
     if (!user) {
@@ -40,7 +38,7 @@ export class AuthService {
     if (user.provider !== provider) {
       throw new ConflictException('이미 가입된 계정입니다.');
     }
-    if (!(await this.validatePassword(user.password, hashedPassword))) {
+    if (!(await this.validatePassword(password, user.password))) {
       throw new ConflictException('잘못된 비밀번호 입니다.');
     }
 
@@ -58,8 +56,11 @@ export class AuthService {
   }
 
   async hashPassword(password: string): Promise<string> {
-    const salt = this.configService.get<number>('PASSWORD_SALT') as number;
-    return bcrypt.hash(password, salt);
+    const saltRounds = this.configService.get<number>(
+      'PASSWORD_SALT',
+    ) as number;
+
+    return bcrypt.hash(password, saltRounds);
   }
 
   async validatePassword(
