@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { useAppDispatch } from '@/redux/hooks';
 import { initUserData } from '@/redux/loginStateSlice';
-import { backend, fakeBackend, UserFormData } from '@/api/axios';
+import { UserFormData } from '@/api/axios';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { LoginServiceImpl } from '@/service/LoginService';
 
@@ -47,7 +47,7 @@ export default function LoginPopup({
     if (response) {
       onClose();
     } else {
-      setErrorLogin('root', { type: 'World', message: 'Hello World' });
+      setErrorLogin('root', { type: 'error', message: '실패' });
     }
     dispatch(initUserData());
     setIsSubmtting(false);
@@ -65,9 +65,8 @@ export default function LoginPopup({
         return 'signupOk';
       });
       setTimeout(onClose, 1000);
-      // onClose();
     } else {
-      setErrorSignup('root', { type: 'World', message: 'Hello World' });
+      setErrorSignup('root', { type: 'error', message: '실패' });
     }
     dispatch(initUserData());
     setIsSubmtting(false);
@@ -343,7 +342,7 @@ const Login = styled.div`
   }
 
   .error-text {
-    font-size: 12px;
+    font-size: 10px;
     color: red;
   }
 
