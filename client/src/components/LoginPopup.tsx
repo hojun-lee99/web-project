@@ -59,7 +59,7 @@ export default function LoginPopup({
       return;
     }
     setIsSubmtting(true);
-    const response = await LoginServiceImpl.fakeSingup(data);
+    const response = await LoginServiceImpl.singup(data);
     if (response) {
       setType(() => {
         return 'signupOk';
