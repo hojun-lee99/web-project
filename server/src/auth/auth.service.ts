@@ -6,8 +6,11 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { v4 } from 'uuid';
 import { UsersPrismaRepository } from 'src/users/users-prisma.repository';
 import { LocalLoginPrototype, Provider } from './auth.types';
+import { UserEntity } from 'src/users/user.entity';
+import { UserPrototype } from 'src/users/user.types';
 
 @Injectable()
 export class AuthService {
@@ -55,10 +58,23 @@ export class AuthService {
     };
   }
 
+  async register(prototype: UserPrototype) {
+    const userByEmail = await this.usersPrisma.findOneByEmail(prototype.email);
+
+    if (userByEmail) {
+      throw new ConflictException('이미 가입된 사용자 입니다.');
+    }
+
+    const hashedPassword = await this.hashPassword(prototype.password);
+    const stdDate = new Date();
+    const user = UserEntity.create(prototype, hashedPassword, v4, stdDate);
+    await this.usersPrisma.save(user);
+  }
+
   async hashPassword(password: string): Promise<string> {
-    const saltRounds = this.configService.get<number>(
-      'PASSWORD_SALT',
-    ) as number;
+    const saltRounds = Number(
+      this.configService.get<number>('PASSWORD_SALT') as number,
+    );
 
     return bcrypt.hash(password, saltRounds);
   }

@@ -1,8 +1,12 @@
+import React from 'react';
 import styled from 'styled-components';
 import { useState } from 'react';
 import Image from 'next/image';
 import { useAppDispatch } from '@/redux/hooks';
-import { userFakeLogin } from '@/redux/loginStateSlice';
+import { initUserData } from '@/redux/loginStateSlice';
+import { UserFormData } from '@/api/axios';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { LoginServiceImpl } from '@/service/LoginService';
 
 interface LoginPopupProps {
   type: 'login' | 'signup';
@@ -13,113 +17,261 @@ export default function LoginPopup({
   type: initialType,
   onClose,
 }: LoginPopupProps) {
-  const [type, setType] = useState<'login' | 'signup'>(initialType);
+  const [type, setType] = useState<'login' | 'signup' | 'signupOk'>(
+    initialType,
+  );
+  const [isSubmtting, setIsSubmtting] = useState<boolean>(false);
   const dispatch = useAppDispatch();
+
+  const {
+    register: registerLogin,
+    handleSubmit: handleSubmitLogin,
+    setError: setErrorLogin,
+    formState: { errors: errorsLogin },
+  } = useForm<UserFormData>({ mode: 'onSubmit', reValidateMode: 'onSubmit' });
+
+  const {
+    register: registerSignup,
+    handleSubmit: handleSubmitSignup,
+    setError: setErrorSignup,
+    formState: { errors: errorsSigup },
+  } = useForm<UserFormData>({ mode: 'onSubmit', reValidateMode: 'onSubmit' });
+
+  const onSubmitLogin: SubmitHandler<UserFormData> = async (data, e) => {
+    if (isSubmtting) {
+      e?.preventDefault();
+      return;
+    }
+    setIsSubmtting(true);
+    const response = await LoginServiceImpl.login(data);
+    if (response) {
+      onClose();
+    } else {
+      setErrorLogin('root', { type: 'error', message: '실패' });
+    }
+    dispatch(initUserData());
+    setIsSubmtting(false);
+  };
+
+  const onSubmitSignup: SubmitHandler<UserFormData> = async (data, e) => {
+    if (isSubmtting) {
+      e?.preventDefault();
+      return;
+    }
+    setIsSubmtting(true);
+    const response = await LoginServiceImpl.singup(data);
+    if (response) {
+      setType(() => {
+        return 'signupOk';
+      });
+      setTimeout(onClose, 1000);
+    } else {
+      setErrorSignup('root', { type: 'error', message: '실패' });
+    }
+    dispatch(initUserData());
+    setIsSubmtting(false);
+  };
+
+  const namePattern = /^[a-zA-Z]+$/;
+  const emailPattern =
+    /^[a-zA-Z][a-zA-Z0-9._%+-]+@([a-zA-Z]+(-[a-zA-Z]+)*\.)+[a-zA-Z]{2,}$/;
+  const passwordParttern =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,12}$/;
+  const nameErrorText = '이름형식';
+  const emailErrorText = '이메일형식';
+  const passwordErrorText =
+    '소문자, 대문자, 특수문자(!@#$%^&*)를 사용한 8이상 12이하';
   return (
     <PopupWrapper onClick={onClose}>
       <PopupContent onClick={(e) => e.stopPropagation()}>
         <Login>
-          <div className="login-title">MOVIEPEDIA</div>
+          {type !== 'signupOk' && <div className="login-title">MOVIEPEDIA</div>}
 
           {type === 'login' ? (
             <div>
               <div className="login-title_text">로그인</div>
-              <form>
+              <form onSubmit={handleSubmitLogin(onSubmitLogin)}>
+                {errorsLogin.email && (
+                  <p className="error-text">{errorsLogin.email.message}</p>
+                )}
                 <label htmlFor="login-email">
-                  <input id="login-email" type="text" placeholder="이메일" />
+                  <input
+                    {...registerLogin('email', {
+                      required: true,
+                      pattern: {
+                        value: emailPattern,
+                        message: emailErrorText,
+                      },
+                    })}
+                    id="login-email"
+                    type="text"
+                    placeholder="이메일"
+                  />
                 </label>
 
+                {errorsLogin.password && (
+                  <p className="error-text">{errorsLogin.password.message}</p>
+                )}
                 <label htmlFor="login-password">
                   <input
+                    {...registerLogin('password', {
+                      required: true,
+                      pattern: {
+                        value: passwordParttern,
+                        message: passwordErrorText,
+                      },
+                    })}
                     id="login-password"
                     type="password"
                     placeholder="비밀번호"
                   />
                 </label>
 
-                <button
-                  className="login-button"
-                  onClick={() => {
-                    dispatch(userFakeLogin());
-                  }}
-                >
-                  로그인
-                </button>
+                {errorsLogin.root && (
+                  <p className="error-text">{errorsLogin.root.message}</p>
+                )}
+
+                <button className="login-button">로그인</button>
               </form>
               <div className="login-sign-up">
                 계정이 없으신가요?
-                <button type="button" onClick={() => setType('signup')}>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    if (isSubmtting) {
+                      e.preventDefault();
+                      return;
+                    }
+                    setType('signup');
+                  }}
+                >
                   회원가입
                 </button>
               </div>
             </div>
-          ) : (
+          ) : type === 'signup' ? (
             <div>
               <div className="login-title_text">회원가입</div>
-              <form>
+              <form onSubmit={handleSubmitSignup(onSubmitSignup)}>
+                {errorsSigup.name && (
+                  <p className="error-text">{errorsSigup.name?.message}</p>
+                )}
                 <label htmlFor="signup-name">
-                  <input id="signup-name" type="text" placeholder="이름" />
+                  <input
+                    {...registerSignup('name', {
+                      required: true,
+                      pattern: {
+                        value: namePattern,
+                        message: nameErrorText,
+                      },
+                    })}
+                    id="signup-name"
+                    type="text"
+                    placeholder="이름"
+                  />
                 </label>
 
+                {errorsSigup.email && (
+                  <p className="error-text">{errorsSigup.email?.message}</p>
+                )}
                 <label htmlFor="signup-email">
-                  <input id="signup-email" type="email" placeholder="이메일" />
+                  <input
+                    {...registerSignup('email', {
+                      required: true,
+                      pattern: {
+                        value: emailPattern,
+                        message: emailErrorText,
+                      },
+                    })}
+                    id="signup-email"
+                    type="text"
+                    placeholder="이메일"
+                  />
                 </label>
 
+                {errorsSigup.password && (
+                  <p className="error-text">{errorsSigup.password?.message}</p>
+                )}
                 <label htmlFor="signup-password">
                   <input
+                    {...registerSignup('password', {
+                      required: true,
+                      pattern: {
+                        value: passwordParttern,
+                        message: passwordErrorText,
+                      },
+                    })}
                     id="signup-password"
                     type="password"
                     placeholder="비밀번호"
                   />
                 </label>
 
+                {errorsSigup.root && (
+                  <p className="error-text">{errorsSigup.root?.message}</p>
+                )}
+
                 <button className="login-button">회원가입</button>
               </form>
               <div className="login-sign-up">
                 이미 가입하셨나요?
-                <button type="button" onClick={() => setType('login')}>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    if (isSubmtting) {
+                      e.preventDefault();
+                      return;
+                    }
+                    setType('login');
+                  }}
+                >
                   로그인
                 </button>
               </div>
             </div>
+          ) : (
+            <div className="login-title">OK</div>
           )}
+          {type !== 'signupOk' && (
+            <React.Fragment>
+              <hr></hr>
 
-          <hr></hr>
-
-          <SocialLogin>
-            <button type="button" className="btn-naver">
-              <Image
-                src="/icon-naver.png"
-                alt="네이버 로고"
-                width={50}
-                height={50}
-              />
-            </button>
-            <button type="button" className="btn-github">
-              <Image
-                src="/icon-github.svg"
-                alt="깃허브 로고"
-                width={50}
-                height={50}
-              />
-            </button>
-            <button type="button" className="btn-kakao">
-              <Image
-                src="/icon-kakao.svg"
-                alt="카카오 로고"
-                width={30}
-                height={30}
-              />
-            </button>
-            <button type="button" className="btn-google">
-              <Image
-                src="/icon-google.svg"
-                alt="구글 로고"
-                width={30}
-                height={30}
-              />
-            </button>
-          </SocialLogin>
+              <SocialLogin>
+                <button type="button" className="btn-naver">
+                  <Image
+                    src="/icon-naver.png"
+                    alt="네이버 로고"
+                    width={50}
+                    height={50}
+                  />
+                </button>
+                <button type="button" className="btn-github">
+                  <Image
+                    src="/icon-github.svg"
+                    alt="깃허브 로고"
+                    width={50}
+                    height={50}
+                  />
+                </button>
+                <button type="button" className="btn-kakao">
+                  <Image
+                    src="/icon-kakao.svg"
+                    alt="카카오 로고"
+                    width={30}
+                    height={30}
+                  />
+                </button>
+                <button type="button" className="btn-google">
+                  <Image
+                    src="/icon-google.svg"
+                    alt="구글 로고"
+                    width={30}
+                    height={30}
+                  />
+                </button>
+              </SocialLogin>
+            </React.Fragment>
+          )}
         </Login>
       </PopupContent>
     </PopupWrapper>
@@ -187,6 +339,11 @@ const Login = styled.div`
     border-radius: 4px;
     padding: 10px;
     margin-top: 10px;
+  }
+
+  .error-text {
+    font-size: 10px;
+    color: red;
   }
 
   .login-sign-up {
