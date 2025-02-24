@@ -1,9 +1,17 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import { LoginRequest } from 'shared/types/dto/auth/login.request';
 import { Response } from 'express';
 import { LoginResponse } from 'shared/types/dto/auth/login.response';
+import { RegisterRequest } from 'shared/types/dto/auth/register.request';
 
 @Controller('auth')
 export class AuthController {
@@ -29,5 +37,11 @@ export class AuthController {
     });
 
     return responseWithoutRefresh;
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post('register')
+  async localRegister(@Body() dto: RegisterRequest) {
+    await this.authService.register({ provider: 'LOCAL', ...dto });
   }
 }

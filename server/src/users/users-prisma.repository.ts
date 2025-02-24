@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserInfo } from './user.types';
+import { UserEntity } from './user.entity';
 
 @Injectable()
 export class UsersPrismaRepository {
@@ -18,6 +19,12 @@ export class UsersPrismaRepository {
       where: {
         email: email,
       },
+    });
+  }
+
+  async save(data: UserEntity): Promise<void> {
+    await this.prisma.user.create({
+      data,
     });
   }
 }
