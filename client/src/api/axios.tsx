@@ -1,6 +1,4 @@
-import { SaveLocalStorage } from '@/utils/loginUtils';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { resolve } from 'path';
 
 export interface UserFormData {
   name: string;
@@ -42,6 +40,7 @@ const fakeBackend = {
     return true;
   },
   async signup(userData: UserFormData): Promise<AxiosResponse> {
+    console.log(userData);
     await new Promise((resolve) => {
       return setTimeout(resolve, this.timeout);
     });
@@ -54,6 +53,7 @@ const fakeBackend = {
     } as AxiosResponse;
   },
   async getContentComment(movieId: string) {
+    console.log(movieId);
     await new Promise((resolve) => {
       return setTimeout(resolve, this.timeout);
     });

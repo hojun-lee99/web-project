@@ -9,15 +9,15 @@ import {
   timeoutLoginLocalStorage,
 } from '@/utils/loginUtils';
 
-export interface LoginService {}
+export interface LoginService {
+  hello: string;
+}
 export class LoginServiceImpl implements LoginService {
+  hello = 'HELLO';
   static async login(loginObj: UserFormData): Promise<boolean> {
     let message = true;
     try {
-      const response = await backend.post('/api/login', {
-        ...loginObj,
-      });
-      response.statusText;
+      const response = await backend.post('/auth/login', loginObj);
       setLoginLocalStorage({
         name: response.data.name,
         jwt: response.data.jwt,
@@ -26,6 +26,7 @@ export class LoginServiceImpl implements LoginService {
           parseInt(process.env.NEXT_PUBLIC_TIMEOUT as string)) as number,
       });
     } catch (error) {
+      console.log(error);
       message = false;
     }
     return message;
@@ -33,9 +34,11 @@ export class LoginServiceImpl implements LoginService {
   static async logout(): Promise<boolean> {
     let message = true;
     try {
-      const response = backend.post('/api/logout');
+      const response = backend.post('/auth/logout');
+      console.log(response);
       LoginServiceImpl.clearUserData();
     } catch (error) {
+      console.log(error);
       message = false;
     }
     return message;
@@ -56,7 +59,9 @@ export class LoginServiceImpl implements LoginService {
     let message = true;
     try {
       const response = await backend.post('api/signup', loginObj);
+      console.log(response);
     } catch (error) {
+      console.log(error);
       message = false;
     }
     return message;
@@ -65,7 +70,9 @@ export class LoginServiceImpl implements LoginService {
     let message = true;
     try {
       const response = await fakeBackend.signup(loginObj);
+      console.log(response);
     } catch (error) {
+      console.log(error);
       message = false;
     }
     return message;

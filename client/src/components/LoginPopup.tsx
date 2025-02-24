@@ -43,7 +43,7 @@ export default function LoginPopup({
       return;
     }
     setIsSubmtting(true);
-    const response = await LoginServiceImpl.fakeLogin(data);
+    const response = await LoginServiceImpl.login(data);
     if (response) {
       onClose();
     } else {
