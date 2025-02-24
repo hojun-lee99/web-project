@@ -1,11 +1,12 @@
 'use client';
 
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
 import { LoginServiceImpl } from '@/service/LoginService';
+import { backend, UserFormData } from '@/api/axios';
 
 export interface LoginState {
-  userID: string;
+  name: string;
   jwt: string;
   timeout: number;
   onLogin: boolean;
@@ -14,7 +15,7 @@ export interface LoginState {
 const loginService = new LoginServiceImpl();
 
 const initialState: LoginState = {
-  userID: '',
+  name: '',
   jwt: '',
   timeout: 0,
   onLogin: false,
@@ -24,35 +25,13 @@ export const loginStateSlice = createSlice({
   name: 'userLogin',
   initialState: initialState,
   reducers: {
-    userLogin: (state, action: PayloadAction<LoginState>) => {
-      loginService.Login(action.payload);
-      return (state = loginService.getLoginState());
-    },
-    userLogout: () => {
-      loginService.Logout();
-      return loginService.getLoginState();
-    },
-    userFakeLogin: () => {
-      loginService.FakeLogin();
-      return loginService.getLoginState();
-    },
-    userLoginTimeout: () => {
-      loginService.LoginTimeout();
-      return loginService.getLoginState();
-    },
-    userLoginInit: () => {
-      return loginService.getLoginState();
+    initUserData: () => {
+      return LoginServiceImpl.getLoginState();
     },
   },
 });
 
-export const {
-  userLogin,
-  userLogout,
-  userFakeLogin,
-  userLoginTimeout,
-  userLoginInit,
-} = loginStateSlice.actions;
+export const { initUserData } = loginStateSlice.actions;
 
 export const selectLoginState = (state: RootState) => state.userLogin;
 

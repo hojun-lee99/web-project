@@ -1,5 +1,6 @@
 'use client';
 
+import { backend, fakeBackend, UserFormData } from '@/api/axios';
 import {
   getLoginLocalStorage,
   removeLoginLocalStorage,
@@ -8,47 +9,91 @@ import {
   timeoutLoginLocalStorage,
 } from '@/utils/loginUtils';
 
-export interface LoginService {
-  Login(loginObj: SaveLocalStorage): void;
-  Logout(): void;
-  FakeLogin(): void;
-  getLoginState(): SaveLocalStorage;
-}
-
+export interface LoginService {}
 export class LoginServiceImpl implements LoginService {
-  Login(loginObj: SaveLocalStorage) {
-    setLoginLocalStorage(loginObj);
+  static async login(loginObj: UserFormData): Promise<boolean> {
+    let message = true;
+    try {
+      const response = await backend.post('/api/login', {
+        ...loginObj,
+      });
+      response.statusText;
+      setLoginLocalStorage({
+        name: response.data.name,
+        jwt: response.data.jwt,
+        onLogin: true,
+        timeout: (new Date().getTime() +
+          parseInt(process.env.NEXT_PUBLIC_TIMEOUT as string)) as number,
+      });
+    } catch (error) {
+      message = false;
+    }
+    return message;
   }
-  Logout(): void {
-    removeLoginLocalStorage();
+  static async logout(): Promise<boolean> {
+    let message = true;
+    try {
+      const response = backend.post('/api/logout');
+      LoginServiceImpl.clearUserData();
+    } catch (error) {
+      message = false;
+    }
+    return message;
   }
-  FakeLogin(): void {
+  static async fakeLogin(loginObj: UserFormData): Promise<boolean> {
+    let message = true;
+    const response = await fakeBackend.login(loginObj);
     setLoginLocalStorage({
-      jwt: '',
+      name: response.data.name,
+      jwt: response.data.jwt,
       onLogin: true,
       timeout: (new Date().getTime() +
         parseInt(process.env.NEXT_PUBLIC_TIMEOUT as string)) as number,
-      userID: '',
     });
+    return message;
   }
-  getLoginState(): SaveLocalStorage {
+  static async singup(loginObj: UserFormData): Promise<boolean> {
+    let message = true;
+    try {
+      const response = await backend.post('api/signup', loginObj);
+    } catch (error) {
+      message = false;
+    }
+    return message;
+  }
+  static async fakeSingup(loginObj: UserFormData): Promise<boolean> {
+    let message = true;
+    try {
+      const response = await fakeBackend.signup(loginObj);
+    } catch (error) {
+      message = false;
+    }
+    return message;
+  }
+  static getLoginState(): SaveLocalStorage {
     let loginState: SaveLocalStorage;
     try {
       loginState = getLoginLocalStorage();
     } catch {
-      loginState = { userID: '', jwt: '', onLogin: false, timeout: 0 };
+      loginState = { name: '', jwt: '', onLogin: false, timeout: 0 };
     }
     return loginState;
   }
-  timeoutCheck(loginObj?: SaveLocalStorage): boolean {
+  static timeoutCheck(loginObj?: SaveLocalStorage): boolean {
     if (loginObj) {
       return timeoutLoginLocalStorage(loginObj);
     }
-    return timeoutLoginLocalStorage(this.getLoginState());
+    return timeoutLoginLocalStorage(LoginServiceImpl.getLoginState());
   }
-  LoginTimeout(): void {
-    if (this.timeoutCheck()) {
-      this.Logout();
+  static loginTimeout(): void {
+    if (LoginServiceImpl.timeoutCheck()) {
+      LoginServiceImpl.logout();
     }
+  }
+  static setUserData(userData: SaveLocalStorage): void {
+    setLoginLocalStorage(userData);
+  }
+  static clearUserData(): void {
+    removeLoginLocalStorage();
   }
 }
