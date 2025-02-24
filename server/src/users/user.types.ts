@@ -7,3 +7,12 @@ export interface UserInfo {
   readonly name: string;
   readonly provider: Provider;
 }
+export interface UserPrototype {
+  readonly email: string;
+
+  readonly name: string;
+
+  readonly password: string;
+
+  readonly provider: Provider;
+}
