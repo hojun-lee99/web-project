@@ -10,13 +10,13 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
-import { LoginRequest } from 'shared/types/dto/auth/login.request';
+import { LoginRequest } from 'src/shared/types/dto/auth/login.request';
 import { Response } from 'express';
-import { LoginResponse } from 'shared/types/dto/auth/login.response';
-import { RegisterRequest } from 'shared/types/dto/auth/register.request';
+import { LoginResponse } from 'src/shared/types/dto/auth/login.response';
+import { RegisterRequest } from 'src/shared/types/dto/auth/register.request';
 import { RefreshTokenGuard } from 'src/common/guard/refresh-token.guard';
 import { AuthenticatedRequest } from './auth.types';
-import { RefreshTokenResponse } from 'shared/types/dto/auth/refresh-token.response';
+import { RefreshTokenResponse } from 'src/shared/types/dto/auth/refresh-token.response';
 
 @Controller('auth')
 export class AuthController {
