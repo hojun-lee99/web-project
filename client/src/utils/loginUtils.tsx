@@ -41,6 +41,11 @@ export function checkLoginLocalStorage(): boolean {
   return ok;
 }
 
+export function getTimoutTime(): number {
+  return (new Date().getTime() +
+    parseInt(process.env.NEXT_PUBLIC_TIMEOUT as string)) as number;
+}
+
 export function timeoutLoginLocalStorage(
   time: SaveLocalStorage | Date,
 ): boolean {

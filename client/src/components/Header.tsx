@@ -33,7 +33,7 @@ export default function Header() {
     dispatch(initUserData());
   }, []);
 
-  const logout = async () => {
+  const logout = async (): Promise<void> => {
     await LoginServiceImpl.logout();
     dispatch(initUserData());
   };

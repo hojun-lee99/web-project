@@ -3,6 +3,7 @@
 import { backend, fakeBackend, UserFormData } from '@/api/axios';
 import {
   getLoginLocalStorage,
+  getTimoutTime,
   removeLoginLocalStorage,
   SaveLocalStorage,
   setLoginLocalStorage,
@@ -18,12 +19,11 @@ export class LoginServiceImpl implements LoginService {
     let message = true;
     try {
       const response = await backend.post('/auth/login', loginObj);
-      setLoginLocalStorage({
+      LoginServiceImpl.setUserData({
         name: response.data.name,
         jwt: response.data.accessToken,
         onLogin: true,
-        timeout: (new Date().getTime() +
-          parseInt(process.env.NEXT_PUBLIC_TIMEOUT as string)) as number,
+        timeout: getTimoutTime(),
       });
       console.log(response);
     } catch (error) {
@@ -44,6 +44,26 @@ export class LoginServiceImpl implements LoginService {
     }
     return message;
   }
+  static async refreshJWT(): Promise<boolean> {
+    let message = true;
+    try {
+      const response = await backend.post('/auth/refresh');
+      console.log(response);
+      const oldData = LoginServiceImpl.getLoginState();
+      const newData: SaveLocalStorage = {
+        name: oldData.name,
+        jwt: response.data.accessToken,
+        onLogin: true,
+        timeout: getTimoutTime(),
+      };
+      LoginServiceImpl.setUserData(newData);
+    } catch (error) {
+      await LoginServiceImpl.logout();
+      console.log(error);
+      message = false;
+    }
+    return message;
+  }
   static async fakeLogin(loginObj: UserFormData): Promise<boolean> {
     let message = true;
     const response = await fakeBackend.login(loginObj);
@@ -51,8 +71,7 @@ export class LoginServiceImpl implements LoginService {
       name: response.data.name,
       jwt: response.data.jwt,
       onLogin: true,
-      timeout: (new Date().getTime() +
-        parseInt(process.env.NEXT_PUBLIC_TIMEOUT as string)) as number,
+      timeout: getTimoutTime(),
     });
     return message;
   }
