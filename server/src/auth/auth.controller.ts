@@ -67,7 +67,7 @@ export class AuthController {
   @Post('refresh')
   async refreshToken(
     @Req() request: AuthenticatedRequest,
-  ): RefreshTokenResponse {
+  ): Promise<RefreshTokenResponse> {
     const userId = request.user.id;
 
     const accessToken = await this.authService.refreshAccessToken(userId);
