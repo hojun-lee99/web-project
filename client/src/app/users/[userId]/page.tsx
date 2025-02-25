@@ -35,7 +35,6 @@ const categories: CategoryItem[] = [
 
 export default function UserPage({ params }: { params: { userId: string } }) {
   const { userId } = params;
-
   return (
     <div className="content">
       <div className="content-inner">
