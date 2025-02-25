@@ -1,6 +1,11 @@
 'use client';
 
-import { backend, fakeBackend, UserFormData } from '@/api/axios';
+import {
+  backend,
+  backendWithCredentials,
+  fakeBackend,
+  UserFormData,
+} from '@/api/axios';
 import {
   getLoginLocalStorage,
   getTimoutTime,
@@ -33,18 +38,23 @@ export class LoginServiceImpl implements LoginService {
     return message;
   }
   static async logout(): Promise<boolean> {
+    backendWithCredentials(true);
     let message = true;
     try {
-      const response = backend.post('/auth/logout');
+      const response = await backend.post('/auth/logout');
+      console.log('logout');
       console.log(response);
       LoginServiceImpl.clearUserData();
     } catch (error) {
+      console.log('logoutError');
       console.log(error);
       message = false;
     }
+    backendWithCredentials(false);
     return message;
   }
   static async refreshJWT(): Promise<boolean> {
+    backendWithCredentials(true);
     let message = true;
     try {
       const response = await backend.post('/auth/refresh');
@@ -62,6 +72,7 @@ export class LoginServiceImpl implements LoginService {
       console.log(error);
       message = false;
     }
+    backendWithCredentials(false);
     return message;
   }
   static async fakeLogin(loginObj: UserFormData): Promise<boolean> {

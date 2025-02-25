@@ -71,6 +71,14 @@ export default function Header() {
             <li>
               <Link href="/community">커뮤니티</Link>
             </li>
+            <li
+              onClick={async () => {
+                await LoginServiceImpl.refreshJWT();
+                dispatch(initUserData());
+              }}
+            >
+              refresh
+            </li>
           </MenuList>
         </nav>
         <User>

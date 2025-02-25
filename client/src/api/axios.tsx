@@ -18,6 +18,17 @@ const backend: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL_DEV as string,
 });
 
+export function backendWithCredentials(set: boolean) {
+  if (set) {
+    if (!backend.defaults.withCredentials) {
+      backend.defaults.withCredentials = true;
+    }
+  } else {
+    if (backend.defaults.withCredentials) {
+      backend.defaults.withCredentials = false;
+    }
+  }
+}
 const fakeBackend = {
   timeout: 1000,
   async login(userData: UserFormData): Promise<AxiosResponse> {
