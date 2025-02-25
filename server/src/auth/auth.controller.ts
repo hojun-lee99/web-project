@@ -4,14 +4,19 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
-import { LoginRequest } from 'shared/types/dto/auth/login.request';
+import { LoginRequest } from 'src/shared/types/dto/auth/login.request';
 import { Response } from 'express';
-import { LoginResponse } from 'shared/types/dto/auth/login.response';
-import { RegisterRequest } from 'shared/types/dto/auth/register.request';
+import { LoginResponse } from 'src/shared/types/dto/auth/login.response';
+import { RegisterRequest } from 'src/shared/types/dto/auth/register.request';
+import { RefreshTokenGuard } from 'src/common/guard/refresh-token.guard';
+import { AuthenticatedRequest } from './auth.types';
+import { RefreshTokenResponse } from 'src/shared/types/dto/auth/refresh-token.response';
 
 @Controller('auth')
 export class AuthController {
@@ -29,7 +34,7 @@ export class AuthController {
 
     const { refreshToken, ...responseWithoutRefresh } = loginResponse;
 
-    response.cookie('refreshToken', refreshToken, {
+    response.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
@@ -43,5 +48,30 @@ export class AuthController {
   @Post('register')
   async localRegister(@Body() dto: RegisterRequest) {
     await this.authService.register({ provider: 'LOCAL', ...dto });
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post('logout')
+  logout(@Res() res: Response) {
+    res.clearCookie('refresh_token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+    });
+
+    res.end();
+  }
+
+  @UseGuards(RefreshTokenGuard)
+  @Post('refresh')
+  async refreshToken(
+    @Req() request: AuthenticatedRequest,
+  ): Promise<RefreshTokenResponse> {
+    const userId = request.user.id;
+
+    const accessToken = await this.authService.refreshAccessToken(userId);
+
+    return { accessToken };
   }
 }

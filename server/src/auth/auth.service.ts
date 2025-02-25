@@ -71,6 +71,15 @@ export class AuthService {
     await this.usersPrisma.save(user);
   }
 
+  async refreshAccessToken(userId: string) {
+    const accessToken = await this.generateToken(
+      userId,
+      this.accessTokenExpiration,
+    );
+
+    return accessToken;
+  }
+
   async hashPassword(password: string): Promise<string> {
     const saltRounds = Number(
       this.configService.get<number>('PASSWORD_SALT') as number,
