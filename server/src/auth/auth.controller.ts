@@ -29,7 +29,7 @@ export class AuthController {
 
     const { refreshToken, ...responseWithoutRefresh } = loginResponse;
 
-    response.cookie('refreshToken', refreshToken, {
+    response.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
@@ -43,5 +43,18 @@ export class AuthController {
   @Post('register')
   async localRegister(@Body() dto: RegisterRequest) {
     await this.authService.register({ provider: 'LOCAL', ...dto });
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post('logout')
+  logout(@Res() res: Response) {
+    res.clearCookie('refresh_token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+    });
+
+    res.end();
   }
 }
