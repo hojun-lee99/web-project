@@ -4,7 +4,9 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
@@ -12,6 +14,8 @@ import { LoginRequest } from 'shared/types/dto/auth/login.request';
 import { Response } from 'express';
 import { LoginResponse } from 'shared/types/dto/auth/login.response';
 import { RegisterRequest } from 'shared/types/dto/auth/register.request';
+import { RefreshTokenGuard } from 'src/common/guard/refresh-token.guard';
+import { AuthenticatedRequest } from './auth.types';
 
 @Controller('auth')
 export class AuthController {
@@ -56,5 +60,15 @@ export class AuthController {
     });
 
     res.end();
+  }
+
+  @UseGuards(RefreshTokenGuard)
+  @Post('refresh')
+  async refreshToken(@Req() request: AuthenticatedRequest) {
+    const userId = request.user.id;
+
+    const accessToken = await this.authService.refreshAccessToken(userId);
+
+    return accessToken;
   }
 }

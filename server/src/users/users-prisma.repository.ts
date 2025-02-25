@@ -22,6 +22,21 @@ export class UsersPrismaRepository {
     });
   }
 
+  async findOneById(userId: string): Promise<UserInfo | null> {
+    return await this.prisma.user.findUnique({
+      select: {
+        id: true,
+        email: true,
+        password: true,
+        name: true,
+        provider: true,
+      },
+      where: {
+        id: userId,
+      },
+    });
+  }
+
   async save(data: UserEntity): Promise<void> {
     await this.prisma.user.create({
       data,
