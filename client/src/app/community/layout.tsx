@@ -90,7 +90,7 @@ const CommunityHeader = styled.div`
   margin-bottom: 36px;
 `;
 
-const WriteButton = styled.a`
+const WriteButton = styled(Link)`
   width: 100%;
   max-width: 749px;
   padding: 20px 49px;
