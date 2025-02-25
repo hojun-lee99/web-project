@@ -33,6 +33,11 @@ export default function Header() {
     dispatch(initUserData());
   }, []);
 
+  const logout = async () => {
+    await LoginServiceImpl.logout();
+    dispatch(initUserData());
+  };
+
   const openPopup = (state: 'login' | 'signup') => {
     setPopupState(state);
   };
@@ -107,9 +112,8 @@ export default function Header() {
                 <UserProfile />
               </Link>
               <div
-                onClick={() => {
-                  LoginServiceImpl.clearUserData();
-                  dispatch(initUserData());
+                onClick={async () => {
+                  await logout();
                 }}
               >
                 logout
