@@ -1,7 +1,7 @@
 export class RegisterRequest {
-  readonly email;
+  readonly email: string;
 
-  readonly name;
+  readonly name: string;
 
-  readonly password;
+  readonly password: string;
 }

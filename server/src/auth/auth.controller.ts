@@ -16,6 +16,7 @@ import { LoginResponse } from 'shared/types/dto/auth/login.response';
 import { RegisterRequest } from 'shared/types/dto/auth/register.request';
 import { RefreshTokenGuard } from 'src/common/guard/refresh-token.guard';
 import { AuthenticatedRequest } from './auth.types';
+import { RefreshTokenResponse } from 'shared/types/dto/auth/refresh-token.response';
 
 @Controller('auth')
 export class AuthController {
@@ -64,11 +65,13 @@ export class AuthController {
 
   @UseGuards(RefreshTokenGuard)
   @Post('refresh')
-  async refreshToken(@Req() request: AuthenticatedRequest) {
+  async refreshToken(
+    @Req() request: AuthenticatedRequest,
+  ): RefreshTokenResponse {
     const userId = request.user.id;
 
     const accessToken = await this.authService.refreshAccessToken(userId);
 
-    return accessToken;
+    return { accessToken };
   }
 }
