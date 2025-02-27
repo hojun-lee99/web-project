@@ -11,6 +11,7 @@ const instance: AxiosInstance = axios.create({
   params: {
     api_key: process.env.NEXT_PUBLIC_MOVIE_DB_API_KEY as string,
     language: 'ko-KR',
+    include_adult: false,
   },
 });
 
