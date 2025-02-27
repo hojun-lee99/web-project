@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useDebounce } from '../hooks/useDebounce';
 
 import LoginPopup from '../components/LoginPopup';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
@@ -13,7 +12,6 @@ import { LoginServiceImpl } from '@/service/LoginService';
 
 export default function Header() {
   const [searchValue, setSearchValue] = useState('');
-  const debouncedSearchValue = useDebounce(searchValue, 500);
   const router = useRouter();
 
   //알람
@@ -46,13 +44,6 @@ export default function Header() {
     setPopupState(null);
   };
 
-  // 디바운스된 값이 변경될 때 URL 이동
-  useEffect(() => {
-    if (debouncedSearchValue.trim()) {
-      router.push(`/search?q=${encodeURIComponent(debouncedSearchValue)}`);
-    }
-  }, [debouncedSearchValue, router]);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
   };
@@ -83,12 +74,23 @@ export default function Header() {
         </nav>
         <User>
           <InputWrap>
-            <input
-              type="text"
-              placeholder="콘텐츠, 인물, 컬렉션, 유저를 검색해보세요."
-              value={searchValue}
-              onChange={handleChange}
-            />
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (searchValue.trim()) {
+                  router.push(
+                    `/search?q=${encodeURIComponent(searchValue.trim())}`,
+                  );
+                }
+              }}
+            >
+              <input
+                type="text"
+                placeholder="콘텐츠, 인물, 컬렉션, 유저를 검색해보세요."
+                value={searchValue}
+                onChange={handleChange}
+              />
+            </form>
           </InputWrap>
 
           {/* {isLoggedIn ? ( */}
