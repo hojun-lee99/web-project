@@ -25,19 +25,23 @@ export default function CardDefault({ cate }: TitleProps) {
   const fetchMovies = useCallback(async (movieCate: string) => {
     try {
       let response;
-      if (movieCate == 'top_rated') {
+      if (movieCate === 'top_rated') {
         response = await axios.get('/movie/' + movieCate, {
           params: { language: 'ko-KR', page: 1 },
         });
-      } else if (movieCate == 'Dday') {
+      } else if (movieCate === 'Dday') {
         response = await axios.get('/movie/' + movieCate, {
           params: {
             language: 'ko-KR',
             page: 1,
-            dates: { maximum: '2024-12-25', minimum: '2024-12-04' },
+            // dates: { maximum: '2024-12-25', minimum: '2024-12-04' },
           },
         });
-      } else if (movieCate == 'popular') {
+      } else if (movieCate === 'popular') {
+        response = await axios.get('/movie/' + movieCate, {
+          params: { language: 'ko-KR', page: 1 },
+        });
+      } else if (movieCate === 'now_playing') {
         response = await axios.get('/movie/' + movieCate, {
           params: { language: 'ko-KR', page: 1 },
         });
@@ -58,83 +62,58 @@ export default function CardDefault({ cate }: TitleProps) {
       fetchMovies('popular');
     } else if (category === 'Dday') {
       fetchMovies('upcoming');
+    } else if (category === 'top_rated') {
+      fetchMovies('top_rated');
+    } else if (category === 'now_playing') {
+      fetchMovies('now_playing');
+    } else {
+      fetchMovies(category);
     }
   }, [category, fetchMovies]);
 
   return (
     <CardListWrap>
-      {/* HOTRank 카테고리 */}
-      {cate === 'HOTRank' && (
-        <>
-          {loadMovies.slice(0, 5).map((movie, index) => (
-            <CardWrap
-              key={movie.id}
-              onClick={() => openDetail(router, movie.id, 'movie')}
-            >
-              <div className="card-photo">
-                <div className="card-PhotoTxt">{index + 1}</div>
-                <div className="card-logo"></div>
-                <div className="card-photo-wrap">
-                  <Image
-                    src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
-                    alt={movie.title}
-                    layout="fill"
-                    style={{
-                      objectFit: 'cover', // 이미지 비율 유지하며 채우기
-                      objectPosition: 'center' // 이미지 중앙 정렬
-                    }}
-                    sizes="(max-width: 768px) 33%, (max-width: 1320px) 24%, 33%"
-                  />
-                </div>
+      <>
+        {loadMovies.slice(0, 5).map((movie, index) => (
+          <CardWrap
+            key={movie.id}
+            onClick={() => openDetail(router, movie.id, 'movie')}
+          >
+            <div className="card-photo">
+              <div className="card-PhotoTxt">
+                {cate === 'HOTRank' && index + 1}
+                {cate === 'Dday' && movie.release_date}
               </div>
-              <div className="card-text-wrap">
-                <div className="card-movie-title">{movie.title}</div>
-                <div className="card-movie-desc">
-                  {new Date(movie.release_date).getFullYear()} |{' '}
-                  {movie.original_language.toUpperCase()}
-                </div>
+              <div className="card-logo"></div>
+              <div className="card-photo-wrap">
+                <Image
+                  src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                  alt={movie.title}
+                  layout="fill"
+                  style={{
+                    objectFit: 'cover', // 이미지 비율 유지하며 채우기
+                    objectPosition: 'center', // 이미지 중앙 정렬
+                  }}
+                  sizes="(max-width: 768px) 33%, (max-width: 1320px) 24%, 33%"
+                />
               </div>
-            </CardWrap>
-          ))}
-        </>
-      )}
-
-      {/* Dday 카테고리 */}
-      {cate === 'Dday' && (
-        <>
-          {loadMovies.slice(0, 5).map((movie) => (
-            <CardWrap
-              key={movie.id}
-              onClick={() => openDetail(router, movie.id, 'movie')}
-            >
-              <div className="card-photo">
-                <div className="card-PhotoTxt">{movie.release_date}</div>
-                <div className="card-photo-wrap">
-                  <Image
-                    src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
-                    alt={movie.title}
-                    style={{
-                      objectFit: 'cover', // 이미지 비율 유지하며 채우기
-                      objectPosition: 'center' // 이미지 중앙 정렬
-                    }}
-                    layout='fill'
-                    sizes="(max-width: 768px) 33%, (max-width: 1320px) 24%, 33%"
-                  />
-                </div>
-              </div>
-              <div className="card-text-wrap">
-                <div className="card-movie-title">{movie.title}</div>
-                <div className="card-movie-desc">
-                  {new Date(movie.release_date).getFullYear()} | <span className='popularity'>
+            </div>
+            <div className="card-text-wrap">
+              <div className="card-movie-title">{movie.title}</div>
+              <div className="card-movie-desc">
+                {new Date(movie.release_date).getFullYear()} |{' '}
+                {cate === 'HOTRank' && movie.original_language.toUpperCase()}
+                {cate === 'Dday' && (
+                  <span className="popularity">
                     {/* 예상평점 {movie.vote_average} */}
                   </span>
-                </div>
-                <div className="card-movie-info"></div>
+                )}
               </div>
-            </CardWrap>
-          ))}
-        </>
-      )}
+              {cate === 'Dday' && <div className="card-movie-info"></div>}
+            </div>
+          </CardWrap>
+        ))}
+      </>
     </CardListWrap>
   );
 }
