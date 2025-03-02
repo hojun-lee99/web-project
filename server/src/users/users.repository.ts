@@ -4,7 +4,7 @@ import { UserInfo } from './user.types';
 import { UserEntity } from './user.entity';
 
 @Injectable()
-export class UsersPrismaRepository {
+export class UsersRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findOneByEmail(email: string): Promise<UserInfo | null> {
