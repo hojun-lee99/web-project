@@ -183,6 +183,6 @@ export class MovieServiceImpl implements MovieService {
     movieId: string,
     params?: object,
   ): Promise<AxiosResponse> {
-    return MovieServiceImpl.getMovieIdCate(movieId, 'cedits', params);
+    return MovieServiceImpl.getMovieIdCate(movieId, 'credits', params);
   }
 }
