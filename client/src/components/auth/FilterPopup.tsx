@@ -5,14 +5,13 @@ import { useRouter } from 'next/navigation';
 import React from 'react';
 import styled from 'styled-components';
 
-export default function LoginFilterPopup(
-  {
-    children,
-  }: {
-    children: React.ReactNode;
-  },
-  message: string,
-) {
+export default function LoginFilterPopup({
+  children,
+  message,
+}: {
+  children: React.ReactNode;
+  message: string;
+}) {
   const onLogin = useLoginFilter();
   const router = useRouter();
   console.log(onLogin);
