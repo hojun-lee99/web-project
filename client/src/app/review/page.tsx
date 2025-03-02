@@ -1,19 +1,11 @@
 'use client';
 
-import axios from '../../api/axios';
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import StarRating from '../../components/StarRating';
 import ReviewPopup from '../../components/ReviewPopup';
 import Image from 'next/image';
-
-interface Movie {
-  id: number;
-  title: string;
-  poster_path: string;
-  release_date: string;
-  original_language: string;
-}
+import { Movie, MovieServiceImpl } from '@/service/MovieService';
 
 const messages = [
   {
@@ -50,9 +42,7 @@ export default function Review() {
   useEffect(() => {
     const fetchRandomMovies = async () => {
       try {
-        const response = await axios.get('/movie/popular', {
-          params: { language: 'ko-KR', page: 1 },
-        });
+        const response = await MovieServiceImpl.getMoviePopular();
         const movies = response.data.results;
         const shuffledMovies = movies.sort(() => 0.5 - Math.random());
         const selectedMovies = shuffledMovies.slice(0, 10);

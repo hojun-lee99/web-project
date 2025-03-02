@@ -2,43 +2,18 @@
 
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import axios from '../api/axios';
 import TitleSm from './elements/TitleSm';
 import { useRouter } from 'next/navigation';
 import { openDetail } from '@/hooks/openDetail';
 import Image from 'next/image';
 import { AxiosResponse } from 'axios';
+import {
+  Collection,
+  Movie,
+  MovieServiceImpl,
+  People,
+} from '@/service/MovieService';
 
-type Movie = {
-  id: number;
-  title: string;
-  poster_path: string | null;
-  release_date: string;
-  original_language: string;
-};
-
-type KnownFor = {
-  id: number;
-  title?: string; // 영화 제목
-  name?: string; // TV 쇼 이름
-  poster_path: string | null; // 포스터 이미지 경로
-  media_type: 'movie' | 'tv'; // 영화 또는 TV 쇼 구분
-};
-
-type People = {
-  id: number;
-  name: string;
-  profile_path: string | null;
-  original_name: string;
-  known_for: KnownFor[];
-  known_for_department: string;
-};
-type Collection = {
-  id: number;
-  original_name: string;
-  poster_path: string | null;
-  overview: string | null;
-};
 type LoadDataType = Movie | People | Collection;
 type LoadDataConfig = {
   page: number;
@@ -104,29 +79,13 @@ export default function CardSrch({ srchProps, selected }: CardSrchProps) {
     let re;
     switch (type) {
       case 'movie':
-        re = axios.get('/search/movie', {
-          params: { query, language: 'ko-KR', page: page },
-        });
+        re = MovieServiceImpl.getSearchMovie(query, { page: page });
         break;
       case 'people':
-        re = axios.get('/search/person', {
-          params: {
-            query,
-            include_adult: false,
-            language: 'ko-KR',
-            page: page,
-          },
-        });
+        re = MovieServiceImpl.getSearchPerson(query, { page: page });
         break;
       case 'collection':
-        re = axios.get('/search/collection', {
-          params: {
-            query,
-            include_adult: false,
-            language: 'ko-KR',
-            page: page,
-          },
-        });
+        re = MovieServiceImpl.getSearchCollection(query, { page: page });
         break;
     }
     return re as Promise<AxiosResponse>;

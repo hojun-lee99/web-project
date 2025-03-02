@@ -2,26 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import axios from '../api/axios';
 import Image from 'next/image';
+import {
+  CastMember,
+  CrewMember,
+  MovieServiceImpl,
+} from '@/service/MovieService';
 
 interface PeopleInfoProps {
   data: {
     category: string | number;
     movieId: string | number;
   };
-}
-
-interface CastMember {
-  name: string;
-  character: string;
-  profile_path: string | null;
-}
-
-interface CrewMember {
-  name: string;
-  job: string;
-  profile_path: string | null;
 }
 
 export default function PeopleInfo({ data }: PeopleInfoProps) {
@@ -35,9 +27,8 @@ export default function PeopleInfo({ data }: PeopleInfoProps) {
         typeof data.movieId === 'number'
       ) {
         try {
-          const { data: creditsData } = await axios.get(
-            `movie/${data.movieId}/credits`,
-          );
+          const { data: creditsData } =
+            await MovieServiceImpl.getMovieIdCredits(data.movieId as string);
           setCast(creditsData.cast || []);
           setCrew(creditsData.crew || []);
         } catch (error) {
@@ -76,7 +67,7 @@ export default function PeopleInfo({ data }: PeopleInfoProps) {
                     layout="fill"
                     style={{
                       objectFit: 'cover', // 이미지 비율 유지하며 채우기
-                      objectPosition: 'center' // 이미지 중앙 정렬
+                      objectPosition: 'center', // 이미지 중앙 정렬
                     }}
                     sizes="(max-width: 768px) 33%, (max-width: 1320px) 24%, 33%"
                   />
@@ -103,7 +94,7 @@ export default function PeopleInfo({ data }: PeopleInfoProps) {
                     layout="fill"
                     style={{
                       objectFit: 'cover', // 이미지 비율 유지하며 채우기
-                      objectPosition: 'center' // 이미지 중앙 정렬
+                      objectPosition: 'center', // 이미지 중앙 정렬
                     }}
                     sizes="(max-width: 768px) 33%, (max-width: 1320px) 24%, 33%"
                   />

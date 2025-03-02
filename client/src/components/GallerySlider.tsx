@@ -1,6 +1,5 @@
 'use client';
 
-import axios from '../api/axios';
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -9,6 +8,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import Image from 'next/image';
+import { MovieServiceImpl } from '@/service/MovieService';
 
 interface GallerySliderProps {
   data: {
@@ -31,18 +31,18 @@ export default function GallerySlider({ data }: GallerySliderProps) {
     const fetchData = async () => {
       try {
         if (type === 'image') {
-          const response = await axios.get(`/movie/${movieId}/images`, {
-            params: {
-              include_image_language: 'kr,null', // 언어 필터링 추가
-            },
-          });
+          const response = await MovieServiceImpl.getMovieIdImages(
+            movieId as string,
+          );
           const backdrops = response.data?.backdrops || [];
           const limitedBackdrops = backdrops
             .slice(0, 9) // 최대 9개의 이미지만 선택
             .map((backdrop: { file_path: string }) => backdrop.file_path);
           setItems(limitedBackdrops);
         } else if (type === 'video') {
-          const response = await axios.get(`/movie/${movieId}/videos`);
+          const response = await MovieServiceImpl.getMovieIdVideos(
+            movieId as string,
+          );
           const videos = response.data?.results || [];
           const videoKeys = videos
             .filter((video: { site: string }) => video.site === 'YouTube')
@@ -83,7 +83,7 @@ export default function GallerySlider({ data }: GallerySliderProps) {
                   layout="fill"
                   style={{
                     objectFit: 'cover', // 이미지 비율 유지하며 채우기
-                    objectPosition: 'center' // 이미지 중앙 정렬
+                    objectPosition: 'center', // 이미지 중앙 정렬
                   }}
                   sizes="(max-width: 768px) 33%, (max-width: 1320px) 24%, 33%"
                 />
@@ -130,8 +130,8 @@ const SlideContent = styled.div<{ isVideo: boolean }>`
     width: 100%;
     height: 100%;
     ${({ isVideo }) =>
-    isVideo &&
-    `
+      isVideo &&
+      `
       position: absolute;
       top: 0;
       left: 0;

@@ -2,20 +2,12 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-import axios from '../../api/axios';
 import { useRouter } from 'next/navigation';
 import { openDetail } from '@/hooks/openDetail';
 import Image from 'next/image';
+import { Movie, MovieServiceImpl } from '@/service/MovieService';
 
 type TitleProps = { cate: string };
-
-interface Movie {
-  id: number;
-  title: string;
-  poster_path: string;
-  release_date: string;
-  original_language: string;
-}
 
 export default function CardDefault({ cate }: TitleProps) {
   const router = useRouter();
@@ -26,32 +18,18 @@ export default function CardDefault({ cate }: TitleProps) {
     try {
       let response;
       if (movieCate === 'top_rated') {
-        response = await axios.get('/movie/' + movieCate, {
-          params: { language: 'ko-KR', page: 1 },
-        });
+        response = await MovieServiceImpl.getMovieTopRated();
       } else if (movieCate === 'Dday') {
-        response = await axios.get('/movie/' + movieCate, {
-          params: {
-            language: 'ko-KR',
-            page: 1,
-            // dates: { maximum: '2024-12-25', minimum: '2024-12-04' },
-          },
-        });
+        response = await MovieServiceImpl.getMovieTopRated();
       } else if (movieCate === 'popular') {
-        response = await axios.get('/movie/' + movieCate, {
-          params: { language: 'ko-KR', page: 1 },
-        });
+        response = await MovieServiceImpl.getMoviePopular();
       } else if (movieCate === 'now_playing') {
-        response = await axios.get('/movie/' + movieCate, {
-          params: { language: 'ko-KR', page: 1 },
-        });
+        response = await MovieServiceImpl.getMovieNowPlaying();
       } else {
-        response = await axios.get('/movie/' + movieCate, {
-          params: { language: 'ko-KR', page: 1 },
-        });
+        response = await MovieServiceImpl.getMovieCate(movieCate);
       }
       setLoadMovies(response.data.results);
-      console.error(movieCate + ':', response.data.results);
+      console.log(movieCate + ':', response.data.results);
     } catch (error) {
       console.error('Error fetching movies:', error);
     }

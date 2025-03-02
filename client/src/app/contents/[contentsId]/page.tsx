@@ -5,38 +5,19 @@ import Comment from '../../../components/Comment';
 import PeopleInfo from '../../../components/PeopleInfo';
 import StarRating from '../../../components/StarRating';
 import GallerySlider from '../../../components/GallerySlider';
-import axios, { fakeBackend } from '../../../api/axios';
+import { fakeBackend } from '../../../api/axios';
 import CommentPopup from '../../../components/CommentPopup';
 import Image from 'next/image';
+import { MovieDetail, MovieServiceImpl } from '@/service/MovieService';
 
 /* tmdb 기준 작업 다른 api쓸 경우 수정 필요*/
-
-interface Movie {
-  id: number;
-  title: string;
-  original_title: string;
-  release_date: string;
-  genres: { id: number; name: string }[];
-  runtime: number;
-  backdrop_path: string;
-  poster_path: string;
-  vote_average: number;
-  overview: string;
-  origin_country?: string[];
-  release_dates?: {
-    results: {
-      iso_3166_1: string;
-      release_dates: { certification: string }[];
-    }[];
-  };
-}
 
 export default function Contents({
   params,
 }: {
   params: { contentsId: string };
 }) {
-  const [movie, setMovie] = useState<Movie | null>(null);
+  const [movie, setMovie] = useState<MovieDetail | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupType, setPopupType] = useState<'view' | 'writer'>('view');
   const [commentData, setCommentData] = useState<
@@ -62,9 +43,9 @@ export default function Contents({
 
   const fetchData = async (id: string | number) => {
     try {
-      const { data: movieDetail } = await axios.get(`movie/${id}`, {
-        params: { append_to_response: 'videos,release_dates' },
-      });
+      const { data: movieDetail } = await MovieServiceImpl.getMovieDetailData(
+        id as string,
+      );
       setMovie(movieDetail);
     } catch (error) {
       console.error('Error fetching movie data:', error);
