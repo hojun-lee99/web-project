@@ -23,15 +23,14 @@ erDiagram
 }
 "Review" {
   String id PK
-  String title
   String comment
   Float rating
-  String userId FK
+  String userId
+  String name
   Int movieId FK
   DateTime created_at
   DateTime updated_at
 }
-"Review" }o--|| "User" : user
 "Review" }o--|| "Movie" : Movie
 ```
 
@@ -58,10 +57,10 @@ erDiagram
 
 **Properties**
   - `id`: 
-  - `title`: 
   - `comment`: 
   - `rating`: 
   - `userId`: 
+  - `name`: 
   - `movieId`: 
   - `created_at`: 
   - `updated_at`: 
