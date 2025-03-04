@@ -1,9 +1,8 @@
 'use client';
 
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from './store';
 import { LoginServiceImpl } from '@/service/LoginService';
-import { backend, UserFormData } from '@/api/axios';
 
 export interface LoginState {
   name: string;
@@ -11,8 +10,6 @@ export interface LoginState {
   timeout: number;
   onLogin: boolean;
 }
-
-const loginService = new LoginServiceImpl();
 
 const initialState: LoginState = {
   name: '',
