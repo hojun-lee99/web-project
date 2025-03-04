@@ -44,11 +44,11 @@ export default function Header() {
   };
 
   const openPopup = (state: 'login' | 'signup') => {
-    dispatch(setLoginPopupState({ type: state }));
+    dispatch(setLoginPopupState(state));
   };
 
   const closePopup = () => {
-    dispatch(setLoginPopupState({ type: null }));
+    dispatch(setLoginPopupState(null));
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

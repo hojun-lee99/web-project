@@ -17,8 +17,8 @@ export const loginPopupStateSlice = createSlice({
   name: 'loginPopup',
   initialState: initialState,
   reducers: {
-    setLoginPopupState: (state, action: PayloadAction<LoginPopupState>) => {
-      return { ...state, type: action.payload.type };
+    setLoginPopupState: (state, action: PayloadAction<LoginPopupStateType>) => {
+      return { ...state, type: action.payload };
     },
     setPopupStateNull: () => {
       return { type: null };

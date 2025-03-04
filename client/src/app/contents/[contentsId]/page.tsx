@@ -10,6 +10,7 @@ import CommentPopup from '../../../components/CommentPopup';
 import Image from 'next/image';
 import { MovieDetail, MovieServiceImpl } from '@/service/MovieService';
 import { useDebounce } from '@/hooks/useDebounce';
+import LoginFilter from '@/components/auth/LoginFilter';
 
 export default function Contents({
   params,
@@ -173,9 +174,11 @@ export default function Contents({
                     이 작품에 대한 <span>닉네임</span>님의 평가를 글로
                     남겨보세요.
                   </div>
-                  <button type="button" onClick={() => openPopup('writer')}>
-                    코멘트 남기기
-                  </button>
+                  <LoginFilter>
+                    <button type="button" onClick={() => openPopup('writer')}>
+                      코멘트 남기기
+                    </button>
+                  </LoginFilter>
                 </div>
               )}
             </div>
