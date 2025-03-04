@@ -14,16 +14,18 @@ export default function LoginFilter({
   const onLogin = useLoginFilter();
   return (
     <React.Fragment>
-      <div
+      <span
+        style={{ all: 'unset', display: 'contents' }}
         onClickCapture={(e) => {
           if (!onLogin) {
             dispatch(setLoginPopupState('login'));
             e.stopPropagation();
+            e.preventDefault();
           }
         }}
       >
         {children}
-      </div>
+      </span>
     </React.Fragment>
   );
 }

@@ -2,6 +2,7 @@
 
 import styled from 'styled-components';
 import Link from 'next/link';
+import LoginFilter from '@/components/auth/LoginFilter';
 
 const menu = [
   {
@@ -36,13 +37,15 @@ export default function CommunityLayout({
     <div className="content">
       <div className="content-inner">
         <CommunityHeader>
-          <WriteButton href="/community/write">
-            <div>
-              <div className="profile"></div>
-              <div>나누고 싶은 생각이 있으신가요?</div>
-            </div>
-            <i></i>
-          </WriteButton>
+          <LoginFilter>
+            <WriteButton href="/community/write">
+              <div>
+                <div className="profile"></div>
+                <div>나누고 싶은 생각이 있으신가요?</div>
+              </div>
+              <i></i>
+            </WriteButton>
+          </LoginFilter>
         </CommunityHeader>
         <Post>
           <PostMenu>
