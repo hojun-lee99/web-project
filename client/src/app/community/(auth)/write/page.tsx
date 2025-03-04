@@ -1,6 +1,6 @@
 'use client';
 
-import LoginFilterPopup from '@/components/auth/FilterPopup';
+import LoginFilterPopup from '@/components/auth/LoginFilterPopup';
 
 export default function Write() {
   return (

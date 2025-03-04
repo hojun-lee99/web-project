@@ -13,7 +13,7 @@ interface CommentItem {
 interface PopupProps {
   isOpen: boolean;
   onClose: () => void;
-  type: 'view' | 'writer'; // UI타입
+  type: 'view' | 'writer' | 'edit'; // UI타입
   movieTitle?: string; // 영화 제목
   commentData?: CommentItem[];
 }
@@ -158,6 +158,7 @@ const PopupInner = styled.div<{ isView: boolean }>`
     height: 100%;
     border: none;
     resize: none;
+    padding: 10px;
   }
 `;
 

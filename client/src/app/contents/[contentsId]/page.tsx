@@ -9,8 +9,7 @@ import { fakeBackend } from '../../../api/axios';
 import CommentPopup from '../../../components/CommentPopup';
 import Image from 'next/image';
 import { MovieDetail, MovieServiceImpl } from '@/service/MovieService';
-
-/* tmdb 기준 작업 다른 api쓸 경우 수정 필요*/
+import { useDebounce } from '@/hooks/useDebounce';
 
 export default function Contents({
   params,
@@ -19,16 +18,19 @@ export default function Contents({
 }) {
   const [movie, setMovie] = useState<MovieDetail | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [popupType, setPopupType] = useState<'view' | 'writer'>('view');
+  const [popupType, setPopupType] = useState<'view' | 'writer' | 'edit'>(
+    'view',
+  );
   const [commentData, setCommentData] = useState<
     { id: string; rating: number; text: string }[] | []
   >([]);
 
+  const [myRating, setMyiRating] = useState<number>(3); //임시 내가 평가한 별점이 있다면
+  const fetchRating = useDebounce(myRating, 1000);
+
   const category = 'movies';
-  // const movieId = 550; // 영화 클릭했을 때 id 값 받아서 쓰는걸로 수정 useRouter 서버컴포넌트에서 사용안함
   const movieId = params.contentsId;
   const myReview = false; //임시 UI확인
-  const myRating = 3; //임시 내가 평가한 별점이 있다면
 
   useEffect(() => {
     fetchData(movieId);
@@ -36,10 +38,9 @@ export default function Contents({
       setCommentData(await fakeBackend.getContentComment(movieId));
     })();
   }, []);
-
   useEffect(() => {
-    console.log(commentData);
-  }, [commentData]);
+    console.log(fetchRating);
+  }, [fetchRating]);
 
   const fetchData = async (id: string | number) => {
     try {
@@ -56,7 +57,7 @@ export default function Contents({
     return <div>Loading...</div>;
   }
 
-  const openPopup = (type: 'view' | 'writer') => {
+  const openPopup = (type: 'view' | 'writer' | 'edit') => {
     console.log('Opening popup with type:', type); // 디버깅용
     setPopupType(type); // Popup 타입 업데이트
     setIsPopupOpen(true); // Popup 열기
@@ -138,7 +139,11 @@ export default function Contents({
           </div>
           <div>
             <div className="content-rating">
-              <StarRating name={movie.id} myRating={myRating} />
+              <StarRating
+                name={movie.id}
+                myRating={myRating}
+                onRatingSelect={setMyiRating}
+              />
               <p className="content-rating_value">
                 <span>
                   {movie.vote_average

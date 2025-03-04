@@ -1,6 +1,6 @@
 'ues client';
 
-import movieBackend from '@/api/axios';
+import movieBackend, { backend } from '@/api/axios';
 import { AxiosResponse } from 'axios';
 
 //contents/contentId/page.tsx
@@ -80,8 +80,8 @@ export interface CrewMember {
 
 export class MovieServiceImpl implements MovieService {
   hello = 'MovieService';
-  static async getData(url: string, Obj?: object): Promise<AxiosResponse> {
-    return movieBackend.get(url, Obj);
+  static async getData(url: string, obj?: object): Promise<AxiosResponse> {
+    return movieBackend.get(url, obj);
   }
 
   static async getMovieDetailData(
@@ -89,7 +89,7 @@ export class MovieServiceImpl implements MovieService {
     params?: object,
   ): Promise<AxiosResponse> {
     //reponse.data: MovieDetaile
-    return movieBackend.get(`movie/${movieId}`, {
+    return MovieServiceImpl.getData(`movie/${movieId}`, {
       params: { append_to_response: 'videos,release_dates', ...params },
     });
   }
@@ -98,7 +98,7 @@ export class MovieServiceImpl implements MovieService {
     cate: string,
     params?: object,
   ): Promise<AxiosResponse> {
-    return movieBackend.get(`/movie/${cate}`, {
+    return MovieServiceImpl.getData(`movie/${cate}`, {
       params: { page: 1, ...params },
     });
   }
@@ -124,7 +124,7 @@ export class MovieServiceImpl implements MovieService {
     query: string,
     params?: object,
   ): Promise<AxiosResponse> {
-    return movieBackend.get(`/search/${cate}`, {
+    return MovieServiceImpl.getData(`search/${cate}`, {
       params: {
         query: query,
         page: 1,
@@ -159,7 +159,7 @@ export class MovieServiceImpl implements MovieService {
     cate: string,
     params?: object,
   ): Promise<AxiosResponse> {
-    return movieBackend.get(`/movie/${movieId}/${cate}`, {
+    return MovieServiceImpl.getData(`movie/${movieId}/${cate}`, {
       params: { ...params },
     });
   }
@@ -184,5 +184,27 @@ export class MovieServiceImpl implements MovieService {
     params?: object,
   ): Promise<AxiosResponse> {
     return MovieServiceImpl.getMovieIdCate(movieId, 'credits', params);
+  }
+
+  static async getDataBack(url: string, obj?: object): Promise<AxiosResponse> {
+    return backend.get(url, obj);
+  }
+  static async getMovieIdCateBack(
+    movieId: string,
+    cate: string,
+    params: object,
+  ) {
+    return MovieServiceImpl.getDataBack(`${movieId}/${cate}`, {
+      params: { ...params },
+    });
+  }
+  static async getMovieIdCommentsBack(movieId: string, params: object) {
+    return MovieServiceImpl.getMovieIdCateBack(movieId, 'comments', params);
+  }
+  static async getMovieIdCommentBack(movieId: string, params: object) {
+    return MovieServiceImpl.getMovieIdCateBack(movieId, 'comment', params);
+  }
+  static async setDataBack(url: string, data: object, obj: object) {
+    return backend.post(url, data, obj);
   }
 }
