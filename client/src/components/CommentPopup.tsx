@@ -1,7 +1,7 @@
 'use client';
 
 import styled from 'styled-components';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Comment from './Comment';
 
 interface CommentItem {
@@ -16,6 +16,7 @@ interface PopupProps {
   type: 'view' | 'writer' | 'edit'; // UI타입
   movieTitle?: string; // 영화 제목
   commentData?: CommentItem[];
+  myCommentData?: string;
 }
 
 export default function CommentPopup({
@@ -24,57 +25,57 @@ export default function CommentPopup({
   type,
   movieTitle,
   commentData,
+  myCommentData,
 }: PopupProps) {
-  const [text, setText] = useState('');
+  const [text, setText] = useState<string>('');
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (myCommentData && text === '') {
+      setText(myCommentData);
+    }
+  }, [myCommentData]);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(event.target.value);
   };
 
+  if (!isOpen) return null;
+
   return (
     <PopupWrapper>
-      {type === 'writer' && (
-        <PopupContent>
-          <PopupHeader>
-            <p>{movieTitle || '영화 제목 없음'}</p>
-            <button onClick={onClose}>X</button>
-          </PopupHeader>
-          <PopupInner isView={false}>
-            {/* writer 상태 */}
-            <Textarea>
-              <textarea
-                value={text}
-                onChange={handleTextChange}
-                placeholder="이 작품에 대한 생각을 자유롭게 표현해 주세요."
-              ></textarea>
-            </Textarea>
-            <div className="save">
-              <p>
-                <span>{text.length}</span>/<span>10000</span>
-              </p>
-              <button type="button">저장</button>
-            </div>
-          </PopupInner>
-        </PopupContent>
-      )}
-      {type === 'view' && (
-        <PopupContent>
-          <PopupHeader>
-            <p>코멘트</p>
-            <button onClick={onClose}>X</button>
-          </PopupHeader>
-          <PopupInner isView={true}>
-            {/* view 상태 */}
-            {commentData && commentData.length > 0 ? (
+      <PopupContent>
+        <PopupHeader>
+          {type === 'writer' && <p>{movieTitle || '영화 제목 없음'}</p>}
+          {type === 'view' && <p>코멘트</p>}
+          <button onClick={onClose}>X</button>
+        </PopupHeader>
+        <PopupInner isView={type === 'writer' ? false : true}>
+          {type === 'writer' && (
+            <React.Fragment>
+              <Textarea>
+                <textarea
+                  value={text}
+                  onChange={handleTextChange}
+                  placeholder="이 작품에 대한 생각을 자유롭게 표현해 주세요."
+                ></textarea>
+              </Textarea>
+              <div className="save">
+                <p>
+                  <span>{text.length}</span>/<span>10000</span>
+                </p>
+                <button type="button">저장</button>
+              </div>
+            </React.Fragment>
+          )}
+
+          {type === 'view' &&
+            (commentData && commentData.length > 0 ? (
               <Comment content={commentData} isPopup={true} /> // Comment 컴포넌트 사용
             ) : (
               <p>코멘트가 없습니다.</p>
-            )}
-          </PopupInner>
-        </PopupContent>
-      )}
+            ))}
+        </PopupInner>
+      </PopupContent>
     </PopupWrapper>
   );
 }

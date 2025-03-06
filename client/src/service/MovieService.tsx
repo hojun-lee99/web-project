@@ -1,16 +1,8 @@
 'ues client';
 
-import movieBackend, { backend } from '@/api/axios';
+import movieBackend, { backend, backendWithCredentials } from '@/api/axios';
 import { AxiosResponse } from 'axios';
 
-//contents/contentId/page.tsx
-//review/page.tsx
-//components/GallerySlider.tsx
-//components/MainBanner.tsx
-//components/PeopleInfo.tsx
-//components/Srch.tsx
-//components/elements/CardDefaults.tsx
-////////////////////////////////////////
 export interface MovieService {
   hello: string;
 }
@@ -187,7 +179,10 @@ export class MovieServiceImpl implements MovieService {
   }
 
   static async getDataBack(url: string, obj?: object): Promise<AxiosResponse> {
-    return backend.get(url, obj);
+    backendWithCredentials(true);
+    const response = backend.get(url, obj);
+    backendWithCredentials(false);
+    return response;
   }
   static async getMovieIdCateBack(
     movieId: string,
@@ -198,13 +193,49 @@ export class MovieServiceImpl implements MovieService {
       params: { ...params },
     });
   }
-  static async getMovieIdCommentsBack(movieId: string, params: object) {
+  static async getMovieIdCommentsBack(
+    movieId: string,
+    params: object,
+  ): Promise<AxiosResponse> {
     return MovieServiceImpl.getMovieIdCateBack(movieId, 'comments', params);
   }
-  static async getMovieIdCommentBack(movieId: string, params: object) {
+  static async getMovieIdCommentBack(
+    movieId: string,
+    params: object,
+  ): Promise<AxiosResponse> {
     return MovieServiceImpl.getMovieIdCateBack(movieId, 'comment', params);
   }
-  static async setDataBack(url: string, data: object, obj: object) {
-    return backend.post(url, data, obj);
+
+  static async postDataBack(
+    url: string,
+    data: object,
+    obj: object,
+  ): Promise<AxiosResponse> {
+    backendWithCredentials(true);
+    const response = backend.post(url, data, obj);
+    backendWithCredentials(false);
+    return response;
+  }
+  static async postMovieIdCateBack(
+    movieId: string,
+    cate: string,
+    data: object,
+    obj: object,
+  ): Promise<AxiosResponse> {
+    return MovieServiceImpl.postDataBack(`${movieId}/${cate}`, data, obj);
+  }
+  static async postMovieIdCommentsBack(
+    movieId: string,
+    data: object,
+    obj: object,
+  ): Promise<AxiosResponse> {
+    return MovieServiceImpl.postDataBack(`${movieId}/comments`, data, obj);
+  }
+  static async postMovieIdCommentBack(
+    movieId: string,
+    data: object,
+    obj: object,
+  ): Promise<AxiosResponse> {
+    return MovieServiceImpl.postDataBack(`${movieId}/comment`, data, obj);
   }
 }
