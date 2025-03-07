@@ -27,7 +27,7 @@ enum Provider {
 model User {
   id       String   @id @db.Uuid
   email    String   @unique
-  password String
+  password String?
   name     String
   provider Provider
 
@@ -48,8 +48,8 @@ model Movie {
 
 model Review {
   id      String @id @db.Uuid
-  comment String
-  rating  Float  @default(0)
+  comment String?
+  rating  Float?
   userId  String @db.Uuid
   name    String
   Movie   Movie  @relation(fields: [movieId], references: [id])

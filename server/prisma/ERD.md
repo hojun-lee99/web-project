@@ -9,7 +9,7 @@ erDiagram
 "User" {
   String id PK
   String email UK
-  String password
+  String password "nullable"
   String name
   Provider provider
   DateTime created_at
@@ -23,8 +23,8 @@ erDiagram
 }
 "Review" {
   String id PK
-  String comment
-  Float rating
+  String comment "nullable"
+  Float rating "nullable"
   String userId
   String name
   Int movieId FK
