@@ -7,7 +7,7 @@ interface StarRatingProps {
   fontSize?: string;
   name?: string | number;
   myRating?: number;
-  onRatingSelect?: (value: string) => void;
+  onRatingSelect?: (value: number) => void;
 }
 
 export default function StarRating({
@@ -17,6 +17,7 @@ export default function StarRating({
   onRatingSelect,
 }: StarRatingProps) {
   const [selectedRating, setSelectedRating] = useState<string | null>(null);
+  const [clickCheck, setClickCheck] = useState<boolean>(false);
 
   useEffect(() => {
     if (myRating !== undefined) {
@@ -26,108 +27,60 @@ export default function StarRating({
   }, [myRating]);
 
   const handleRatingChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (clickCheck) {
+      event.preventDefault();
+      setClickCheck(false);
+      if (onRatingSelect) {
+        onRatingSelect(0);
+      }
+      return;
+    }
     const selectedValue = event.target.value;
     setSelectedRating(selectedValue);
 
-    console.log(`${selectedValue}`);
-
     if (onRatingSelect) {
-      onRatingSelect(selectedValue);
+      onRatingSelect(parseInt(selectedValue));
     }
+  };
+  const handleRatingClick = (event: React.MouseEvent<HTMLLabelElement>) => {
+    const selectedValue = (event.target as HTMLLabelElement).title;
+    if (selectedRating !== selectedValue) {
+      return;
+    }
+    setClickCheck(true);
+    setSelectedRating('0');
   };
 
   return (
     <RateContainer className="rate" fontSize={fontSize}>
+      {Array.from({ length: 10 }, (d, i) => {
+        return (
+          <React.Fragment key={`${i}${name}`}>
+            <input
+              type="radio"
+              id={`rating${10 - i}-${name}`}
+              name={`rating-${name}`}
+              value={`${10 - i}`}
+              onChange={handleRatingChange}
+              checked={selectedRating === `${10 - i}`}
+            />
+            <label
+              className={i % 2 === 1 ? 'half' : ''}
+              htmlFor={`rating${10 - i}-${name}`}
+              title={`${10 - i}`}
+              onClick={handleRatingClick}
+            ></label>
+          </React.Fragment>
+        );
+      })}
+
       <input
         type="radio"
-        id={`rating10-${name}`}
         name={`rating-${name}`}
-        value="5"
+        value="0"
         onChange={handleRatingChange}
-        checked={selectedRating === '5'} // 초기 값 설정
+        checked={selectedRating === '0'}
       />
-      <label htmlFor={`rating10-${name}`} title="5"></label>
-      <input
-        type="radio"
-        id={`rating9-${name}`}
-        name={`rating-${name}`}
-        value="4.5"
-        onChange={handleRatingChange}
-        checked={selectedRating === '4.5'}
-      />
-      <label className="half" htmlFor={`rating9-${name}`} title="4.5"></label>
-      <input
-        type="radio"
-        id={`rating8-${name}`}
-        name={`rating-${name}`}
-        value="4"
-        onChange={handleRatingChange}
-        checked={selectedRating === '4'}
-      />
-      <label htmlFor={`rating8-${name}`} title="4"></label>
-      <input
-        type="radio"
-        id={`rating7-${name}`}
-        name={`rating-${name}`}
-        value="3.5"
-        onChange={handleRatingChange}
-        checked={selectedRating === '3.5'}
-      />
-      <label className="half" htmlFor={`rating7-${name}`} title="3.5"></label>
-      <input
-        type="radio"
-        id={`rating6-${name}`}
-        name={`rating-${name}`}
-        value="3"
-        onChange={handleRatingChange}
-        checked={selectedRating === '3'}
-      />
-      <label htmlFor={`rating6-${name}`} title="3"></label>
-      <input
-        type="radio"
-        id={`rating5-${name}`}
-        name={`rating-${name}`}
-        value="2.5"
-        onChange={handleRatingChange}
-        checked={selectedRating === '2.5'}
-      />
-      <label className="half" htmlFor={`rating5-${name}`} title="2.5"></label>
-      <input
-        type="radio"
-        id={`rating4-${name}`}
-        name={`rating-${name}`}
-        value="2"
-        onChange={handleRatingChange}
-        checked={selectedRating === '2'}
-      />
-      <label htmlFor={`rating4-${name}`} title="2"></label>
-      <input
-        type="radio"
-        id={`rating3-${name}`}
-        name={`rating-${name}`}
-        value="1.5"
-        onChange={handleRatingChange}
-        checked={selectedRating === '1.5'}
-      />
-      <label className="half" htmlFor={`rating3-${name}`} title="1.5"></label>
-      <input
-        type="radio"
-        id={`rating2-${name}`}
-        name={`rating-${name}`}
-        value="1"
-        onChange={handleRatingChange}
-        checked={selectedRating === '1'}
-      />
-      <label htmlFor={`rating2-${name}`} title="1"></label>
-      <input
-        type="radio"
-        id={`rating1-${name}`}
-        name={`rating-${name}`}
-        value="0.5"
-        onChange={handleRatingChange}
-        checked={selectedRating === '0.5'}
-      />
-      <label className="half" htmlFor={`rating1-${name}`} title="0.5"></label>
     </RateContainer>
   );
 }

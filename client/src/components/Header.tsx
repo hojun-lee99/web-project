@@ -9,6 +9,11 @@ import LoginPopup from '../components/LoginPopup';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { selectLoginState, initUserData } from '@/redux/loginStateSlice';
 import { LoginServiceImpl } from '@/service/LoginService';
+import {
+  selectLoginPopupState,
+  setLoginPopupState,
+  LoginPopupState,
+} from '@/redux/loginPopupStateSlice';
 
 export default function Header() {
   const [searchValue, setSearchValue] = useState('');
@@ -23,7 +28,9 @@ export default function Header() {
   };
 
   //로그인
-  const [popupState, setPopupState] = useState<'login' | 'signup' | null>(null);
+  const loginPopupState: LoginPopupState = useAppSelector(
+    selectLoginPopupState,
+  );
 
   const loginState = useAppSelector(selectLoginState);
   const dispatch = useAppDispatch();
@@ -37,11 +44,11 @@ export default function Header() {
   };
 
   const openPopup = (state: 'login' | 'signup') => {
-    setPopupState(state);
+    dispatch(setLoginPopupState(state));
   };
 
   const closePopup = () => {
-    setPopupState(null);
+    dispatch(setLoginPopupState(null));
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,7 +149,12 @@ export default function Header() {
       </HeaderInner>
 
       {/* 팝업 렌더링 */}
-      {popupState && <LoginPopup type={popupState} onClose={closePopup} />}
+      {loginPopupState.type && (
+        <LoginPopup
+          type={loginPopupState.type as 'login' | 'signup'}
+          onClose={closePopup}
+        />
+      )}
     </HeaderWrap>
   );
 }

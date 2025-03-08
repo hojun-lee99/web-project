@@ -9,8 +9,8 @@ import { fakeBackend } from '../../../api/axios';
 import CommentPopup from '../../../components/CommentPopup';
 import Image from 'next/image';
 import { MovieDetail, MovieServiceImpl } from '@/service/MovieService';
-
-/* tmdb 기준 작업 다른 api쓸 경우 수정 필요*/
+import { useDebounce } from '@/hooks/useDebounce';
+import LoginFilter from '@/components/auth/LoginFilter';
 
 export default function Contents({
   params,
@@ -19,27 +19,38 @@ export default function Contents({
 }) {
   const [movie, setMovie] = useState<MovieDetail | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [popupType, setPopupType] = useState<'view' | 'writer'>('view');
+  const [popupType, setPopupType] = useState<'view' | 'writer' | 'edit'>(
+    'view',
+  );
   const [commentData, setCommentData] = useState<
     { id: string; rating: number; text: string }[] | []
   >([]);
+  const [myComment, setMyComment] = useState<string | undefined>(undefined);
+
+  const [myRating, setMyiRating] = useState<number>(3); //임시 내가 평가한 별점이 있다면
+  const fetchRating = useDebounce(myRating, 1000);
+  const [fetchRate, setFetchRate] = useState<boolean>(false);
 
   const category = 'movies';
-  // const movieId = 550; // 영화 클릭했을 때 id 값 받아서 쓰는걸로 수정 useRouter 서버컴포넌트에서 사용안함
   const movieId = params.contentsId;
-  const myReview = false; //임시 UI확인
-  const myRating = 3; //임시 내가 평가한 별점이 있다면
 
   useEffect(() => {
     fetchData(movieId);
     (async () => {
       setCommentData(await fakeBackend.getContentComment(movieId));
     })();
+    (async () => {
+      setMyComment(
+        'hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world',
+      );
+    })();
   }, []);
-
   useEffect(() => {
-    console.log(commentData);
-  }, [commentData]);
+    if (fetchRate) {
+      console.log(fetchRating);
+    }
+    setFetchRate(true);
+  }, [fetchRating]);
 
   const fetchData = async (id: string | number) => {
     try {
@@ -56,7 +67,7 @@ export default function Contents({
     return <div>Loading...</div>;
   }
 
-  const openPopup = (type: 'view' | 'writer') => {
+  const openPopup = (type: 'view' | 'writer' | 'edit') => {
     console.log('Opening popup with type:', type); // 디버깅용
     setPopupType(type); // Popup 타입 업데이트
     setIsPopupOpen(true); // Popup 열기
@@ -138,7 +149,11 @@ export default function Contents({
           </div>
           <div>
             <div className="content-rating">
-              <StarRating name={movie.id} myRating={myRating} />
+              <StarRating
+                name={movie.id}
+                myRating={myRating}
+                onRatingSelect={setMyiRating}
+              />
               <p className="content-rating_value">
                 <span>
                   {movie.vote_average
@@ -149,15 +164,21 @@ export default function Contents({
               </p>
             </div>
             <div className="content-comment">
-              {myReview ? (
+              {myComment ? (
                 <div className="content-comment_area">
                   {/* myReview가 true일 때 보여줄 내용 */}
                   <div>
                     <div className="content-comment_profile"></div>
-                    <p>코멘트를 남기면 이렇게 보임 </p>
+                    <p>
+                      {myComment.length < 90
+                        ? myComment
+                        : myComment.slice(0, 90) + '...'}
+                    </p>
                   </div>
                   <div>
-                    <button type="button">수정</button>
+                    <button type="button" onClick={() => openPopup('writer')}>
+                      수정
+                    </button>
                     <button type="button">삭제</button>
                   </div>
                 </div>
@@ -168,9 +189,11 @@ export default function Contents({
                     이 작품에 대한 <span>닉네임</span>님의 평가를 글로
                     남겨보세요.
                   </div>
+                  {/* <LoginFilter> */}
                   <button type="button" onClick={() => openPopup('writer')}>
                     코멘트 남기기
                   </button>
+                  {/* </LoginFilter> */}
                 </div>
               )}
             </div>
@@ -213,6 +236,7 @@ export default function Contents({
         type={popupType}
         movieTitle={popupType === 'writer' ? movie.title : undefined}
         commentData={popupType === 'view' ? commentData : undefined}
+        myCommentData={popupType === 'writer' ? myComment : undefined}
       />
     </div>
   );

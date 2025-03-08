@@ -1,11 +1,13 @@
 'use client';
 
 import { configureStore } from '@reduxjs/toolkit';
-import userLogin from './loginStateSlice';
+import userLogin from '@/redux/loginStateSlice';
+import loginPopup from '@/redux/loginPopupStateSlice';
 
 const store = configureStore({
   reducer: {
     userLogin: userLogin,
+    loginPopup: loginPopup,
   },
 });
 

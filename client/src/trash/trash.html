@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>별점 평점</title>
+    <style>
+      /* .rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+      }
+
+      .rating input {
+        display: none;
+      }
+
+      .rating label {
+        width: 30px;
+        height: 30px;
+        font-size: 30px;
+        cursor: pointer;
+        color: #ddd;
+        position: relative;
+      }
+
+      .rating label::before {
+        content: '★';
+        position: absolute;
+        left: 0;
+        color: #ddd;
+      }
+
+      .rating input:checked ~ label::before {
+        color: gold;
+      }
+
+      .rating label.half::before {
+        content: '★';
+        position: absolute;
+        left: 0;
+        width: 50%;
+        overflow: hidden;
+        color: gold;
+      } */
+
+      .rate {
+        display: inline-block;
+        color: red;
+        border: 0;
+        margin-right: 15px;
+        padding: 0;
+        margin: 0;
+      }
+      .rate > input {
+        display: none;
+      }
+
+      .rate > label {
+        float: right;
+        cursor: pointer;
+        position: relative;
+      }
+      .rate > label::before {
+        display: inline-block;
+        font-size: 60px;
+        padding: 0.3rem 0.2rem;
+        margin: 0;
+        content: '★';
+      }
+      .rate > label.half:before {
+        content: '★';
+        width: 30px;
+        overflow: hidden;
+        position: absolute;
+        padding-right: 0;
+      }
+      .rate > input:checked ~ label {
+        color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <fieldset class="rate">
+      <input id="rate6" type="radio" name="hello" />
+      <label for="rate6"></label>
+      <input id="rate5" type="radio" name="hello" />
+      <label for="rate5" class="half"></label>
+      <input id="rate4" type="radio" name="hello" />
+      <label for="rate4"></label>
+      <input id="rate3" type="radio" name="hello" />
+      <label for="rate3" class="half"></label>
+      <input id="rate2" type="radio" name="hello" />
+      <label for="rate2"></label>
+      <input id="rate1" type="radio" name="hello" />
+      <label for="rate1" class="half"></label>
+    </fieldset>
+    <!-- <div class="rating">
+      <input type="radio" id="star5" name="rating" value="5" /><label
+        for="star5"
+      ></label>
+      <input type="radio" id="star4_5" name="rating" value="4.5" /><label
+        for="star4_5"
+        class="half"
+      ></label>
+      <input type="radio" id="star4" name="rating" value="4" /><label
+        for="star4"
+      ></label>
+      <input type="radio" id="star3_5" name="rating" value="3.5" /><label
+        for="star3_5"
+        class="half"
+      ></label>
+      <input type="radio" id="star3" name="rating" value="3" /><label
+        for="star3"
+      ></label>
+      <input type="radio" id="star2_5" name="rating" value="2.5" /><label
+        for="star2_5"
+        class="half"
+      ></label>
+      <input type="radio" id="star2" name="rating" value="2" /><label
+        for="star2"
+      ></label>
+      <input type="radio" id="star1_5" name="rating" value="1.5" /><label
+        for="star1_5"
+        class="half"
+      ></label>
+      <input type="radio" id="star1" name="rating" value="1" /><label
+        for="star1"
+      ></label>
+      <input type="radio" id="star0_5" name="rating" value="0.5" /><label
+        for="star0_5"
+        class="half"
+      ></label>
+    </div> -->
+  </body>
+</html>
