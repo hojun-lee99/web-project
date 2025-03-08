@@ -29,6 +29,7 @@ export default function Contents({
 
   const [myRating, setMyiRating] = useState<number>(3); //임시 내가 평가한 별점이 있다면
   const fetchRating = useDebounce(myRating, 1000);
+  const [fetchRate, setFetchRate] = useState<boolean>(false);
 
   const category = 'movies';
   const movieId = params.contentsId;
@@ -45,7 +46,10 @@ export default function Contents({
     })();
   }, []);
   useEffect(() => {
-    console.log(fetchRating);
+    if (fetchRate) {
+      console.log(fetchRating);
+    }
+    setFetchRate(true);
   }, [fetchRating]);
 
   const fetchData = async (id: string | number) => {
