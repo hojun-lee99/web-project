@@ -49,7 +49,7 @@ export default function CommentPopup({
           {type === 'view' && <p>코멘트</p>}
           <button onClick={onClose}>X</button>
         </PopupHeader>
-        <PopupInner isView={type === 'writer' ? false : true}>
+        <PopupInner isView={type === 'view' ? true : false}>
           {type === 'writer' && (
             <React.Fragment>
               <Textarea>
