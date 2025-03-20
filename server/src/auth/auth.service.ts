@@ -41,8 +41,10 @@ export class AuthService {
     if (user.provider !== provider) {
       throw new ConflictException('이미 가입된 계정입니다.');
     }
-    if (!(await this.validatePassword(password, user.password))) {
-      throw new ConflictException('잘못된 비밀번호 입니다.');
+    if (user.password) {
+      if (!(await this.validatePassword(password, user.password))) {
+        throw new ConflictException('잘못된 비밀번호 입니다.');
+      }
     }
 
     return {
