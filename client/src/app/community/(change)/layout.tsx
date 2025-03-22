@@ -37,15 +37,15 @@ export default function CommunityLayout({
     <div className="content">
       <div className="content-inner">
         <CommunityHeader>
-          <LoginFilter>
-            <WriteButton href="/community/write">
-              <div>
-                <div className="profile"></div>
-                <div>나누고 싶은 생각이 있으신가요?</div>
-              </div>
-              <i></i>
-            </WriteButton>
-          </LoginFilter>
+          {/* <LoginFilter> */}
+          <WriteButton href="/community/write">
+            <div>
+              <div className="profile"></div>
+              <div>나누고 싶은 생각이 있으신가요?</div>
+            </div>
+            <i></i>
+          </WriteButton>
+          {/* </LoginFilter> */}
         </CommunityHeader>
         <Post>
           <PostMenu>

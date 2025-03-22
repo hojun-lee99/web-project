@@ -73,6 +73,7 @@ const PostArea = ({
 };
 
 export default function CommunityPage() {
+  // return <div></div>;
   return (
     <>
       <PostArea
