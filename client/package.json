@@ -28,6 +28,8 @@
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
+    "@types/is-hotkey": "^0.1.10",
+    "@types/is-url": "^1.2.32",
     "@types/node": "^20.17.6",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18",

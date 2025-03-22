@@ -1,4 +1,3 @@
-import { css } from '@emotion/css';
 import imageExtensions from 'image-extensions';
 import isHotkey from 'is-hotkey';
 import isUrl from 'is-url';
