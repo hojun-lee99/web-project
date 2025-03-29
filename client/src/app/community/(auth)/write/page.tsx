@@ -1,13 +1,188 @@
 'use client';
 
 import LoginFilterPopup from '@/components/auth/LoginFilterPopup';
+import SummernoteEditor from '@/summernote/MySummernote';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import styled from 'styled-components';
+
+interface CommunityFormData {
+  title: string;
+  category: string;
+  contents: string;
+}
+
+interface MyFile {
+  name: string;
+  file: File;
+}
+
+class MySet<T> {
+  key: (a: T, b: T) => boolean;
+  set: Set<T>;
+  constructor(
+    key: (a: T, b: T) => boolean = (a: T, b: T) => {
+      return a === b;
+    },
+  ) {
+    this.key = key;
+    this.set = new Set<T>();
+  }
+
+  add: (value: T) => boolean = (value: T) => {
+    if (this.has(value)) {
+      return false;
+    }
+
+    this.set.add(value);
+
+    return true;
+  };
+
+  has: (value: T) => boolean = (value: T) => {
+    for (let v of this.set) {
+      if (this.key(v, value)) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  delete: (value: T) => boolean = (value: T) => {
+    return this.set.delete(value);
+  };
+
+  values: () => SetIterator<T> = () => {
+    return this.set.values();
+  };
+}
+
+function getMyFiles(set: MySet<MyFile>, arrayStr: string[]) {
+  const result1 = set.values().filter((value) => {
+    for (let v of arrayStr) {
+      if (value.name === v) {
+        return true;
+      }
+    }
+    return false;
+  });
+  const result2 = [
+    ...result1.map((value) => {
+      return value.file;
+    }),
+  ];
+
+  return result2;
+}
 
 export default function Write() {
+  const {
+    register,
+    handleSubmit,
+    setError,
+    setValue,
+    formState: { errors },
+  } = useForm<CommunityFormData>({
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit',
+  });
+  const router = useRouter();
+  const [contents, setContents] = useState<string>('');
+  const [imgFiles, setImgFiles] = useState<MySet<MyFile>>(
+    new MySet((a, b) => {
+      return a.name === b.name;
+    }),
+  );
+
+  const setImg = (img: File) => {
+    setImgFiles((v) => {
+      const mySet = new MySet<MyFile>((a, b) => {
+        return a.name === b.name;
+      });
+      for (let value of v.values()) {
+        mySet.add(value);
+      }
+      mySet.add({ name: URL.createObjectURL(img), file: img });
+      return mySet;
+    });
+  };
+
   return (
     // <LoginFilterPopup message="로그인 필요">
     <div className="content">
-      <div className="content-inner">글쓰는페이지</div>
+      <WriteDiv>
+        <div style={{ width: '100%' }}>
+          <BackButton
+            onClick={() => {
+              router.back();
+            }}
+          >
+            ← Go Back
+          </BackButton>
+          <form
+            style={{ width: '100%' }}
+            onSubmit={handleSubmit((data, e) => {
+              e?.preventDefault();
+              const imgFormData = new FormData();
+              for (let v of imgFiles.values()) {
+                imgFormData.append('file', v.file);
+              }
+              const formData: CommunityFormData = {
+                title: data.title
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;')
+                  .replace(/\s+/g, ' '),
+                category: data.category,
+                contents: contents,
+              };
+              console.log(formData);
+              console.log([...imgFormData.values()]);
+            })}
+          >
+            <label>제목</label>
+            <input
+              {...register('title', {
+                required: '적어주세요',
+              })}
+              id="write-title"
+            />
+            <label htmlFor="write-category">카테고리</label>
+            <select
+              {...register('category', {
+                required: '선택하세요',
+                validate: (value) => {
+                  return value !== '' || '선택하세요';
+                },
+              })}
+              id="write-category"
+            >
+              <option value="">선택</option>
+              <option value="female">female</option>
+              <option value="male">male</option>
+              <option value="other">other</option>
+            </select>
+            <SummernoteEditor onChange={setContents} setFiles={setImg} />
+            <button>sumbit</button>
+          </form>
+        </div>
+      </WriteDiv>
     </div>
     // </LoginFilterPopup>
   );
 }
+
+const WriteDiv = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  margin: 100px;
+`;
+
+const BackButton = styled.span`
+  color: var(--color-primary-accent);
+  cursor: pointer;
+`;
