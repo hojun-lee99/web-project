@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
-import { getImgSrc, replaceImgSrc } from '@/utils/htmlUtils';
+import { getImgSrc } from '@/utils/htmlUtils';
 
 interface CommunityFormData {
   title: string;
@@ -83,10 +83,9 @@ function getMyFiles(set: MySet<MyFile>, arrayStr: string[]) {
     return false;
   });
   const result2 = [
-    ...result1,
-    // .map((value) => {
-    //   return value.file;
-    // }),
+    ...result1.map((value) => {
+      return value.file;
+    }),
   ];
 
   return result2;
@@ -105,6 +104,7 @@ export default function Write() {
   });
   const router = useRouter();
   const [contents, setContents] = useState<string>('');
+  const [initFiles, setInitFiles] = useState<string[]>([]);
   const [imgFiles, setImgFiles] = useState<MySet<MyFile>>(
     new MySet((a, b) => {
       return a.name === b.name;
@@ -121,9 +121,7 @@ export default function Write() {
           mySet.add(vl);
         }
       });
-      // for (let value of v.values()) {
-      //   mySet.add(value);
-      // }
+
       mySet.add({ name: key, file: img });
       return mySet;
     });
@@ -147,15 +145,14 @@ export default function Write() {
               e?.preventDefault();
               const imgFormData = new FormData();
 
-              const imgSrcArray = getImgSrc(contents);
+              const imgSrc = getImgSrc(contents);
+              console.log('getImgSrc: ', imgSrc);
 
-              const myFileArray = getMyFiles(imgFiles, imgSrcArray);
+              console.log(getMyFiles(imgFiles, imgSrc));
 
-              for (let v of myFileArray) {
+              for (let v of imgFiles.values()) {
                 imgFormData.append('file', v.file);
               }
-
-              replaceImgSrc;
 
               const formData: CommunityFormData = {
                 title: data.title

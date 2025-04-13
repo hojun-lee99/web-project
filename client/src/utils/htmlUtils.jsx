@@ -11,21 +11,39 @@ export function getImgSrc(htmlString) {
 
   const result = getAttr(htmlString, reg, 'g');
 
-  const re = result.map((value) => {
-    return value[1];
-  });
-  return re;
+  const re = new Set(
+    result.map((value) => {
+      return value[1];
+    }),
+  );
+  return [...re.values()];
+}
+
+export function getImgCount(htmlString) {
+  const reg = `<img[^>]+src=["']([^"']+)["']`;
+
+  const result = getAttr(htmlString, reg, 'g');
+
+  return result.length;
 }
 
 function replaceAttr(htmlString, newAttr, reg, option = null) {
   const regexp = new RegExp(reg, option);
   return htmlString.replace(regexp, (match, src) => {
-    return match.replace(src, replaceAttr);
+    return match.replace(src, newAttr);
   });
 }
 
-function replaceImgSrc(htmlString, oldSrc, newSrc) {
+export function replaceImgSrc(htmlString, oldSrc, newSrc) {
   //   const reg = `/<img[^>]+src=["']([^"']+)["']/g`;
   const reg = `<img[^>]+src=["'](${oldSrc})["']`;
-  return replaceAttr(htmlString, replaceImgSrc, reg, 'g');
+  return replaceAttr(htmlString, newSrc, reg, 'g');
+}
+
+export function isImg(htmlString, src) {
+  const reg = `<img[^>]+src=["'](${src})["']`;
+  if (getAttr(htmlString, reg).length === 0) {
+    return false;
+  }
+  return true;
 }

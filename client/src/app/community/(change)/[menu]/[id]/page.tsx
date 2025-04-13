@@ -195,7 +195,7 @@ const PostCommentReply = styled.div`
   }
 `;
 
-const BackButton = styled.div`
+const BackButton = styled.span`
   color: var(--color-primary-accent);
 `;
 
