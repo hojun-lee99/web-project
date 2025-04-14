@@ -12,7 +12,7 @@ const SummernoteEditor = ({
   onChange,
   setFiles,
   initCode = '',
-  initFiles = () => {},
+  initFiles = (args) => {},
 }) => {
   const editorRef = useRef(null);
   const imgCount = useRef(null);
@@ -27,12 +27,11 @@ const SummernoteEditor = ({
       if (!!event.target) {
         files = event.target.files;
       }
-      console.log(files);
+
       const $imageCount = $(imgCount.current);
       const imgSrc = getImgSrc($editor.summernote('code'));
       $imageCount.val(imgSrc.length);
-      // $imageCount.val(getImgCount($editor.summernote('code')));
-      console.log($imageCount.val());
+
       for (let file of files) {
         const c = $imageCount.val();
         if (c >= maxImg) {
@@ -104,7 +103,7 @@ const SummernoteEditor = ({
         $editor.summernote('destroy');
       }
     };
-  }, [onChange]);
+  }, [initCode]);
 
   return (
     <div>

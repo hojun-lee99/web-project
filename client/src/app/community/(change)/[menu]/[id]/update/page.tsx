@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
-import { getImgSrc } from '@/utils/htmlUtils';
+import { getImgSrc, isImg, replaceImgSrc } from '@/utils/htmlUtils';
 
 interface CommunityFormData {
   title: string;
@@ -83,9 +83,10 @@ function getMyFiles(set: MySet<MyFile>, arrayStr: string[]) {
     return false;
   });
   const result2 = [
-    ...result1.map((value) => {
-      return value.file;
-    }),
+    ...result1,
+    // .map((value) => {
+    //   return value.file;
+    // }),
   ];
 
   return result2;
@@ -104,7 +105,8 @@ export default function Write() {
   });
   const router = useRouter();
   const [contents, setContents] = useState<string>('');
-  const [initFiles, setInitFiles] = useState<string[]>([]);
+  const [preContents, setPreContents] = useState<string>('');
+  const [preFiles, setPreFiles] = useState<string[]>([]);
   const [imgFiles, setImgFiles] = useState<MySet<MyFile>>(
     new MySet((a, b) => {
       return a.name === b.name;
@@ -121,11 +123,21 @@ export default function Write() {
           mySet.add(vl);
         }
       });
-
+      // for (let value of v.values()) {
+      //   mySet.add(value);
+      // }
       mySet.add({ name: key, file: img });
       return mySet;
     });
   };
+
+  useEffect(() => {
+    setPreContents('Hello World<img src="hello World!!!" />');
+  }, []);
+
+  useEffect(() => {
+    console.log(preFiles);
+  }, [preFiles]);
 
   return (
     // <LoginFilterPopup message="로그인 필요">
@@ -143,16 +155,22 @@ export default function Write() {
             style={{ width: '100%' }}
             onSubmit={handleSubmit(async (data, e) => {
               e?.preventDefault();
+
+              preFiles.forEach((v) => {
+                console.log(v, isImg(contents, v));
+              });
+
               const imgFormData = new FormData();
 
-              const imgSrc = getImgSrc(contents);
-              console.log('getImgSrc: ', imgSrc);
+              const imgSrcArray = getImgSrc(contents);
 
-              console.log(getMyFiles(imgFiles, imgSrc));
+              const myFileArray = getMyFiles(imgFiles, imgSrcArray);
 
-              for (let v of imgFiles.values()) {
+              for (let v of myFileArray) {
                 imgFormData.append('file', v.file);
               }
+
+              replaceImgSrc;
 
               const formData: CommunityFormData = {
                 title: data.title
@@ -188,7 +206,16 @@ export default function Write() {
               <option value="cate2">male</option>
               <option value="cate3">other</option>
             </select>
-            <SummernoteEditor onChange={setContents} setFiles={setImg} />
+            <SummernoteEditor
+              onChange={setContents}
+              setFiles={setImg}
+              initCode={preContents}
+              initFiles={(args) => {
+                setPreFiles((v) => {
+                  return [...args];
+                });
+              }}
+            />
             <button>sumbit</button>
           </form>
         </div>

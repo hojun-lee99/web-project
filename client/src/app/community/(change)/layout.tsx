@@ -39,12 +39,6 @@ export default function CommunityLayout({
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  useEffect(() => {
-    console.log(params);
-    console.log(searchParams);
-    console.log(pathname.split('/')[4]);
-  }, [params]);
-
   if (pathname.split('/')[4] == 'update') {
     return <div>{children}</div>;
   }

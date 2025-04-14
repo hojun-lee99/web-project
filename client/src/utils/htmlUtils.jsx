@@ -1,6 +1,6 @@
 'use client';
 
-function getAttr(htmlString, reg, option = null) {
+function getAttr(htmlString, reg, option = 'g') {
   const regexp = new RegExp(reg, option);
 
   return [...htmlString.matchAll(regexp)];
