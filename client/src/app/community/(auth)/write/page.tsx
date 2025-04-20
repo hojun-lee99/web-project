@@ -93,13 +93,7 @@ function getMyFiles(set: MySet<MyFile>, arrayStr: string[]) {
 }
 
 export default function Write() {
-  const {
-    register,
-    handleSubmit,
-    setError,
-    setValue,
-    formState: { errors },
-  } = useForm<CommunityFormData>({
+  const { register, handleSubmit } = useForm<CommunityFormData>({
     mode: 'onSubmit',
     reValidateMode: 'onSubmit',
   });
@@ -143,6 +137,11 @@ export default function Write() {
           </BackButton>
           <form
             style={{ width: '100%' }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+              }
+            }}
             onSubmit={handleSubmit(async (data, e) => {
               e?.preventDefault();
               const imgFormData = new FormData();

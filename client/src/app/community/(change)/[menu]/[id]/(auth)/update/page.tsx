@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { getImgSrc, isImg, replaceImgSrc } from '@/utils/htmlUtils';
 
 interface CommunityFormData {
+  id: string;
   title: string;
   category: string;
   contents: string;
@@ -133,6 +134,8 @@ export default function Write() {
 
   useEffect(() => {
     setPreContents('Hello World<img src="hello World!!!" />');
+    setValue('title', 'Hello World');
+    setValue('category', 'cate1');
   }, []);
 
   useEffect(() => {
@@ -153,8 +156,21 @@ export default function Write() {
           </BackButton>
           <form
             style={{ width: '100%' }}
-            onSubmit={handleSubmit(async (data, e) => {
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+              }
+            }}
+            onSubmit={handleSubmit(async (data, e: any) => {
               e?.preventDefault();
+              const clickObj = e?.nativeEvent.submitter.name;
+              if (true) {
+              } else if (clickObj === 'submit') {
+              } else if (clickObj === 'delete') {
+              }
+
+              console.log(clickObj);
+              console.log(e?.nativeEvent.key);
 
               preFiles.forEach((v) => {
                 console.log(v, isImg(contents, v));
@@ -173,6 +189,7 @@ export default function Write() {
               replaceImgSrc;
 
               const formData: CommunityFormData = {
+                id: '123',
                 title: data.title
                   .replace(/</g, '&lt;')
                   .replace(/>/g, '&gt;')
@@ -216,7 +233,12 @@ export default function Write() {
                 });
               }}
             />
-            <button>sumbit</button>
+            <button type="submit" name="submit">
+              submit
+            </button>
+            <button type="submit" name="delete">
+              delete
+            </button>
           </form>
         </div>
       </WriteDiv>

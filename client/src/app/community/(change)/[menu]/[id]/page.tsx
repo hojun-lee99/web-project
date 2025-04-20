@@ -1,108 +1,345 @@
 'use client';
 
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/navigation';
+import LoginFilterPopup from '@/components/auth/LoginFilterPopup';
+import LoginFilter from '@/components/auth/LoginFilter';
+import { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+
+interface PostData {
+  id: string;
+  title: string;
+  userId: string;
+  category: string;
+  contents: string;
+  createdAt: Date;
+  comments: PostComment[];
+}
+interface PostComment {
+  id: string;
+  userId: string;
+  contents: string;
+  postId: string;
+  parentId?: string;
+  createdAt: Date;
+  children?: PostComment[];
+}
+
+interface CommentForm {
+  contents: string;
+  userId: string;
+  postId: string;
+  parentId: string;
+}
 
 export default function Post() {
   const router = useRouter();
+  const [postData, setPostData] = useState<PostData>();
 
   const handleGoBack = () => {
     router.back(); // 이전 페이지로 이동
   };
 
+  useEffect(() => {
+    const testData: PostData = {
+      id: '123',
+      userId: 'world',
+      title: 'hello',
+      category: 'cate1',
+      contents: '<p>hello world~</p><p>hello world</p>',
+      createdAt: new Date(),
+      comments: [
+        {
+          id: '321',
+          userId: 'world',
+          contents: 'u jam',
+          createdAt: new Date(),
+          postId: '123',
+          children: [
+            {
+              id: '4321',
+              userId: 'world',
+              contents: 'no jam',
+              createdAt: new Date(),
+              postId: '123',
+            } as PostComment,
+          ],
+        } as PostComment,
+      ],
+    };
+    setPostData(testData);
+  }, []);
+  if (!postData) {
+    return <div></div>;
+  }
   return (
     <div>
       <BackButton onClick={handleGoBack}>← Go Back</BackButton>
       <PostLayout>
         <PostHeader>
           <div>
-            <p className="post-item_name">게시물제목</p>
+            <p className="post-item_name">{postData.title}</p>
             <div className="post-item_info">
-              <span className="post-item_author">작성자</span>
-              <span className="post-item_date">날짜</span>
+              <span className="post-item_author">{postData.userId}</span>
+              <span className="post-item_date">
+                {postData.createdAt.toLocaleString()}
+              </span>
               <div className="post-item_comment">
-                <i></i> 10
+                <i></i> {postData.comments.length}
               </div>
             </div>
           </div>
           <div className="post-item_pohto"></div>
         </PostHeader>
-        <PostText>게시물 내용</PostText>
-        <PostComment>
-          <div className="comment-head">댓글</div>
-          <div className="comment-textarea">
-            <CommentTextarea placeholder="PostComment"></CommentTextarea>
+        <PostText>{postData.contents}</PostText>
+        {/*  */}
+        <MyComment data={postData.comments}></MyComment>
+        {/*  */}
+      </PostLayout>
+    </div>
+  );
+}
+
+function MyCommentForm() {
+  const maxLength = 10;
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { errors },
+  } = useForm<CommentForm>();
+  const [refresh, setRefresh] = useState<boolean>();
+  const toggle = () => {
+    setRefresh((v) => {
+      return !v;
+    });
+  };
+
+  return (
+    <React.Fragment>
+      <div className="comment-head">댓글</div>
+      <div className="comment-textarea">
+        <form
+          style={{ all: 'unset', display: 'contents' }}
+          onSubmit={handleSubmit((data, e) => {
+            e?.preventDefault();
+            console.log(data);
+          })}
+        >
+          <CommentTextarea
+            {...register('contents', {
+              required: true,
+              onChange: (e) => {
+                toggle();
+              },
+              maxLength: {
+                value: maxLength,
+                message: 'max: ' + maxLength.toString(),
+              },
+            })}
+            placeholder="PostComment"
+            maxLength={maxLength}
+          ></CommentTextarea>
+
+          <div>
+            <span style={{ marginRight: '15px' }}>
+              {(getValues('contents')
+                ? getValues('contents').length.toString()
+                : '0') + ' / 500'}
+            </span>
+            {/* <LoginFilter> */}
+            <button className="comment-submit" type="submit">
+              등록
+            </button>
+            {/* </LoginFilter> */}
+          </div>
+        </form>
+      </div>
+    </React.Fragment>
+  );
+}
+
+function MyReplyCommentForm() {
+  const maxLength = 10;
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { errors },
+  } = useForm<CommentForm>();
+  const [refresh, setRefresh] = useState<boolean>();
+  const toggle = () => {
+    setRefresh((v) => {
+      return !v;
+    });
+  };
+  return (
+    <div className="comment-reply-textarea">
+      <div className="comment-user-profile"></div>
+      <div className="comment-textarea">
+        <form
+          style={{ all: 'unset', display: 'contents' }}
+          onSubmit={handleSubmit((data, e) => {
+            e?.preventDefault();
+            console.log(data);
+          })}
+        >
+          <CommentTextarea
+            {...register('contents', {
+              required: true,
+              onChange: (e) => {
+                toggle();
+              },
+              maxLength: {
+                value: maxLength,
+                message: 'max: ' + maxLength.toString(),
+              },
+            })}
+            placeholder="PostComment"
+            maxLength={maxLength}
+          ></CommentTextarea>
+          <div>
+            <span style={{ marginRight: '15px' }}>
+              {(getValues('contents')
+                ? getValues('contents').length.toString()
+                : '0') + ' / 500'}
+            </span>
+            {/* <LoginFilter> */}
             <button className="comment-submit" type="button">
               등록
             </button>
+            {/* </LoginFilter> */}
           </div>
-          <PostCommentList>
-            <ul>
-              <PostCommentItem>
-                <div className="comment-item-user">
-                  <div className="comment-item-head">
-                    <div>
-                      <div className="comment-user-profile"></div>
-                      <div className="comment-user-name">댓글작성자1</div>
-                      <div className="comment-date">1일전</div>
-                    </div>
-
-                    <div className="comment-reply-button">답글달기</div>
-                  </div>
-                  <div className="comment-item-user_text">댓글내용</div>
-                </div>
-
-                <PostCommentReply>
-                  <div className="comment-reply-textarea">
-                    <div className="comment-user-profile"></div>
-                    <div className="comment-textarea">
-                      <CommentTextarea placeholder="PostComment"></CommentTextarea>
-                      <button className="comment-submit" type="button">
-                        등록
-                      </button>
-                    </div>
-                  </div>
-
-                  <ul className="comment-reply-list">
-                    <li>
-                      <div className="comment-item-head">
-                        <div>
-                          <div className="comment-user-profile"></div>
-                          <div className="comment-user-name">답댓작성자</div>
-                          <div className="comment-date">1일전</div>
-                        </div>
-
-                        <div className="comment-reply-button">
-                          <button type="button">삭제</button>
-                          <button type="button">수정</button>
-                        </div>
-                      </div>
-                      <div className="comment-item-user_text">
-                        <div>답댓글내용</div>
-                      </div>
-                    </li>
-                  </ul>
-                </PostCommentReply>
-              </PostCommentItem>
-              <PostCommentItem>
-                <div className="comment-item-user">
-                  <div className="comment-item-head">
-                    <div>
-                      <div className="comment-user-profile"></div>
-                      <div className="comment-user-name">닉네임</div>
-                      <div className="comment-date">1일전</div>
-                    </div>
-
-                    <div className="comment-reply-button">답글달기</div>
-                  </div>
-                  <div className="comment-item-user_text">댓글내용</div>
-                </div>
-              </PostCommentItem>
-            </ul>
-          </PostCommentList>
-        </PostComment>
-      </PostLayout>
+        </form>
+      </div>
     </div>
+  );
+}
+
+function MyCommentView({ data, toggle }: { data: PostComment; toggle: any }) {
+  return (
+    <div className="comment-item-user">
+      <div className="comment-item-head">
+        <div>
+          <div className="comment-user-profile"></div>
+          <div className="comment-user-name">{data.userId}</div>
+          <div className="comment-date">
+            {data.createdAt.toLocaleTimeString()}
+          </div>
+        </div>
+
+        <div
+          className="comment-reply-button"
+          onClick={() => {
+            toggle();
+          }}
+        >
+          답글달기
+        </div>
+      </div>
+      <div className="comment-item-user_text">{data.contents}</div>
+    </div>
+  );
+}
+
+function MyReplyCommentView({ data }: { data: PostComment }) {
+  return (
+    <React.Fragment>
+      <div className="comment-item-head">
+        <div>
+          <div className="comment-user-profile"></div>
+          <div className="comment-user-name">{data.userId}</div>
+          <div className="comment-date">
+            {data.createdAt.toLocaleTimeString()}
+          </div>
+        </div>
+
+        <div className="comment-reply-button">
+          <button type="button">삭제</button>
+          <button type="button">수정</button>
+        </div>
+      </div>
+      <div className="comment-item-user_text">
+        <div>{data.contents}</div>
+      </div>
+    </React.Fragment>
+  );
+}
+
+function MyCommentItem({ data }: { data: PostComment }) {
+  const [onReplyCommentForm, setOnReplyCommentForm] = useState<boolean>(false);
+  const toggleReplyCommentForm = () => {
+    setOnReplyCommentForm((v) => {
+      return !v;
+    });
+  };
+
+  return (
+    <PostCommentItem>
+      <MyCommentView
+        data={data}
+        toggle={toggleReplyCommentForm}
+      ></MyCommentView>
+
+      <PostCommentReply>
+        {onReplyCommentForm && <MyReplyCommentForm></MyReplyCommentForm>}
+        <MyReplyCommentList data={data.children || []}></MyReplyCommentList>
+      </PostCommentReply>
+    </PostCommentItem>
+  );
+}
+
+function MyReplyCommentList({ data }: { data: PostComment[] }) {
+  console.log(data);
+  return (
+    <ul className="comment-reply-list">
+      {data.map((d) => {
+        return (
+          <li>
+            <MyReplyCommentView data={d}></MyReplyCommentView>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function MyCommentList({ data }: { data: PostComment[] }) {
+  return (
+    <PostCommentList>
+      <ul>
+        {data.map((d) => {
+          return <MyCommentItem data={d}></MyCommentItem>;
+        })}
+        {/* <MyCommentItem data={{} as PostComment}></MyCommentItem>
+        <PostCommentItem>
+          <div className="comment-item-user">
+            <div className="comment-item-head">
+              <div>
+                <div className="comment-user-profile"></div>
+                <div className="comment-user-name">닉네임</div>
+                <div className="comment-date">1일전</div>
+              </div>
+
+              <div className="comment-reply-button">답글달기</div>
+            </div>
+            <div className="comment-item-user_text">댓글내용</div>
+          </div>
+        </PostCommentItem> */}
+      </ul>
+    </PostCommentList>
+  );
+}
+
+function MyComment({ data }: { data: PostComment[] }) {
+  useEffect(() => {}, []);
+  return (
+    <PostComment>
+      <MyCommentForm></MyCommentForm>
+      <MyCommentList data={data}></MyCommentList>
+    </PostComment>
   );
 }
 

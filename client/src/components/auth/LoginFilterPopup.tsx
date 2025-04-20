@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 export default function LoginFilterPopup({
   children,
-  message,
+  message = '로그인 필요',
 }: {
   children: React.ReactNode;
   message: string;
