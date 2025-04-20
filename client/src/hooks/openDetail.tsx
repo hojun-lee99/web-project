@@ -1,3 +1,5 @@
+'use client';
+
 type AppRouterInstance = {
   push: (url: string) => void;
   replace: (url: string) => void;

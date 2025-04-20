@@ -1,3 +1,5 @@
+'use clicent';
+
 import { useAppSelector } from '@/redux/hooks';
 import { selectLoginState } from '@/redux/loginStateSlice';
 

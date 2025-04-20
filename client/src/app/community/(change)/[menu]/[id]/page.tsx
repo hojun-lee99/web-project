@@ -67,6 +67,29 @@ export default function Post() {
             } as PostComment,
           ],
         } as PostComment,
+        {
+          id: '321',
+          userId: 'world',
+          contents: 'u jam',
+          createdAt: new Date(),
+          postId: '123',
+          children: [
+            {
+              id: '4321',
+              userId: 'world',
+              contents: 'no jam',
+              createdAt: new Date(),
+              postId: '123',
+            } as PostComment,
+            {
+              id: '4321',
+              userId: 'world',
+              contents: 'no jam',
+              createdAt: new Date(),
+              postId: '123',
+            } as PostComment,
+          ],
+        } as PostComment,
       ],
     };
     setPostData(testData);
@@ -147,7 +170,9 @@ function MyCommentForm() {
             <span style={{ marginRight: '15px' }}>
               {(getValues('contents')
                 ? getValues('contents').length.toString()
-                : '0') + ' / 500'}
+                : '0') +
+                ' / ' +
+                maxLength}
             </span>
             {/* <LoginFilter> */}
             <button className="comment-submit" type="submit">
@@ -204,7 +229,9 @@ function MyReplyCommentForm() {
             <span style={{ marginRight: '15px' }}>
               {(getValues('contents')
                 ? getValues('contents').length.toString()
-                : '0') + ' / 500'}
+                : '0') +
+                ' / ' +
+                maxLength}
             </span>
             {/* <LoginFilter> */}
             <button className="comment-submit" type="button">
