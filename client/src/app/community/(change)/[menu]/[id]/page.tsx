@@ -7,27 +7,29 @@ import LoginFilterPopup from '@/components/auth/LoginFilterPopup';
 import LoginFilter from '@/components/auth/LoginFilter';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import constructWithOptions from 'styled-components/dist/constructors/constructWithOptions';
+import { current } from '@reduxjs/toolkit';
 
-interface PostData {
+interface MyPostData {
   id: string;
   title: string;
   userId: string;
   category: string;
   contents: string;
   createdAt: Date;
-  comments: PostComment[];
+  comments: MyPostComment[];
 }
-interface PostComment {
+interface MyPostComment {
   id: string;
   userId: string;
   contents: string;
   postId: string;
   parentId?: string;
   createdAt: Date;
-  children?: PostComment[];
+  children?: MyPostComment[];
 }
 
-interface CommentForm {
+interface MyCommentForm {
   contents: string;
   userId: string;
   postId: string;
@@ -36,14 +38,20 @@ interface CommentForm {
 
 export default function Post() {
   const router = useRouter();
-  const [postData, setPostData] = useState<PostData>();
+  const [myPostData, setMyPostData] = useState<MyPostData>();
 
   const handleGoBack = () => {
     router.back(); // 이전 페이지로 이동
   };
 
+  const commentListLenght = (commentList: MyPostComment[]) => {
+    return commentList.reduce((d, c) => {
+      return d + (c.children ? c.children.length : 0) + 1;
+    }, 0);
+  };
+
   useEffect(() => {
-    const testData: PostData = {
+    const testData: MyPostData = {
       id: '123',
       userId: 'world',
       title: 'hello',
@@ -52,7 +60,7 @@ export default function Post() {
       createdAt: new Date(),
       comments: [
         {
-          id: '321',
+          id: '321123123',
           userId: 'world',
           contents: 'u jam',
           createdAt: new Date(),
@@ -64,9 +72,9 @@ export default function Post() {
               contents: 'no jam',
               createdAt: new Date(),
               postId: '123',
-            } as PostComment,
+            } as MyPostComment,
           ],
-        } as PostComment,
+        } as MyPostComment,
         {
           id: '321',
           userId: 'world',
@@ -80,21 +88,32 @@ export default function Post() {
               contents: 'no jam',
               createdAt: new Date(),
               postId: '123',
-            } as PostComment,
-            {
-              id: '4321',
-              userId: 'world',
-              contents: 'no jam',
-              createdAt: new Date(),
-              postId: '123',
-            } as PostComment,
+            } as MyPostComment,
+            ...Array.from({ length: 10 }, (v, i) => {
+              return {
+                id: '4321' + i,
+                userId: 'world',
+                contents: 'no jam',
+                createdAt: new Date(),
+                postId: '123',
+              };
+            }),
           ],
-        } as PostComment,
+        } as MyPostComment,
+        ...Array.from({ length: 23 }, (v, i) => {
+          return {
+            id: '4321555' + i,
+            userId: 'world',
+            contents: 'no jam',
+            createdAt: new Date(),
+            postId: '123',
+          };
+        }),
       ],
     };
-    setPostData(testData);
+    setMyPostData(testData);
   }, []);
-  if (!postData) {
+  if (!myPostData) {
     return <div></div>;
   }
   return (
@@ -103,22 +122,22 @@ export default function Post() {
       <PostLayout>
         <PostHeader>
           <div>
-            <p className="post-item_name">{postData.title}</p>
+            <p className="post-item_name">{myPostData.title}</p>
             <div className="post-item_info">
-              <span className="post-item_author">{postData.userId}</span>
+              <span className="post-item_author">{myPostData.userId}</span>
               <span className="post-item_date">
-                {postData.createdAt.toLocaleString()}
+                {myPostData.createdAt.toLocaleString()}
               </span>
               <div className="post-item_comment">
-                <i></i> {postData.comments.length}
+                <i></i> {commentListLenght(myPostData.comments)}
               </div>
             </div>
           </div>
           <div className="post-item_pohto"></div>
         </PostHeader>
-        <PostText>{postData.contents}</PostText>
+        <PostText>{myPostData.contents}</PostText>
         {/*  */}
-        <MyComment data={postData.comments}></MyComment>
+        <MyComment data={myPostData.comments}></MyComment>
         {/*  */}
       </PostLayout>
     </div>
@@ -132,7 +151,7 @@ function MyCommentForm() {
     handleSubmit,
     getValues,
     formState: { errors },
-  } = useForm<CommentForm>();
+  } = useForm<MyCommentForm>();
   const [refresh, setRefresh] = useState<boolean>();
   const toggle = () => {
     setRefresh((v) => {
@@ -193,7 +212,7 @@ function MyReplyCommentForm() {
     handleSubmit,
     getValues,
     formState: { errors },
-  } = useForm<CommentForm>();
+  } = useForm<MyCommentForm>();
   const [refresh, setRefresh] = useState<boolean>();
   const toggle = () => {
     setRefresh((v) => {
@@ -245,7 +264,7 @@ function MyReplyCommentForm() {
   );
 }
 
-function MyCommentView({ data, toggle }: { data: PostComment; toggle: any }) {
+function MyCommentView({ data, toggle }: { data: MyPostComment; toggle: any }) {
   return (
     <div className="comment-item-user">
       <div className="comment-item-head">
@@ -271,7 +290,7 @@ function MyCommentView({ data, toggle }: { data: PostComment; toggle: any }) {
   );
 }
 
-function MyReplyCommentView({ data }: { data: PostComment }) {
+function MyReplyCommentView({ data }: { data: MyPostComment }) {
   return (
     <React.Fragment>
       <div className="comment-item-head">
@@ -295,7 +314,7 @@ function MyReplyCommentView({ data }: { data: PostComment }) {
   );
 }
 
-function MyCommentItem({ data }: { data: PostComment }) {
+function MyCommentItem({ data }: { data: MyPostComment }) {
   const [onReplyCommentForm, setOnReplyCommentForm] = useState<boolean>(false);
   const toggleReplyCommentForm = () => {
     setOnReplyCommentForm((v) => {
@@ -318,49 +337,179 @@ function MyCommentItem({ data }: { data: PostComment }) {
   );
 }
 
-function MyReplyCommentList({ data }: { data: PostComment[] }) {
-  console.log(data);
+function MyReplyCommentList({ data }: { data: MyPostComment[] }) {
+  const cut = 5;
+  const [page, setPage] = useState<number>(1);
+  const [count, setCount] = useState<number>(0);
+
+  useEffect(() => {
+    setCount(data.length);
+  }, [data]);
+
+  useEffect(() => {}, [page]);
   return (
-    <ul className="comment-reply-list">
-      {data.map((d) => {
-        return (
-          <li>
-            <MyReplyCommentView data={d}></MyReplyCommentView>
-          </li>
-        );
-      })}
-    </ul>
+    <React.Fragment>
+      <ul className="comment-reply-list">
+        {data.map((d, i) => {
+          if (i < page * cut) {
+            return (
+              <li key={'post-comment' + d.id}>
+                <MyReplyCommentView data={d}></MyReplyCommentView>
+              </li>
+            );
+          }
+        })}
+      </ul>
+
+      {count > cut * page && (
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <span
+            onClick={() => {
+              setPage((v) => {
+                return v + 1;
+              });
+            }}
+            style={{}}
+          >
+            더 보기
+          </span>
+        </div>
+      )}
+    </React.Fragment>
   );
 }
 
-function MyCommentList({ data }: { data: PostComment[] }) {
+function MyCommentList({ data }: { data: MyPostComment[] }) {
+  interface MyPostComment2 extends MyPostComment {
+    page: number;
+  }
+  const cut = 10;
+  const cut2 = 5;
+  const [maxPage, setMaxPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(1);
+  const [myData, setMyData] = useState<MyPostComment2[]>();
+
+  const commentCounter = (mypostCommnet: MyPostComment) => {
+    return (
+      1 +
+      (mypostCommnet.children
+        ? mypostCommnet.children.length < cut2
+          ? mypostCommnet.children.length
+          : cut2
+        : 0)
+    );
+  };
+
+  const pageUI = (currentPage: number, maxPage: number) => {
+    const minPage = 1;
+    const cut = 10;
+    const offset = cut * Math.floor((currentPage - 1) / cut);
+
+    return [
+      <div
+        key={offset - 1}
+        onClick={() => {
+          setPage((v) => {
+            return v <= minPage ? minPage : v - 1;
+          });
+        }}
+        style={{
+          margin: '0px 3px 0px 3px',
+        }}
+      >
+        P
+      </div>,
+      ...Array.from(
+        {
+          length: maxPage - offset > cut ? cut : maxPage - offset,
+        },
+        (v, i) => {
+          return (
+            <div
+              key={i + 1 + offset}
+              onClick={() => {
+                setPage(i + 1 + offset);
+              }}
+              style={{
+                fontWeight: i + 1 + offset === currentPage ? 'bold' : '',
+                margin: '0px 3px 0px 3px',
+              }}
+            >
+              {i + 1 + offset}
+            </div>
+          );
+        },
+      ),
+      <div
+        key={maxPage + offset + 1}
+        onClick={() => {
+          setPage((v) => {
+            return v >= maxPage ? maxPage : v + 1;
+          });
+        }}
+        style={{
+          margin: '0px 3px 0px 3px',
+        }}
+      >
+        N
+      </div>,
+    ];
+  };
+
+  useEffect(() => {
+    let count = 0;
+    let currentPage = 1;
+    setMyData(
+      data.map((d, i) => {
+        if (count >= cut) {
+          count = 0;
+          currentPage = currentPage + 1;
+          setMaxPage(currentPage);
+        }
+
+        const myPostComment: MyPostComment2 = {
+          ...d,
+          page: currentPage,
+        };
+
+        count = count + commentCounter(d);
+        return myPostComment;
+      }),
+    );
+  }, [data]);
   return (
     <PostCommentList>
       <ul>
-        {data.map((d) => {
-          return <MyCommentItem data={d}></MyCommentItem>;
-        })}
-        {/* <MyCommentItem data={{} as PostComment}></MyCommentItem>
-        <PostCommentItem>
-          <div className="comment-item-user">
-            <div className="comment-item-head">
-              <div>
-                <div className="comment-user-profile"></div>
-                <div className="comment-user-name">닉네임</div>
-                <div className="comment-date">1일전</div>
-              </div>
-
-              <div className="comment-reply-button">답글달기</div>
-            </div>
-            <div className="comment-item-user_text">댓글내용</div>
-          </div>
-        </PostCommentItem> */}
+        {myData &&
+          myData.map((d) => {
+            if (d.page === page) {
+              return (
+                <MyCommentItem
+                  data={d}
+                  key={'post-comment' + d.id}
+                ></MyCommentItem>
+              );
+            }
+          })}
       </ul>
+      {myData && (
+        <div
+          style={{
+            marginTop: '55px',
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <span style={{ display: 'flex', flexDirection: 'row' }}>
+            {pageUI(page, maxPage)}
+          </span>
+        </div>
+      )}
     </PostCommentList>
   );
 }
 
-function MyComment({ data }: { data: PostComment[] }) {
+function MyComment({ data }: { data: MyPostComment[] }) {
   useEffect(() => {}, []);
   return (
     <PostComment>

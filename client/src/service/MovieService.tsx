@@ -71,7 +71,7 @@ export interface CrewMember {
 }
 
 export class MovieServiceImpl implements MovieService {
-  hello = 'MovieService';
+  hello = 'HELLO';
   static async getData(url: string, obj?: object): Promise<AxiosResponse> {
     return movieBackend.get(url, obj);
   }
@@ -206,7 +206,7 @@ export class MovieServiceImpl implements MovieService {
     return MovieServiceImpl.getMovieIdCateBack(movieId, 'comment', params);
   }
 
-  static async fetchDataBack(
+  static async sendDataBack(
     url: string,
     data: object,
     obj: object,
@@ -216,33 +216,27 @@ export class MovieServiceImpl implements MovieService {
     backendWithCredentials(false);
     return response;
   }
-  static async fetchMovieIdCateBack(
+  static async sendMovieIdCateBack(
     movieId: string,
     cate: string,
     data: object,
     obj: object,
   ): Promise<AxiosResponse> {
-    return MovieServiceImpl.fetchDataBack(`${movieId}/${cate}`, data, obj);
+    return MovieServiceImpl.sendDataBack(`${movieId}/${cate}`, data, obj);
   }
-  static async fetchMovieIdCommentsBack(
+  static async sendMovieIdCommentsBack(
     movieId: string,
     data: object,
     obj: object,
   ): Promise<AxiosResponse> {
-    return MovieServiceImpl.fetchDataBack(`${movieId}/comments`, data, obj);
+    return MovieServiceImpl.sendDataBack(`${movieId}/comments`, data, obj);
   }
-  static async fetchMovieIdCommentBack(
+
+  static async sendMovieIdCommentBack(
     movieId: string,
     data: object,
     obj: object,
   ): Promise<AxiosResponse> {
-    return MovieServiceImpl.fetchDataBack(`${movieId}/comment`, data, obj);
-  }
-  static async postMovieIdCommentBack(
-    movieId: string,
-    data: object,
-    obj: object,
-  ): Promise<AxiosResponse> {
-    return MovieServiceImpl.fetchDataBack(`${movieId}/comment`, data, obj);
+    return MovieServiceImpl.sendDataBack(`${movieId}/comment`, data, obj);
   }
 }
