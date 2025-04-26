@@ -10,19 +10,29 @@ import { Controller, useForm } from 'react-hook-form';
 import constructWithOptions from 'styled-components/dist/constructors/constructWithOptions';
 import { current } from '@reduxjs/toolkit';
 
+// posts: {
+//   id: number;
+//   title: string;
+//   author: string;
+//   date: string;
+//   category: string;
+//   content: string;
+// }
 interface MyPostData {
   id: string;
   title: string;
+  author: string;
   userId: string;
   category: string;
-  contents: string;
+  content: string;
   createdAt: Date;
   comments: MyPostComment[];
 }
 interface MyPostComment {
   id: string;
   userId: string;
-  contents: string;
+  author: string;
+  content: string;
   postId: string;
   parentId?: string;
   createdAt: Date;
@@ -30,7 +40,7 @@ interface MyPostComment {
 }
 
 interface MyCommentForm {
-  contents: string;
+  content: string;
   userId: string;
   postId: string;
   parentId: string;
@@ -53,23 +63,26 @@ export default function Post() {
   useEffect(() => {
     const testData: MyPostData = {
       id: '123',
+      author: 'Hello',
       userId: 'world',
       title: 'hello',
       category: 'cate1',
-      contents: '<p>hello world~</p><p>hello world</p>',
+      content: '<p>hello world~</p><p>hello world</p>',
       createdAt: new Date(),
       comments: [
         {
           id: '321123123',
+          author: 'Hello',
           userId: 'world',
-          contents: 'u jam',
+          content: 'u jam',
           createdAt: new Date(),
           postId: '123',
           children: [
             {
               id: '4321',
+              author: 'Hello',
               userId: 'world',
-              contents: 'no jam',
+              content: 'no jam',
               createdAt: new Date(),
               postId: '123',
             } as MyPostComment,
@@ -77,23 +90,26 @@ export default function Post() {
         } as MyPostComment,
         {
           id: '321',
+          author: 'Hello',
           userId: 'world',
-          contents: 'u jam',
+          content: 'u jam',
           createdAt: new Date(),
           postId: '123',
           children: [
             {
               id: '4321',
+              author: 'Hello',
               userId: 'world',
-              contents: 'no jam',
+              content: 'no jam',
               createdAt: new Date(),
               postId: '123',
             } as MyPostComment,
             ...Array.from({ length: 10 }, (v, i) => {
               return {
                 id: '4321' + i,
+                author: 'Hello',
                 userId: 'world',
-                contents: 'no jam',
+                content: 'no jam',
                 createdAt: new Date(),
                 postId: '123',
               };
@@ -103,8 +119,9 @@ export default function Post() {
         ...Array.from({ length: 23 }, (v, i) => {
           return {
             id: '4321555' + i,
+            author: 'Hello',
             userId: 'world',
-            contents: 'no jam',
+            content: 'no jam',
             createdAt: new Date(),
             postId: '123',
           };
@@ -124,7 +141,7 @@ export default function Post() {
           <div>
             <p className="post-item_name">{myPostData.title}</p>
             <div className="post-item_info">
-              <span className="post-item_author">{myPostData.userId}</span>
+              <span className="post-item_author">{myPostData.author}</span>
               <span className="post-item_date">
                 {myPostData.createdAt.toLocaleString()}
               </span>
@@ -135,7 +152,7 @@ export default function Post() {
           </div>
           <div className="post-item_pohto"></div>
         </PostHeader>
-        <PostText>{myPostData.contents}</PostText>
+        <PostText>{myPostData.content}</PostText>
         {/*  */}
         <MyComment data={myPostData.comments}></MyComment>
         {/*  */}
@@ -171,7 +188,7 @@ function MyCommentForm() {
           })}
         >
           <CommentTextarea
-            {...register('contents', {
+            {...register('content', {
               required: true,
               onChange: (e) => {
                 toggle();
@@ -187,8 +204,8 @@ function MyCommentForm() {
 
           <div>
             <span style={{ marginRight: '15px' }}>
-              {(getValues('contents')
-                ? getValues('contents').length.toString()
+              {(getValues('content')
+                ? getValues('content').length.toString()
                 : '0') +
                 ' / ' +
                 maxLength}
@@ -231,7 +248,7 @@ function MyReplyCommentForm() {
           })}
         >
           <CommentTextarea
-            {...register('contents', {
+            {...register('content', {
               required: true,
               onChange: (e) => {
                 toggle();
@@ -246,8 +263,8 @@ function MyReplyCommentForm() {
           ></CommentTextarea>
           <div>
             <span style={{ marginRight: '15px' }}>
-              {(getValues('contents')
-                ? getValues('contents').length.toString()
+              {(getValues('content')
+                ? getValues('content').length.toString()
                 : '0') +
                 ' / ' +
                 maxLength}
@@ -270,7 +287,7 @@ function MyCommentView({ data, toggle }: { data: MyPostComment; toggle: any }) {
       <div className="comment-item-head">
         <div>
           <div className="comment-user-profile"></div>
-          <div className="comment-user-name">{data.userId}</div>
+          <div className="comment-user-name">{data.author}</div>
           <div className="comment-date">
             {data.createdAt.toLocaleTimeString()}
           </div>
@@ -285,7 +302,7 @@ function MyCommentView({ data, toggle }: { data: MyPostComment; toggle: any }) {
           답글달기
         </div>
       </div>
-      <div className="comment-item-user_text">{data.contents}</div>
+      <div className="comment-item-user_text">{data.content}</div>
     </div>
   );
 }
@@ -296,7 +313,7 @@ function MyReplyCommentView({ data }: { data: MyPostComment }) {
       <div className="comment-item-head">
         <div>
           <div className="comment-user-profile"></div>
-          <div className="comment-user-name">{data.userId}</div>
+          <div className="comment-user-name">{data.author}</div>
           <div className="comment-date">
             {data.createdAt.toLocaleTimeString()}
           </div>
@@ -308,7 +325,7 @@ function MyReplyCommentView({ data }: { data: MyPostComment }) {
         </div>
       </div>
       <div className="comment-item-user_text">
-        <div>{data.contents}</div>
+        <div>{data.content}</div>
       </div>
     </React.Fragment>
   );
