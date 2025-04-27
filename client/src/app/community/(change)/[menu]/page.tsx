@@ -71,10 +71,9 @@ export default function Menu({ params }: { params: { menu: string } }) {
   const cut = 10;
 
   const [myPostDataV2, setMyPostDataV2] = useState<MyPostDataV2[]>();
-  const [page, setPage] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
   const [load, setLoad] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [count, setCount] = useState<number>(1);
 
   const loadingHeight = 20;
 
@@ -129,13 +128,13 @@ export default function Menu({ params }: { params: { menu: string } }) {
           const change = (myPostDataV2: MyPostDataV2 | MyPostDataV2[]) => {
             if (Array.isArray(myPostDataV2)) {
               return myPostDataV2.map((d) => {
-                return { ...d, id: d.id + count * 10 };
+                return { ...d, id: d.id + page * 10 };
               });
             }
-            return { ...myPostDataV2, id: myPostDataV2.id + count * 10 };
+            return { ...myPostDataV2, id: myPostDataV2.id + page * 10 };
           };
           fetchData(change(fakePost));
-          setCount((v) => {
+          setPage((v) => {
             return v + 1;
           });
           setLoad((v) => {
