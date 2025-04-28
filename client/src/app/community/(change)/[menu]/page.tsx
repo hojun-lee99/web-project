@@ -2,6 +2,7 @@
 
 import styled from 'styled-components';
 import PostList from '@/components/PostList';
+import React, { useEffect, useRef, useState } from 'react';
 
 const fakePost = [
   {
@@ -47,14 +48,112 @@ const fakePost = [
   },
 ];
 
+interface MyPostDataV1 {
+  id: string;
+  title: string;
+  author: string;
+  createdAt: Date;
+  category: string;
+  content: string;
+}
+
+interface MyPostDataV2 {
+  id: number;
+  title: string;
+  author: string;
+  date: string;
+  category: string;
+  content: string;
+}
+
 export default function Menu({ params }: { params: { menu: string } }) {
   const menuName = params.menu;
+  const cut = 10;
+
+  const [myPostDataV2, setMyPostDataV2] = useState<MyPostDataV2[]>();
+  const [page, setPage] = useState<number>(1);
+  const [load, setLoad] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const loadingHeight = 20;
+
+  const fetchData = (myPostDataV2: MyPostDataV2 | MyPostDataV2[]) => {
+    setMyPostDataV2((v) => {
+      typeof myPostDataV2;
+      if (v !== undefined) {
+        if (Array.isArray(myPostDataV2)) {
+          return [...v, ...myPostDataV2];
+        }
+        return [...v, myPostDataV2];
+      }
+      if (Array.isArray(myPostDataV2)) {
+        return [...myPostDataV2];
+      }
+      return [myPostDataV2];
+    });
+  };
+
+  useEffect(() => {
+    setMyPostDataV2(fakePost);
+
+    if (typeof window !== undefined) {
+      const scrollFunc = () => {
+        const cur = document.body.scrollHeight - document.body.scrollTop;
+
+        const line = document.body.offsetHeight;
+
+        if (cur - loadingHeight <= line) {
+          setLoad((v) => {
+            return true;
+          });
+        }
+      };
+
+      document.body.addEventListener('scroll', scrollFunc);
+
+      return () => {
+        document.body.removeEventListener('scroll', scrollFunc);
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    if (load) {
+      if (!loading) {
+        setLoading((v) => {
+          return true;
+        });
+
+        const FUNC = () => {
+          const change = (myPostDataV2: MyPostDataV2 | MyPostDataV2[]) => {
+            if (Array.isArray(myPostDataV2)) {
+              return myPostDataV2.map((d) => {
+                return { ...d, id: d.id + page * 10 };
+              });
+            }
+            return { ...myPostDataV2, id: myPostDataV2.id + page * 10 };
+          };
+          fetchData(change(fakePost));
+          setPage((v) => {
+            return v + 1;
+          });
+          setLoad((v) => {
+            return false;
+          });
+          setLoading((v) => {
+            return false;
+          });
+        };
+        setTimeout(FUNC, 1000);
+      }
+    }
+  }, [load]);
 
   return (
-    <>
+    <React.Fragment>
       <MenuName>{menuName}</MenuName>
-      <PostList posts={fakePost} type={'post2'} />
-    </>
+      {myPostDataV2 && <PostList posts={myPostDataV2} type={'post2'} />}
+    </React.Fragment>
   );
 }
 

@@ -2,7 +2,9 @@
 
 import styled from 'styled-components';
 import Link from 'next/link';
+import { useParams, useSearchParams, usePathname } from 'next/navigation';
 import LoginFilter from '@/components/auth/LoginFilter';
+import { useEffect } from 'react';
 
 const menu = [
   {
@@ -33,6 +35,14 @@ export default function CommunityLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
+  if (pathname.split('/')[4] == 'update') {
+    return <div>{children}</div>;
+  }
+
   return (
     <div className="content">
       <div className="content-inner">

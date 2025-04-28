@@ -6,9 +6,10 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
-import { getImgSrc, replaceImgSrc } from '@/utils/htmlUtils';
+import { getImgSrc, isImg, replaceImgSrc } from '@/utils/htmlUtils';
 
 interface CommunityFormData {
+  id: string;
   title: string;
   category: string;
   contents: string;
@@ -93,12 +94,20 @@ function getMyFiles(set: MySet<MyFile>, arrayStr: string[]) {
 }
 
 export default function Write() {
-  const { register, handleSubmit } = useForm<CommunityFormData>({
+  const {
+    register,
+    handleSubmit,
+    setError,
+    setValue,
+    formState: { errors },
+  } = useForm<CommunityFormData>({
     mode: 'onSubmit',
     reValidateMode: 'onSubmit',
   });
   const router = useRouter();
   const [contents, setContents] = useState<string>('');
+  const [preContents, setPreContents] = useState<string>('');
+  const [preFiles, setPreFiles] = useState<string[]>([]);
   const [imgFiles, setImgFiles] = useState<MySet<MyFile>>(
     new MySet((a, b) => {
       return a.name === b.name;
@@ -123,6 +132,16 @@ export default function Write() {
     });
   };
 
+  useEffect(() => {
+    setPreContents('Hello World<img src="hello World!!!" />');
+    setValue('title', 'Hello World');
+    setValue('category', 'cate1');
+  }, []);
+
+  useEffect(() => {
+    console.log(preFiles);
+  }, [preFiles]);
+
   return (
     // <LoginFilterPopup message="로그인 필요">
     <div className="content">
@@ -142,8 +161,21 @@ export default function Write() {
                 e.preventDefault();
               }
             }}
-            onSubmit={handleSubmit(async (data, e) => {
+            onSubmit={handleSubmit(async (data, e: any) => {
               e?.preventDefault();
+              const clickObj = e?.nativeEvent.submitter.name;
+              if (true) {
+              } else if (clickObj === 'submit') {
+              } else if (clickObj === 'delete') {
+              }
+
+              console.log(clickObj);
+              console.log(e?.nativeEvent.key);
+
+              preFiles.forEach((v) => {
+                console.log(v, isImg(contents, v));
+              });
+
               const imgFormData = new FormData();
 
               const imgSrcArray = getImgSrc(contents);
@@ -157,6 +189,7 @@ export default function Write() {
               replaceImgSrc;
 
               const formData: CommunityFormData = {
+                id: '123',
                 title: data.title
                   .replace(/</g, '&lt;')
                   .replace(/>/g, '&gt;')
@@ -190,8 +223,22 @@ export default function Write() {
               <option value="cate2">male</option>
               <option value="cate3">other</option>
             </select>
-            <SummernoteEditor onChange={setContents} setFiles={setImg} />
-            <button>sumbit</button>
+            <SummernoteEditor
+              onChange={setContents}
+              setFiles={setImg}
+              initCode={preContents}
+              initFiles={(args) => {
+                setPreFiles((v) => {
+                  return [...args];
+                });
+              }}
+            />
+            <button type="submit" name="submit">
+              submit
+            </button>
+            <button type="submit" name="delete">
+              delete
+            </button>
           </form>
         </div>
       </WriteDiv>
