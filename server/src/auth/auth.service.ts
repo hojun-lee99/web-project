@@ -71,6 +71,10 @@ export class AuthService {
     const stdDate = new Date();
     const user = UserEntity.create(prototype, hashedPassword, v4, stdDate);
     await this.usersRepo.save(user);
+
+    const accessToken = this.generateToken(user.id, this.accessTokenExpiration);
+
+    return accessToken;
   }
 
   async refreshAccessToken(userId: string) {
