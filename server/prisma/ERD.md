@@ -16,7 +16,7 @@ erDiagram
   DateTime updated_at
 }
 "Movie" {
-  Int id PK
+  String id PK
   Float averageRating
   DateTime created_at
   DateTime updated_at
@@ -27,7 +27,7 @@ erDiagram
   Float rating "nullable"
   String userId
   String name
-  Int movieId FK
+  String movieId FK
   DateTime created_at
   DateTime updated_at
 }

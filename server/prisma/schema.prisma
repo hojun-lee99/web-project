@@ -36,7 +36,7 @@ model User {
 }
 
 model Movie {
-  id            Int      @id
+  id            String      @id
   averageRating Float    @default(0)
   reviews       Review[]
 
@@ -53,7 +53,7 @@ model Review {
   userId  String @db.Uuid
   name    String
   Movie   Movie  @relation(fields: [movieId], references: [id])
-  movieId Int
+  movieId String
 
   createdAt DateTime @map("created_at")
   updatedAt DateTime @map("updated_at")
