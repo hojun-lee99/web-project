@@ -10,13 +10,14 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
-import { LoginRequest } from 'src/shared/types/dto/auth/login.request';
+import { LoginRequest } from 'src/shared/types/dto/auth/request/login.request';
 import { Response } from 'express';
-import { LoginResponse } from 'src/shared/types/dto/auth/login.response';
-import { RegisterRequest } from 'src/shared/types/dto/auth/register.request';
+import { LoginResponse } from 'src/shared/types/dto/auth/response/login.response';
+import { RegisterRequest } from 'src/shared/types/dto/auth/request/register.request';
 import { RefreshTokenGuard } from 'src/common/guard/refresh-token.guard';
 import { AuthenticatedRequest } from './auth.types';
-import { RefreshTokenResponse } from 'src/shared/types/dto/auth/refresh-token.response';
+import { RefreshTokenResponse } from 'src/shared/types/dto/auth/response/refresh-token.response';
+import { RegisterResponse } from 'src/shared/types/dto/auth/response/register.response';
 
 @Controller('auth')
 export class AuthController {
@@ -44,10 +45,15 @@ export class AuthController {
     return responseWithoutRefresh;
   }
 
-  @HttpCode(HttpStatus.NO_CONTENT)
+  //로컬 회원 가입으로 현재 구현 되어있음 추구 소셜 로그인 구현시 수정필요
   @Post('register')
-  async localRegister(@Body() dto: RegisterRequest) {
-    await this.authService.register({ provider: 'LOCAL', ...dto });
+  async localRegister(@Body() dto: RegisterRequest): Promise<RegisterResponse> {
+    const accessToken = await this.authService.register({
+      provider: 'LOCAL',
+      ...dto,
+    });
+
+    return { accessToken };
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)

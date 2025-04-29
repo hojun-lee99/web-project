@@ -1,5 +1,5 @@
 import { Provider } from 'src/auth/auth.types';
-import { UserInfo, UserPrototype } from './user.types';
+import { UserPrototype } from './user.types';
 
 export class UserEntity {
   constructor(
