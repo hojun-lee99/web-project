@@ -6,6 +6,7 @@ import { AppModule } from 'src/app.module';
 import { login } from 'test/helper/login';
 import { CreateRatingDto } from 'src/shared/types/dto/movies/request/create-rating.request';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { WriteCommentDto } from 'src/shared/types/dto/movies/request/write-comment.request';
 
 describe('MoviesController (e2e)', () => {
   let app: INestApplication<App>;
@@ -119,6 +120,61 @@ describe('MoviesController (e2e)', () => {
 
       // 응답 상태 코드 검증 (UNAUTHORIZED: 401)
       expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
+    });
+  });
+
+  describe('/movies/:movieId/reviews (POST)', () => {
+    let accessToken: string;
+    const testMovieId = '12345';
+
+    beforeEach(async () => {
+      await prisma.review.deleteMany();
+      await prisma.movie.deleteMany();
+      await prisma.user.deleteMany();
+      const loginResult = await login(app);
+      accessToken = loginResult.accessToken;
+    });
+
+    it('코멘트 작성 정상 동작', async () => {
+      const commentDto: WriteCommentDto = {
+        comment: '테스트를 위한 영화 한줄평 입니다.',
+      };
+
+      const response = await request(app.getHttpServer())
+        .post(`/movies/${testMovieId}/comments`)
+        .set('Authorization', accessToken)
+        .send(commentDto);
+
+      const { status } = response;
+
+      expect(status).toBe(HttpStatus.NO_CONTENT);
+
+      // 데이터베이스에서 생성된 리뷰 확인
+      const reviewAfterCreate = await prisma.review.findFirst({
+        where: { movieId: testMovieId },
+      });
+      expect(reviewAfterCreate).toBeDefined(); // 리뷰가 존재하는지 확인
+      expect(reviewAfterCreate?.comment).toBe(commentDto.comment); // 코멘트가 올바르게 저장되었는지 확인
+
+      // 두 번째 요청: 별점 업데이트
+      const updatedCommentDto: WriteCommentDto = {
+        comment: '테스트를 위한 영화 코멘트 업데이트 입니다.',
+      };
+      const responseUpdate = await request(app.getHttpServer())
+        .post(`/movies/${testMovieId}/comments`)
+        .set('Authorization', accessToken)
+        .send(updatedCommentDto);
+
+      // 응답 상태 코드 검증 (NO_CONTENT: 204)
+      expect(responseUpdate.status).toBe(HttpStatus.NO_CONTENT);
+
+      // 데이터베이스에서 업데이트된 리뷰 확인
+      const reviewAfterUpdate = await prisma.review.findFirst({
+        where: { movieId: testMovieId },
+      });
+
+      expect(reviewAfterUpdate).toBeDefined();
+      expect(reviewAfterUpdate?.comment).toBe(updatedCommentDto.comment); // 코멘트가 올바르게 업데이트되었는지 확인
     });
   });
 });
