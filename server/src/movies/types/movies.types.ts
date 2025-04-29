@@ -17,3 +17,7 @@ export interface MoviePrototype {
 export interface RatingPrototype {
   readonly rating: number;
 }
+
+export interface CommentPrototype {
+  readonly comment: string;
+}
