@@ -17,9 +17,7 @@ export class ReviewsRepository {
       where: {
         id: data.id,
       },
-      data: {
-        rating: data.rating,
-      },
+      data: data,
     });
   }
 

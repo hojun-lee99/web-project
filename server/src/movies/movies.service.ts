@@ -1,6 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { MoviesRepository } from 'src/movies/movies.repository';
-import { MoviePrototype, RatingPrototype } from 'src/movies/types/movies.types';
+import {
+  CommentPrototype,
+  MoviePrototype,
+  RatingPrototype,
+} from 'src/movies/types/movies.types';
 import { MovieEntity } from './types/movie.entity';
 import { ReviewsRepository } from 'src/reviews/reviews.repository';
 import { UsersRepository } from 'src/users/users.repository';
@@ -22,13 +26,13 @@ export class MoviesService {
     prototype: RatingPrototype,
   ) {
     const { rating } = prototype;
-    const movie = await this.moviesRepo.findOneById(movieId);
-    const user = await this.usersRepo.findOneById(userId);
 
+    const user = await this.usersRepo.findOneById(userId);
     if (!user) {
       throw new NotFoundException('사용자가 존재하지 않습니다.');
     }
 
+    const movie = await this.moviesRepo.findOneById(movieId);
     if (!movie) {
       await this.createMovie(movieId);
     }
@@ -39,8 +43,35 @@ export class MoviesService {
     );
 
     return !existingReview
-      ? await this.createReview(rating, user.id, user.name, movieId)
+      ? await this.createReview(user.id, user.name, movieId, rating)
       : await this.updateReview({ id: existingReview.id, rating });
+  }
+
+  async reviewComment(
+    userId: string,
+    movieId: string,
+    prototype: CommentPrototype,
+  ) {
+    const { comment } = prototype;
+
+    const user = await this.usersRepo.findOneById(userId);
+    if (!user) {
+      throw new NotFoundException('사용자가 존재하지 않습니다.');
+    }
+
+    const movie = await this.moviesRepo.findOneById(movieId);
+    if (!movie) {
+      await this.createMovie(movieId);
+    }
+
+    const existingReview = await this.reviewsRepo.findReviewByUserAndMovie(
+      userId,
+      movieId,
+    );
+
+    return !existingReview
+      ? await this.createReview(user.id, user.name, movieId, 0, comment)
+      : await this.updateReview({ id: existingReview.id, comment });
   }
 
   private async createMovie(movieId: string) {
@@ -51,16 +82,18 @@ export class MoviesService {
   }
 
   private async createReview(
-    rating: number,
     userId: string,
     name: string,
     movieId: string,
+    rating?: number,
+    comment?: string,
   ) {
     const prototype: ReviewPrototype = {
-      rating,
       userId,
       name,
       movieId,
+      rating,
+      comment,
     };
 
     const stdDate = new Date();
