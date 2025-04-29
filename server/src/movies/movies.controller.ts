@@ -10,7 +10,7 @@ import {
 import { MoviesService } from 'src/movies/movies.service';
 import { AccessTokenGuard } from 'src/common/guard/access-token.guard';
 import { CurrnetUser } from 'src/common/decorator/current-user.decorator';
-import { CreateRatingDto } from 'src/shared/types/dto/movies/create-rating.request';
+import { CreateRatingDto } from 'src/shared/types/dto/movies/request/create-rating.request';
 
 @Controller('movies')
 export class MoviesController {
