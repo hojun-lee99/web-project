@@ -1,5 +1,5 @@
 export interface MovieInfo {
-  readonly id: number;
+  readonly id: string;
 
   readonly averageRating: number;
 
@@ -9,7 +9,7 @@ export interface MovieInfo {
 }
 
 export interface MoviePrototype {
-  readonly id: number;
+  readonly id: string;
 
   readonly averageRating: number;
 }

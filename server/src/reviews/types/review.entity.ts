@@ -7,7 +7,7 @@ export class ReviewEntity {
     readonly rating: number | null,
     readonly userId: string,
     readonly name: string,
-    readonly movieId: number,
+    readonly movieId: string,
     readonly createdAt: Date,
     readonly updatedAt: Date,
   ) {}

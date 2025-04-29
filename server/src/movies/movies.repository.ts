@@ -13,7 +13,7 @@ export class MoviesRepository {
     });
   }
 
-  async findOneById(id: number): Promise<MovieInfo | null> {
+  async findOneById(id: string): Promise<MovieInfo | null> {
     return await this.prisma.movie.findUnique({
       select: {
         id: true,

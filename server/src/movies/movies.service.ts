@@ -18,18 +18,19 @@ export class MoviesService {
 
   async reviewRating(
     userId: string,
-    movieId: number,
+    movieId: string,
     prototype: RatingPrototype,
   ) {
     const { rating } = prototype;
     const movie = await this.moviesRepo.findOneById(movieId);
     const user = await this.usersRepo.findOneById(userId);
 
-    if (!movie) {
-      await this.createMovie(movieId);
-    }
     if (!user) {
       throw new NotFoundException('사용자가 존재하지 않습니다.');
+    }
+
+    if (!movie) {
+      await this.createMovie(movieId);
     }
 
     const existingReview = await this.reviewsRepo.findReviewByUserAndMovie(
@@ -37,15 +38,12 @@ export class MoviesService {
       movieId,
     );
 
-    if (!existingReview) {
-      await this.createReview(rating, user.id, user.name, movieId);
-    } else {
-      existingReview.rating = rating;
-      await this.updateReview(existingReview);
-    }
+    return !existingReview
+      ? await this.createReview(rating, user.id, user.name, movieId)
+      : await this.updateReview({ id: existingReview.id, rating });
   }
 
-  private async createMovie(movieId: number) {
+  private async createMovie(movieId: string) {
     const input: MoviePrototype = { id: movieId, averageRating: 0 };
     const stdDate = new Date();
     const movieEntity = MovieEntity.create(input, stdDate);
@@ -56,7 +54,7 @@ export class MoviesService {
     rating: number,
     userId: string,
     name: string,
-    movieId: number,
+    movieId: string,
   ) {
     const prototype: ReviewPrototype = {
       rating,

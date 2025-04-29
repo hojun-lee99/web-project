@@ -23,7 +23,7 @@ export class ReviewsRepository {
     });
   }
 
-  async findReviewByUserAndMovie(userId: string, movieId: number) {
+  async findReviewByUserAndMovie(userId: string, movieId: string) {
     return this.prisma.review.findFirst({
       where: {
         userId,

@@ -24,6 +24,6 @@ export class MoviesController {
     @Body() dto: CreateRatingDto,
     @CurrnetUser() userId: string,
   ) {
-    await this.moviesService.reviewRating(userId, parseInt(movieId), dto);
+    await this.moviesService.reviewRating(userId, movieId, dto);
   }
 }

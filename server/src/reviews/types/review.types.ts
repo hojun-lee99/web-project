@@ -7,5 +7,5 @@ export interface ReviewPrototype {
 
   readonly name: string;
 
-  readonly movieId: number;
+  readonly movieId: string;
 }

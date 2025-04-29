@@ -2,7 +2,7 @@ import { MoviePrototype } from './movies.types';
 
 export class MovieEntity {
   constructor(
-    readonly id: number,
+    readonly id: string,
     readonly averageRating: number,
     readonly createdAt: Date,
     readonly updatedAt: Date,
