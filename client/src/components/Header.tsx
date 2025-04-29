@@ -33,6 +33,11 @@ export default function Header() {
     dispatch(initUserData());
   }, []);
 
+  const logout = async (): Promise<void> => {
+    await LoginServiceImpl.logout();
+    dispatch(initUserData());
+  };
+
   const openPopup = (state: 'login' | 'signup') => {
     setPopupState(state);
   };
@@ -65,6 +70,14 @@ export default function Header() {
             </li>
             <li>
               <Link href="/community">커뮤니티</Link>
+            </li>
+            <li
+              onClick={async () => {
+                await LoginServiceImpl.refreshJWT();
+                dispatch(initUserData());
+              }}
+            >
+              refresh
             </li>
           </MenuList>
         </nav>
@@ -107,9 +120,8 @@ export default function Header() {
                 <UserProfile />
               </Link>
               <div
-                onClick={() => {
-                  LoginServiceImpl.clearUserData();
-                  dispatch(initUserData());
+                onClick={async () => {
+                  await logout();
                 }}
               >
                 logout

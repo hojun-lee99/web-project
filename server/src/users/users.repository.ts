@@ -4,7 +4,7 @@ import { UserInfo } from './user.types';
 import { UserEntity } from './user.entity';
 
 @Injectable()
-export class UsersPrismaRepository {
+export class UsersRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findOneByEmail(email: string): Promise<UserInfo | null> {
@@ -18,6 +18,21 @@ export class UsersPrismaRepository {
       },
       where: {
         email: email,
+      },
+    });
+  }
+
+  async findOneById(userId: string): Promise<UserInfo | null> {
+    return await this.prisma.user.findUnique({
+      select: {
+        id: true,
+        email: true,
+        password: true,
+        name: true,
+        provider: true,
+      },
+      where: {
+        id: userId,
       },
     });
   }

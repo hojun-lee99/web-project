@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { v4 } from 'uuid';
-import { UsersPrismaRepository } from 'src/users/users-prisma.repository';
+import { UsersRepository } from 'src/users/users.repository';
 import { LocalLoginPrototype, Provider } from './auth.types';
 import { UserEntity } from 'src/users/user.entity';
 import { UserPrototype } from 'src/users/user.types';
@@ -18,7 +18,7 @@ export class AuthService {
   private readonly refreshTokenExpiration: string;
 
   constructor(
-    private readonly usersPrisma: UsersPrismaRepository,
+    private readonly usersRepo: UsersRepository,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {
@@ -33,7 +33,7 @@ export class AuthService {
   async localLogin(prototype: LocalLoginPrototype, provider: Provider) {
     const { email, password } = prototype;
 
-    const user = await this.usersPrisma.findOneByEmail(email);
+    const user = await this.usersRepo.findOneByEmail(email);
 
     if (!user) {
       throw new NotFoundException('사용자가 존재하지 않습니다.');
@@ -41,8 +41,10 @@ export class AuthService {
     if (user.provider !== provider) {
       throw new ConflictException('이미 가입된 계정입니다.');
     }
-    if (!(await this.validatePassword(password, user.password))) {
-      throw new ConflictException('잘못된 비밀번호 입니다.');
+    if (user.password) {
+      if (!(await this.validatePassword(password, user.password))) {
+        throw new ConflictException('잘못된 비밀번호 입니다.');
+      }
     }
 
     return {
@@ -59,7 +61,7 @@ export class AuthService {
   }
 
   async register(prototype: UserPrototype) {
-    const userByEmail = await this.usersPrisma.findOneByEmail(prototype.email);
+    const userByEmail = await this.usersRepo.findOneByEmail(prototype.email);
 
     if (userByEmail) {
       throw new ConflictException('이미 가입된 사용자 입니다.');
@@ -68,7 +70,20 @@ export class AuthService {
     const hashedPassword = await this.hashPassword(prototype.password);
     const stdDate = new Date();
     const user = UserEntity.create(prototype, hashedPassword, v4, stdDate);
-    await this.usersPrisma.save(user);
+    await this.usersRepo.save(user);
+
+    const accessToken = this.generateToken(user.id, this.accessTokenExpiration);
+
+    return accessToken;
+  }
+
+  async refreshAccessToken(userId: string) {
+    const accessToken = await this.generateToken(
+      userId,
+      this.accessTokenExpiration,
+    );
+
+    return accessToken;
   }
 
   async hashPassword(password: string): Promise<string> {

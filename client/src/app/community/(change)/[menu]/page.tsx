@@ -1,7 +1,7 @@
 'use client';
 
 import styled from 'styled-components';
-import PostList from '../../../components/PostList';
+import PostList from '@/components/PostList';
 
 const fakePost = [
   {

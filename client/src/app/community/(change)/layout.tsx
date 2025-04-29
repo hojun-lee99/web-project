@@ -2,7 +2,6 @@
 
 import styled from 'styled-components';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
 const menu = [
   {
@@ -33,15 +32,6 @@ export default function CommunityLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-
-  // '/community/write' 경로에서는 공통 레이아웃 제외
-  const isWritePage = pathname === '/community/write';
-
-  if (isWritePage) {
-    return <>{children}</>;
-  }
-
   return (
     <div className="content">
       <div className="content-inner">
@@ -90,7 +80,7 @@ const CommunityHeader = styled.div`
   margin-bottom: 36px;
 `;
 
-const WriteButton = styled.a`
+const WriteButton = styled(Link)`
   width: 100%;
   max-width: 749px;
   padding: 20px 49px;

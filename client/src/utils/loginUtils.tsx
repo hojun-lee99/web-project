@@ -1,6 +1,7 @@
 'use-client';
 
 import { LoginState } from '@/redux/loginStateSlice';
+import { throwClientError } from './clientUtils';
 
 export interface SaveLocalStorage extends LoginState {
   name: string;
@@ -25,20 +26,8 @@ function isSaveLocalStorage(arg: any): arg is SaveLocalStorage {
   return true;
 }
 
-export function checkClient(): boolean {
-  return typeof window === undefined;
-}
-
-export function requsetLogin() {}
-
-function notClientError() {
-  throw { error: 'not client' };
-}
-
 export function checkLoginLocalStorage(): boolean {
-  if (checkClient()) {
-    notClientError();
-  }
+  throwClientError();
 
   let ok: boolean = false;
   const check: string | null = localStorage.getItem(
@@ -50,6 +39,11 @@ export function checkLoginLocalStorage(): boolean {
   }
 
   return ok;
+}
+
+export function getTimoutTime(): number {
+  return (new Date().getTime() +
+    parseInt(process.env.NEXT_PUBLIC_TIMEOUT as string)) as number;
 }
 
 export function timeoutLoginLocalStorage(
@@ -87,9 +81,7 @@ function timeoutChecksaveLocalStorage(
 }
 
 export function getLoginLocalStorage(): SaveLocalStorage {
-  if (checkClient()) {
-    notClientError();
-  }
+  throwClientError();
 
   let get: string | null | SaveLocalStorage = localStorage.getItem(
     process.env.NEXT_PUBLIC_MY_LOGIN_USER as string,
@@ -105,9 +97,8 @@ export function getLoginLocalStorage(): SaveLocalStorage {
 }
 
 export function setLoginLocalStorage(saveObj: SaveLocalStorage): boolean {
-  if (checkClient()) {
-    notClientError();
-  }
+  throwClientError();
+
   const SaveLocalStorage: string = saveLocalStorageJsonStringify(saveObj);
   window.localStorage.setItem(
     process.env.NEXT_PUBLIC_MY_LOGIN_USER as string,
@@ -163,9 +154,8 @@ export function saveLocalStorageCheck(obj: SaveLocalStorage): void {
 }
 
 export function removeLoginLocalStorage(): void {
-  if (checkClient()) {
-    notClientError();
-  }
+  throwClientError();
+
   window.localStorage.removeItem(
     process.env.NEXT_PUBLIC_MY_LOGIN_USER as string,
   );

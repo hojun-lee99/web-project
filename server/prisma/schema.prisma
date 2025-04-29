@@ -8,6 +8,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator markdown {
+  provider = "prisma-markdown"
+  output   = "./ERD.md"
+  title    = "moviepedia"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -19,12 +25,39 @@ enum Provider {
 }
 
 model User {
-  id        String  @id @db.Uuid
-  email     String  @unique
-  password  String
-  name      String
-  provider  Provider
+  id       String   @id @db.Uuid
+  email    String   @unique
+  password String?
+  name     String
+  provider Provider
 
   createdAt DateTime @map("created_at")
   updatedAt DateTime @map("updated_at")
+}
+
+model Movie {
+  id            String      @id
+  averageRating Float    @default(0)
+  reviews       Review[]
+
+  createdAt DateTime @map("created_at")
+  updatedAt DateTime @map("updated_at")
+
+  @@index([averageRating])
+}
+
+model Review {
+  id      String @id @db.Uuid
+  comment String?
+  rating  Float?
+  userId  String @db.Uuid
+  name    String
+  Movie   Movie  @relation(fields: [movieId], references: [id])
+  movieId String
+
+  createdAt DateTime @map("created_at")
+  updatedAt DateTime @map("updated_at")
+
+  @@index([userId])
+  @@index([movieId])
 }
