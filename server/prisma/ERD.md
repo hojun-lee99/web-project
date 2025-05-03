@@ -25,13 +25,13 @@ erDiagram
   String id PK
   String comment "nullable"
   Float rating "nullable"
-  String userId
-  String name
+  String userId FK
   String movieId FK
   DateTime created_at
   DateTime updated_at
 }
-"Review" }o--|| "Movie" : Movie
+"Review" }o--|| "User" : user
+"Review" }o--|| "Movie" : movie
 ```
 
 ### `User`
@@ -60,7 +60,6 @@ erDiagram
   - `comment`: 
   - `rating`: 
   - `userId`: 
-  - `name`: 
   - `movieId`: 
   - `created_at`: 
   - `updated_at`: 

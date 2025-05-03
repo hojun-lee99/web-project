@@ -7,6 +7,9 @@ import { login } from 'test/helper/login';
 import { CreateRatingDto } from 'src/shared/types/dto/movies/request/create-rating.request';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WriteCommentDto } from 'src/shared/types/dto/movies/request/write-comment.request';
+import { v4 } from 'uuid';
+import { ResponseResult } from 'test/helper/types';
+import { GetReviewsResponse } from 'src/shared/types/dto/movies/response/get-reviews.response';
 
 describe('MoviesController (e2e)', () => {
   let app: INestApplication<App>;
@@ -175,6 +178,93 @@ describe('MoviesController (e2e)', () => {
 
       expect(reviewAfterUpdate).toBeDefined();
       expect(reviewAfterUpdate?.comment).toBe(updatedCommentDto.comment); // 코멘트가 올바르게 업데이트되었는지 확인
+    });
+  });
+
+  describe('/movies/:movieId/reviews (GET)', () => {
+    let accessToken: string;
+    let userId: string;
+    const testMovieId = '12345';
+
+    beforeEach(async () => {
+      await prisma.review.deleteMany();
+      await prisma.movie.deleteMany();
+      await prisma.user.deleteMany();
+      const loginResult = await login(app);
+      accessToken = loginResult.accessToken;
+      userId = loginResult.id;
+    });
+
+    const createReviews = async (
+      movieId: string,
+      userId: string,
+      count: number,
+    ) => {
+      const reviewData = Array.from({ length: count }, (_, index) => ({
+        id: v4(),
+        comment: `Test comment ${index + 1}`,
+        rating: 7 + index * 0.5,
+        userId: userId,
+        movieId: movieId,
+        createdAt: new Date(Date.now() - (count - index) * 1000),
+        updatedAt: new Date(Date.now() - (count - index) * 1000),
+      }));
+
+      await prisma.review.createMany({
+        data: reviewData,
+      });
+
+      return reviewData.sort(
+        (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+      );
+    };
+
+    it('첫 페이지 리뷰 조회 정상 동작 (No Cursor)', async () => {
+      const reviewsToCreate = 5;
+
+      const compareData = await createReviews(
+        testMovieId,
+        userId,
+        reviewsToCreate,
+      );
+
+      const response = (await request(app.getHttpServer()).get(
+        `/movies/${testMovieId}/reviews`,
+      )) as ResponseResult<GetReviewsResponse>;
+
+      expect(response.status).toBe(HttpStatus.OK);
+      expect(response.body.reviews).toHaveLength(reviewsToCreate);
+      expect(response.body.reviews[0].comment).toContain(
+        compareData[0].comment,
+      );
+      expect(response.body.nextCursor).toBeDefined();
+      expect(response.body.nextCursor).not.toBeNull();
+      expect(response.body.nextCursor).toBe('');
+    });
+
+    it('페이지 네이션 정상 동작', async () => {
+      const reviewsToCreate = 15;
+
+      const compareData = await createReviews(
+        testMovieId,
+        userId,
+        reviewsToCreate,
+      );
+
+      const response = (await request(app.getHttpServer()).get(
+        `/movies/${testMovieId}/reviews`,
+      )) as ResponseResult<GetReviewsResponse>;
+
+      expect(response.status).toBe(HttpStatus.OK);
+      expect(response.body.reviews).toHaveLength(10);
+      expect(response.body.nextCursor).toBe(compareData[10].id);
+
+      const nextResponse = (await request(app.getHttpServer()).get(
+        `/movies/${testMovieId}/reviews?cursor=${response.body.nextCursor}`,
+      )) as ResponseResult<GetReviewsResponse>;
+
+      expect(nextResponse.status).toBe(HttpStatus.OK);
+      expect(nextResponse.body.reviews).toHaveLength(5);
     });
   });
 });

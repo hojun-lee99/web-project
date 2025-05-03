@@ -3,6 +3,7 @@ import * as request from 'supertest';
 import { ResponseResult } from './types';
 import { RegisterRequest } from 'src/shared/types/dto/auth/request/register.request';
 import { LoginResponse } from 'src/shared/types/dto/auth/response/login.response';
+import { RegisterResponse } from 'src/shared/types/dto/auth/response/register.response';
 
 export const login = async (app: INestApplication) => {
   const dto: RegisterRequest = {
@@ -14,7 +15,7 @@ export const login = async (app: INestApplication) => {
   const response = await request(app.getHttpServer())
     .post('/auth/register')
     .send(dto);
-  const { body } = response as ResponseResult<LoginResponse>;
+  const { body } = response as ResponseResult<RegisterResponse>;
 
   if (!body?.accessToken) {
     throw new Error('Login failed: No access token returned');
@@ -22,5 +23,6 @@ export const login = async (app: INestApplication) => {
 
   return {
     accessToken: `Bearer ${body.accessToken}`,
+    id: body.id,
   };
 };
