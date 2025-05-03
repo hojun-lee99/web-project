@@ -57,6 +57,8 @@ export class AuthService {
         this.accessTokenExpiration,
       ),
       name: user.name,
+      id: user.id,
+      email: user.email,
     };
   }
 
@@ -72,9 +74,12 @@ export class AuthService {
     const user = UserEntity.create(prototype, hashedPassword, v4, stdDate);
     await this.usersRepo.save(user);
 
-    const accessToken = this.generateToken(user.id, this.accessTokenExpiration);
+    const accessToken = await this.generateToken(
+      user.id,
+      this.accessTokenExpiration,
+    );
 
-    return accessToken;
+    return { accessToken, ...user };
   }
 
   async refreshAccessToken(userId: string) {

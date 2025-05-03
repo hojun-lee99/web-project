@@ -48,12 +48,12 @@ export class AuthController {
   //로컬 회원 가입으로 현재 구현 되어있음 추구 소셜 로그인 구현시 수정필요
   @Post('register')
   async localRegister(@Body() dto: RegisterRequest): Promise<RegisterResponse> {
-    const accessToken = await this.authService.register({
+    const res = await this.authService.register({
       provider: 'LOCAL',
       ...dto,
     });
 
-    return { accessToken };
+    return { accessToken: res.accessToken, id: res.id };
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
