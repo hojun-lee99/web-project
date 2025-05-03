@@ -20,6 +20,16 @@ export class MoviesService {
     private readonly usersRepo: UsersRepository,
   ) {}
 
+  async readReviews(movieId: string, cursor?: string) {
+    const reviews = await this.reviewsRepo.findManyByMovieId(movieId, cursor);
+
+    if (!reviews) {
+      return { reviews: [], nextCursor: null };
+    }
+
+    return reviews;
+  }
+
   async reviewRating(
     userId: string,
     movieId: string,
@@ -43,7 +53,7 @@ export class MoviesService {
     );
 
     return !existingReview
-      ? await this.createReview(user.id, user.name, movieId, rating)
+      ? await this.createReview(user.id, movieId, rating)
       : await this.updateReview({ id: existingReview.id, rating });
   }
 
@@ -70,7 +80,7 @@ export class MoviesService {
     );
 
     return !existingReview
-      ? await this.createReview(user.id, user.name, movieId, 0, comment)
+      ? await this.createReview(user.id, movieId, 0, comment)
       : await this.updateReview({ id: existingReview.id, comment });
   }
 
@@ -83,14 +93,12 @@ export class MoviesService {
 
   private async createReview(
     userId: string,
-    name: string,
     movieId: string,
     rating?: number,
     comment?: string,
   ) {
     const prototype: ReviewPrototype = {
       userId,
-      name,
       movieId,
       rating,
       comment,

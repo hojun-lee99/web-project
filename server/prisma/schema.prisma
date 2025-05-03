@@ -17,6 +17,7 @@ generator markdown {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 enum Provider {
@@ -30,6 +31,7 @@ model User {
   password String?
   name     String
   provider Provider
+  review    Review[]
 
   createdAt DateTime @map("created_at")
   updatedAt DateTime @map("updated_at")
@@ -51,9 +53,9 @@ model Review {
   comment String?
   rating  Float?
   userId  String @db.Uuid
-  name    String
-  Movie   Movie  @relation(fields: [movieId], references: [id])
+  user    User   @relation(fields: [userId], references: [id]) 
   movieId String
+  movie   Movie  @relation(fields: [movieId], references: [id])
 
   createdAt DateTime @map("created_at")
   updatedAt DateTime @map("updated_at")
