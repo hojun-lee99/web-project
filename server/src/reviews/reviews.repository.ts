@@ -17,6 +17,14 @@ export class ReviewsRepository {
     });
   }
 
+  async findById(id: string): Promise<ReviewEntity | null> {
+    return this.prisma.review.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
   async findManyByMovieId(
     movieId: string,
     cursor?: string,
@@ -80,6 +88,14 @@ export class ReviewsRepository {
       where: {
         userId,
         movieId,
+      },
+    });
+  }
+
+  async deleteReview(reviewId: string): Promise<void> {
+    await this.prisma.review.delete({
+      where: {
+        id: reviewId,
       },
     });
   }
