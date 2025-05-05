@@ -2,7 +2,6 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { ResponseResult } from './types';
 import { RegisterRequest } from 'src/shared/types/dto/auth/request/register.request';
-import { LoginResponse } from 'src/shared/types/dto/auth/response/login.response';
 import { RegisterResponse } from 'src/shared/types/dto/auth/response/register.response';
 
 export const login = async (app: INestApplication) => {

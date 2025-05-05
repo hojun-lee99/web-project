@@ -10,6 +10,7 @@ import { WriteCommentDto } from 'src/shared/types/dto/movies/request/write-comme
 import { v4 } from 'uuid';
 import { ResponseResult } from 'test/helper/types';
 import { GetReviewsResponse } from 'src/shared/types/dto/movies/response/get-reviews.response';
+import { RegisterResponse } from 'src/shared/types/dto/auth/response/register.response';
 
 describe('MoviesController (e2e)', () => {
   let app: INestApplication<App>;
@@ -48,7 +49,7 @@ describe('MoviesController (e2e)', () => {
     });
 
     it('별점 생성 정상 작동', async () => {
-      const ratingDto: CreateRatingDto = { rating: 8.5 };
+      const ratingDto: CreateRatingDto = { rating: 8 };
 
       const response = await request(app.getHttpServer())
         .post(`/movies/${testMovieId}/ratings`)
@@ -63,11 +64,15 @@ describe('MoviesController (e2e)', () => {
       const reviewAfterCreate = await prisma.review.findFirst({
         where: { movieId: testMovieId },
       });
+      const movieAfterCreate = await prisma.movie.findFirst({
+        where: { id: testMovieId },
+      });
       expect(reviewAfterCreate).toBeDefined(); // 리뷰가 존재하는지 확인
       expect(reviewAfterCreate?.rating).toBe(ratingDto.rating); // 별점이 올바르게 저장되었는지 확인
+      expect(movieAfterCreate?.averageRating).toBe(ratingDto.rating);
 
       // 두 번째 요청: 별점 업데이트
-      const updatedRatingDto: CreateRatingDto = { rating: 9.0 };
+      const updatedRatingDto: CreateRatingDto = { rating: 9 };
       const responseUpdate = await request(app.getHttpServer())
         .post(`/movies/${testMovieId}/ratings`)
         .set('Authorization', accessToken)
@@ -80,9 +85,41 @@ describe('MoviesController (e2e)', () => {
       const reviewAfterUpdate = await prisma.review.findFirst({
         where: { movieId: testMovieId },
       });
-
+      const movieAfterUpdate = await prisma.movie.findFirst({
+        where: { id: testMovieId },
+      });
       expect(reviewAfterUpdate).toBeDefined();
       expect(reviewAfterUpdate?.rating).toBe(updatedRatingDto.rating); // 별점이 올바르게 업데이트되었는지 확인
+      expect(movieAfterUpdate?.averageRating).toBe(updatedRatingDto.rating);
+    });
+
+    it('평균 별점 계산 정상 작동', async () => {
+      const response = (await request(app.getHttpServer())
+        .post('/auth/register')
+        .send({
+          email: 'user2@email.com',
+          name: 'user2',
+          password: 'password2',
+        })) as ResponseResult<RegisterResponse>;
+
+      const token2 = `Bearer ${response.body.accessToken}`;
+
+      const res1 = await request(app.getHttpServer())
+        .post(`/movies/${testMovieId}/ratings`)
+        .set('Authorization', accessToken)
+        .send({ rating: 4 });
+
+      const res2 = await request(app.getHttpServer())
+        .post(`/movies/${testMovieId}/ratings`)
+        .set('Authorization', token2)
+        .send({ rating: 2 });
+
+      expect(res1.status).toBe(HttpStatus.NO_CONTENT);
+      expect(res2.status).toBe(HttpStatus.NO_CONTENT);
+      const movieData = await prisma.movie.findFirst({
+        where: { id: testMovieId },
+      });
+      expect(movieData?.averageRating).toBe(3);
     });
 
     // 실패 케이스: 유효하지 않은 별점 값 (예: 범위 초과, 문자열 등)
@@ -183,7 +220,6 @@ describe('MoviesController (e2e)', () => {
   });
 
   describe('/movies/:movieId/reviews (GET)', () => {
-    let accessToken: string;
     let userId: string;
     const testMovieId = '12345';
 
@@ -192,7 +228,6 @@ describe('MoviesController (e2e)', () => {
       await prisma.movie.deleteMany();
       await prisma.user.deleteMany();
       const loginResult = await login(app);
-      accessToken = loginResult.accessToken;
       userId = loginResult.id;
     });
 
