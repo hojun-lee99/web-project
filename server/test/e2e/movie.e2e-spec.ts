@@ -126,6 +126,7 @@ describe('MoviesController (e2e)', () => {
     });
   });
 
+  //* 별점과 기능이 동일해 정상 동작하는지만 확인, 추후 기능이 추가될 경우 테스트 필요
   describe('/movies/:movieId/reviews (POST)', () => {
     let accessToken: string;
     const testMovieId = '12345';
