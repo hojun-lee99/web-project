@@ -25,6 +25,27 @@ export class ReviewsRepository {
     });
   }
 
+  async findRatingsByMovieId(movieId: string): Promise<number[]> {
+    const reviewsWithRatings = await this.prisma.review.findMany({
+      where: {
+        movieId: movieId,
+        rating: {
+          not: null,
+          notIn: [0],
+        },
+      },
+      select: {
+        rating: true,
+      },
+    });
+
+    const ratings = reviewsWithRatings
+      .map((review) => review.rating)
+      .filter((rating) => rating !== null);
+
+    return ratings;
+  }
+
   async findManyByMovieId(
     movieId: string,
     cursor?: string,

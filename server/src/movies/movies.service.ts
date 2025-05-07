@@ -52,9 +52,13 @@ export class MoviesService {
       movieId,
     );
 
-    return !existingReview
-      ? await this.createReview(user.id, movieId, rating)
-      : await this.updateReview({ id: existingReview.id, rating });
+    if (!existingReview) {
+      await this.createReview(user.id, movieId, rating);
+    } else {
+      await this.updateReview({ id: existingReview.id, rating });
+    }
+
+    await this.updateAverageRating(movieId);
   }
 
   async reviewComment(
@@ -111,5 +115,17 @@ export class MoviesService {
 
   private async updateReview(existingReview: Partial<ReviewEntity>) {
     await this.reviewsRepo.updateReview(existingReview);
+  }
+
+  async updateAverageRating(movieId: string) {
+    const ratings = await this.reviewsRepo.findRatingsByMovieId(movieId);
+
+    let averageRating = 0;
+    if (ratings.length > 0 && ratings) {
+      const sum = ratings.reduce((acc, rating) => acc + rating, 0);
+      averageRating = Math.round((sum / ratings.length) * 10) / 10;
+    }
+
+    await this.moviesRepo.update(movieId, { averageRating: averageRating });
   }
 }

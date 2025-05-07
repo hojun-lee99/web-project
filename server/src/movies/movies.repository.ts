@@ -26,4 +26,11 @@ export class MoviesRepository {
       },
     });
   }
+
+  async update(id: string, data: Partial<MovieEntity>): Promise<void> {
+    await this.prisma.movie.update({
+      where: { id: id },
+      data: data,
+    });
+  }
 }
