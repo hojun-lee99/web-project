@@ -79,7 +79,7 @@ export class AuthService {
       this.accessTokenExpiration,
     );
 
-    return { accessToken, ...user };
+    return { accessToken, id: user.id, name: user.name, email: user.email };
   }
 
   async refreshAccessToken(userId: string) {

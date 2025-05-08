@@ -4,9 +4,9 @@ import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from 'src/app.module';
 import { login } from 'test/helper/login';
-import { CreateRatingDto } from 'src/shared/types/dto/movies/request/create-rating.request';
+import { CreateRatingRequest } from 'src/shared/types/dto/movies/request/create-rating.request';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { WriteCommentDto } from 'src/shared/types/dto/movies/request/write-comment.request';
+import { WriteCommentRequest } from 'src/shared/types/dto/movies/request/write-comment.request';
 import { v4 } from 'uuid';
 import { ResponseResult } from 'test/helper/types';
 import { GetReviewsResponse } from 'src/shared/types/dto/movies/response/get-reviews.response';
@@ -49,7 +49,7 @@ describe('MoviesController (e2e)', () => {
     });
 
     it('별점 생성 정상 작동', async () => {
-      const ratingDto: CreateRatingDto = { rating: 8 };
+      const ratingDto: CreateRatingRequest = { rating: 8 };
 
       const response = await request(app.getHttpServer())
         .post(`/movies/${testMovieId}/ratings`)
@@ -72,7 +72,7 @@ describe('MoviesController (e2e)', () => {
       expect(movieAfterCreate?.averageRating).toBe(ratingDto.rating);
 
       // 두 번째 요청: 별점 업데이트
-      const updatedRatingDto: CreateRatingDto = { rating: 9 };
+      const updatedRatingDto: CreateRatingRequest = { rating: 9 };
       const responseUpdate = await request(app.getHttpServer())
         .post(`/movies/${testMovieId}/ratings`)
         .set('Authorization', accessToken)
@@ -137,7 +137,7 @@ describe('MoviesController (e2e)', () => {
 
     // 실패 케이스: 인증 토큰 누락
     it('인증 토큰 없이 요청 시 에러 발생 (HttpStatus.UNAUTHORIZED)', async () => {
-      const ratingDto: CreateRatingDto = { rating: 7.0 };
+      const ratingDto: CreateRatingRequest = { rating: 7.0 };
 
       const response = await request(app.getHttpServer())
         .post(`/movies/${testMovieId}/ratings`)
@@ -150,7 +150,7 @@ describe('MoviesController (e2e)', () => {
 
     // 실패 케이스: 유효하지 않은 인증 토큰
     it('유효하지 않은 인증 토큰으로 요청 시 에러 발생 (HttpStatus.UNAUTHORIZED)', async () => {
-      const ratingDto: CreateRatingDto = { rating: 7.5 };
+      const ratingDto: CreateRatingRequest = { rating: 7.5 };
       const invalidToken = 'Bearer invalid.token.string'; // 유효하지 않은 토큰
 
       const response = await request(app.getHttpServer())
@@ -177,7 +177,7 @@ describe('MoviesController (e2e)', () => {
     });
 
     it('코멘트 작성 정상 동작', async () => {
-      const commentDto: WriteCommentDto = {
+      const commentDto: WriteCommentRequest = {
         comment: '테스트를 위한 영화 한줄평 입니다.',
       };
 
@@ -198,7 +198,7 @@ describe('MoviesController (e2e)', () => {
       expect(reviewAfterCreate?.comment).toBe(commentDto.comment); // 코멘트가 올바르게 저장되었는지 확인
 
       // 두 번째 요청: 별점 업데이트
-      const updatedCommentDto: WriteCommentDto = {
+      const updatedCommentDto: WriteCommentRequest = {
         comment: '테스트를 위한 영화 코멘트 업데이트 입니다.',
       };
       const responseUpdate = await request(app.getHttpServer())
