@@ -18,7 +18,12 @@ import { RefreshTokenGuard } from 'src/common/guard/refresh-token.guard';
 import { AuthenticatedRequest } from './auth.types';
 import { RefreshTokenResponse } from 'src/shared/types/dto/auth/response/refresh-token.response';
 import { RegisterResponse } from 'src/shared/types/dto/auth/response/register.response';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('Auth')
 @ApiResponse({ status: 400, description: '잘못된 요청 데이터 형식' })
@@ -108,6 +113,7 @@ export class AuthController {
     status: 401,
     description: '인증 실패 refresh 토큰이 없음',
   })
+  @ApiBearerAuth()
   @UseGuards(RefreshTokenGuard)
   @Post('refresh')
   async refreshToken(
