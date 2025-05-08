@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class WriteCommentDto {
+export class WriteCommentRequest {
   @IsString()
   readonly comment: string;
 }
